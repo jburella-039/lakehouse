@@ -1,4 +1,4 @@
-# dim_sucursal — bss_sucursales.dim_sucursal. Clave: id_sucursal.
+# dim_sucursal - bss_sucursales.dim_sucursal. Clave: id_sucursal.
 view: dim_sucursal {
   sql_table_name: `lakehouse-dev-483619.bss_sucursales.dim_sucursal` ;;
 
@@ -8,5 +8,5 @@ view: dim_sucursal {
 
   dimension: id_formato { hidden: yes type: number sql: ${TABLE}.id_formato ;; }
   dimension: id_region  { hidden: yes type: number sql: ${TABLE}.id_region ;; }
-  dimension: es_capital { type: yesno sql: ${TABLE}.flg_escapital = 1 ;; label: "¿Es Capital?" }
+  dimension: es_capital { type: yesno sql: ${TABLE}.flg_escapital = 1 ;; label: "Es Capital?" }
 }

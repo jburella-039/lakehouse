@@ -1,24 +1,23 @@
-﻿# =============================================================================
-# Dashboard: Venta Integral â€” Ventas en $
-# RÃ©plica de la pÃ¡gina "Participaciones $" del Power BI.
-# Visualizaciones nativas de Looker.
-# Filtros default = marzo 2026 (perÃ­odo de las capturas de referencia).
+# =============================================================================
+# Dashboard: Venta Integral - Ventas en $
+# Replica de la pagina "Participaciones $" del Power BI. Viz nativas de Looker.
+# Filtros default = marzo 2026 (periodo de las capturas de referencia).
 #
 # GAPS respecto al PBI (no reproducibles con la data actual de BigQuery):
 #  - Canal (era columna calculada en SSAS)
-#  - Negocio / treemap Salud-Belleza-AlimentaciÃ³n (flags calculados en SSAS)
+#  - Negocio / treemap Salud-Belleza-Alimentacion (flags calculados en SSAS)
 #  - Marca Propia (flag EsMarcaPropia sin poblar)
 # =============================================================================
 
 - dashboard: venta_ventas
-  title: "Venta Integral Â· Ventas en $"
+  title: "Venta Integral - Ventas en $"
   layout: newspaper
   preferred_viewer: dashboards-next
-  description: "Ventas s/IVA antes de descuento por formato, departamento, categorÃ­a, marca y producto."
+  description: "Ventas s/IVA antes de descuento por formato, departamento, categoria, marca y producto."
 
   filters:
   - name: fecha
-    title: "Fecha (dÃ­a contable)"
+    title: "Fecha (dia contable)"
     type: field_filter
     default_value: "2026/03/01 to 2026/04/01"
     model: lakehouse
@@ -42,7 +41,7 @@
     field: dim_departamento.departamento
 
   - name: categoria
-    title: "CategorÃ­a"
+    title: "Categoria"
     type: field_filter
     model: lakehouse
     explore: fct_ventas
@@ -113,7 +112,7 @@
     height: 9
 
   # ---------------- Departamento (columnas) ----------------
-  - title: "ParticipaciÃ³n por Departamento"
+  - title: "Participacion por Departamento"
     name: v_depto
     model: lakehouse
     explore: fct_ventas
@@ -127,7 +126,7 @@
     height: 9
 
   # ---------------- Top Marcas (tabla) ----------------
-  - title: "Top Marcas â€” Venta y Margen"
+  - title: "Top Marcas - Venta y Margen"
     name: v_marcas
     model: lakehouse
     explore: fct_ventas
@@ -142,8 +141,8 @@
     width: 8
     height: 11
 
-  # ---------------- Top CategorÃ­as (barras) ----------------
-  - title: "Top CategorÃ­as"
+  # ---------------- Top Categorias (barras) ----------------
+  - title: "Top Categorias"
     name: v_categorias
     model: lakehouse
     explore: fct_ventas
@@ -158,7 +157,7 @@
     height: 11
 
   # ---------------- Top Productos (tabla) ----------------
-  - title: "Top Productos â€” Venta"
+  - title: "Top Productos - Venta"
     name: v_productos
     model: lakehouse
     explore: fct_ventas
