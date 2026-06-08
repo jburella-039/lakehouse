@@ -1,344 +1,186 @@
-view: fct_ventas {
-  sql_table_name: `bss_oracle.fct_ventas` ;;
+# =============================================================================
+# view: fct_ventas
+# Hecho de ventas (nivel línea de comprobante) — BSS Oracle
+# Fuente: lakehouse-dev-483619.bss_oracle.fct_ventas (~1.8 mil M filas)
+#
+# Alineado al MAPEO_SSAS_a_LookML v5 (fct real de BigQuery):
+#  - Venta neta s/IVA antes de desc = columna precalculada mto_totalsinivaantesdescuento
+#    (equivale a [Vta $ T SIva Ant Desc] del cubo).
+#  - Unidades = cnt_cantidad ; Costo = mto_costo ; Margen $ = neto - costo.
+#  - Ticket (resta stock): id_ventaunica viene NULL en la fct -> key interina por
+#    combinación; COALESCE prioriza id_ventaunica cuando se puebla.
+#
+# PENDIENTE (requiere joins de dimensión, ver explore):
+#  - Filtros por flags ID_TKT_ESVENTA / ID_TKT_RESTASTOCK (viven en TipoComprobante).
+#    Las medidas base hoy NO los aplican; se agregan al wirear el join o al
+#    denormalizar es_venta/resta_stock en el hecho (recomendación del mapeo).
+# =============================================================================
 
-  dimension: cd_cliente {
-    type: number
-    sql: ${TABLE}.cd_cliente ;;
-  }
-  dimension: cd_documento {
-    type: number
-    sql: ${TABLE}.cd_documento ;;
-  }
-  dimension: cd_documentofiscal {
+view: fct_ventas {
+  sql_table_name: `lakehouse-dev-483619.bss_oracle.fct_ventas` ;;
+
+  # ---------------------------------------------------------------------------
+  # CLAVES
+  # ---------------------------------------------------------------------------
+  dimension: pk {
+    primary_key: yes
+    hidden: yes
     type: string
-    sql: ${TABLE}.cd_documentofiscal ;;
+    sql: CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
+                ${cd_nrocomprobante},'-',${cd_sku}) ;;
   }
-  dimension: cd_nrocomprobante {
-    type: number
-    sql: ${TABLE}.cd_nrocomprobante ;;
-  }
-  dimension: cd_nrocomprobantefiscal {
-    type: number
-    sql: ${TABLE}.cd_nrocomprobantefiscal ;;
-  }
-  dimension: cd_nrocomprobanterelacionado {
-    type: number
-    sql: ${TABLE}.cd_nrocomprobanterelacionado ;;
-  }
-  dimension: cd_sku {
-    type: number
-    sql: ${TABLE}.cd_sku ;;
-  }
-  dimension: cd_tipodocumentofiscal {
-    type: number
-    sql: ${TABLE}.cd_tipodocumentofiscal ;;
-  }
-  dimension: cnt_bonificacion {
-    type: number
-    sql: ${TABLE}.cnt_bonificacion ;;
-  }
-  dimension: cnt_cantidad {
-    type: number
-    sql: ${TABLE}.cnt_cantidad ;;
-  }
-  dimension: cnt_cupondescuento {
-    type: number
-    sql: ${TABLE}.cnt_cupondescuento ;;
-  }
-  dimension: cnt_farmacia {
-    type: number
-    sql: ${TABLE}.cnt_farmacia ;;
-  }
-  dimension: cnt_promodescuento {
-    type: number
-    sql: ${TABLE}.cnt_promodescuento ;;
-  }
-  dimension: dsc_domicilioentrega {
+
+  # Key de ticket (resta stock). Prioriza id_ventaunica cuando exista.
+  dimension: ticket_key {
+    hidden: yes
     type: string
-    sql: ${TABLE}.dsc_domicilioentrega ;;
+    sql: COALESCE(
+            CAST(${TABLE}.id_ventaunica AS STRING),
+            CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
+                   ${cd_nrocomprobante},'-',
+                   FORMAT_TIMESTAMP('%Y%m%d', ${TABLE}.fec_dia),'-',
+                   CAST(${TABLE}.id_nroapertura AS STRING))
+         ) ;;
   }
-  dimension: eml_comprobantefiscal {
+
+  # ---------------------------------------------------------------------------
+  # DIMENSIONES — claves de join (a wirear en el explore)
+  # ---------------------------------------------------------------------------
+  dimension: id_sucursal       { type: number sql: ${TABLE}.id_sucursal ;;       label: "Sucursal (ID)" }
+  dimension: id_caja           { type: number sql: ${TABLE}.id_caja ;;           label: "Caja" }
+  dimension: id_tipocomprobante{ type: number sql: ${TABLE}.id_tipocomprobante ;; label: "Tipo Comprobante (ID)" }
+  dimension: cd_nrocomprobante { type: number sql: ${TABLE}.cd_nrocomprobante ;;  label: "Nro Comprobante" }
+  dimension: id_nroapertura    { type: number sql: ${TABLE}.id_nroapertura ;;     hidden: yes }
+  dimension: cd_sku            { type: number sql: ${TABLE}.cd_sku ;;            label: "SKU (Artículo)" }
+  dimension: id_obrasocial     { type: number sql: ${TABLE}.id_obrasocial ;;     label: "Obra Social (ID)" }
+  dimension: id_proveedor      { type: number sql: ${TABLE}.id_proveedor ;;      label: "Proveedor (ID)" }
+
+  # Jerarquía de producto histórica directa en la fct (alternativa al snowflake).
+  dimension: id_departamento   { type: number sql: ${TABLE}.id_departamento ;;   label: "Departamento (ID)" }
+  dimension: id_categoria      { type: number sql: ${TABLE}.id_categoria ;;      label: "Categoría (ID)" }
+  dimension: id_subcategoria   { type: number sql: ${TABLE}.id_subcategoria ;;   label: "Subcategoría (ID)" }
+  dimension: id_marca          { type: number sql: ${TABLE}.id_marca ;;          label: "Marca (ID)" }
+
+  # ---------------------------------------------------------------------------
+  # DIMENSIONES — cliente / cobertura
+  # ---------------------------------------------------------------------------
+  dimension: id_cliente { type: number sql: ${TABLE}.id_cliente ;; label: "Cliente (ID)" }
+
+  dimension: cliente_identificado {
+    type: yesno
+    sql: ${TABLE}.id_cliente <> -1 AND ${TABLE}.id_cliente IS NOT NULL ;;
+    label: "¿Cliente Identificado?"
+  }
+
+  dimension: tipo_cobertura {
     type: string
-    sql: ${TABLE}.eml_comprobantefiscal ;;
+    sql: CASE WHEN ${TABLE}.id_obrasocial IS NULL OR ${TABLE}.id_obrasocial <= 0
+              THEN 'Particular' ELSE 'Obra Social / Coseguro' END ;;
+    label: "Tipo de Cobertura"
   }
-  dimension: fec_carga {
-    type: number
-    sql: ${TABLE}.fec_carga ;;
-  }
-  dimension_group: fec_dia {
+
+  # ---------------------------------------------------------------------------
+  # TIEMPO
+  # ---------------------------------------------------------------------------
+  dimension_group: venta {
     type: time
-    timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_dia ;;
-  }
-  dimension: fec_diarelacionado {
-    type: number
-    sql: ${TABLE}.fec_diarelacionado ;;
-  }
-  dimension_group: fec_emisionfiscal {
-    type: time
-    timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_emisionfiscal ;;
-  }
-  dimension_group: fec_escaneo {
-    type: time
-    timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_escaneo ;;
-  }
-  dimension: fec_mesnum {
-    type: number
-    sql: ${TABLE}.fec_mesnum ;;
-  }
-  dimension_group: fec_pedido {
-    type: time
-    timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_pedido ;;
-  }
-  dimension_group: fec_venta {
-    type: time
-    timeframes: [raw, time, date, week, month, quarter, year]
+    timeframes: [raw, time, hour_of_day, date, day_of_week, week, month, month_name, quarter, year]
     sql: ${TABLE}.fec_venta ;;
+    label: "Fecha de Venta"
   }
-  dimension: flg_clientecalculado {
-    type: number
-    sql: ${TABLE}.flg_clientecalculado ;;
+
+  # fec_dia (día contable) — usada para join a la dim Fecha y para el ticket_key.
+  dimension_group: dia {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    sql: ${TABLE}.fec_dia ;;
+    label: "Día Contable"
   }
-  dimension: flg_serviciosalud {
-    type: number
-    sql: ${TABLE}.flg_serviciosalud ;;
-  }
-  dimension: id_caja {
-    type: number
-    sql: ${TABLE}.id_caja ;;
-  }
-  dimension: id_cajarelacionado {
-    type: number
-    sql: ${TABLE}.id_cajarelacionado ;;
-  }
-  dimension: id_categoria {
-    type: number
-    sql: ${TABLE}.id_categoria ;;
-  }
-  dimension: id_cliente {
-    type: number
-    sql: ${TABLE}.id_cliente ;;
-  }
-  dimension: id_coseguro {
-    type: number
-    sql: ${TABLE}.id_coseguro ;;
-  }
-  dimension: id_cupondescuento {
-    type: number
-    sql: ${TABLE}.id_cupondescuento ;;
-  }
-  dimension: id_departamento {
-    type: number
-    sql: ${TABLE}.id_departamento ;;
-  }
-  dimension: id_empleadodescuento {
-    type: number
-    sql: ${TABLE}.id_empleadodescuento ;;
-  }
-  dimension: id_legajoautorizador {
-    type: number
-    sql: ${TABLE}.id_legajoautorizador ;;
-  }
-  dimension: id_legajocajero {
-    type: number
-    sql: ${TABLE}.id_legajocajero ;;
-  }
-  dimension: id_legajocolaborador {
-    type: number
-    sql: ${TABLE}.id_legajocolaborador ;;
-  }
-  dimension: id_marca {
-    type: number
-    sql: ${TABLE}.id_marca ;;
-  }
-  dimension: id_motivonc {
-    type: number
-    sql: ${TABLE}.id_motivonc ;;
-  }
-  dimension: id_nroapertura {
-    type: number
-    sql: ${TABLE}.id_nroapertura ;;
-  }
-  dimension: id_nroaperturarelacionado {
-    type: number
-    sql: ${TABLE}.id_nroaperturarelacionado ;;
-  }
-  dimension: id_nroorden {
-    type: string
-    sql: ${TABLE}.id_nroorden ;;
-  }
-  dimension: id_nropedido {
-    type: number
-    sql: ${TABLE}.id_nropedido ;;
-  }
-  dimension: id_nroremito {
-    type: number
-    sql: ${TABLE}.id_nroremito ;;
-  }
-  dimension: id_obrasocial {
-    type: number
-    sql: ${TABLE}.id_obrasocial ;;
-  }
-  dimension: id_origenventa {
-    type: number
-    sql: ${TABLE}.id_origenventa ;;
-  }
-  dimension: id_padrecoseguro {
-    type: number
-    sql: ${TABLE}.id_padrecoseguro ;;
-  }
-  dimension: id_padreobrasocial {
-    type: number
-    sql: ${TABLE}.id_padreobrasocial ;;
-  }
-  dimension: id_pdvfiscal {
-    type: number
-    sql: ${TABLE}.id_pdvfiscal ;;
-  }
-  dimension: id_programacomercial {
-    type: number
-    sql: ${TABLE}.id_programacomercial ;;
-  }
-  dimension: id_proveedor {
-    type: number
-    sql: ${TABLE}.id_proveedor ;;
-  }
-  dimension: id_subcategoria {
-    type: number
-    sql: ${TABLE}.id_subcategoria ;;
-  }
-  dimension: id_sucursal {
-    type: number
-    sql: ${TABLE}.id_sucursal ;;
-  }
-  dimension: id_sucursalpet {
-    type: number
-    sql: ${TABLE}.id_sucursalpet ;;
-  }
-  dimension: id_tipocomprobante {
-    type: number
-    sql: ${TABLE}.id_tipocomprobante ;;
-  }
-  dimension: id_tipocomprobanterelacionado {
-    type: number
-    sql: ${TABLE}.id_tipocomprobanterelacionado ;;
-  }
-  dimension: id_tipoiva {
-    type: number
-    sql: ${TABLE}.id_tipoiva ;;
-  }
-  dimension: id_tipooperacioncomercial {
-    type: number
-    sql: ${TABLE}.id_tipooperacioncomercial ;;
-  }
-  dimension: id_ventaunica {
-    type: number
-    sql: ${TABLE}.id_ventaunica ;;
-  }
-  dimension: mto_bonificacion {
-    type: number
-    sql: ${TABLE}.mto_bonificacion ;;
-  }
-  dimension: mto_cantidadgranel {
-    type: number
-    sql: ${TABLE}.mto_cantidadgranel ;;
-  }
-  dimension: mto_coseguro {
-    type: number
-    sql: ${TABLE}.mto_coseguro ;;
-  }
-  dimension: mto_costo {
-    type: number
-    sql: ${TABLE}.mto_costo ;;
-  }
-  dimension: mto_cupondescuento {
-    type: number
-    sql: ${TABLE}.mto_cupondescuento ;;
-  }
-  dimension: mto_cupondescuentosiniva {
-    type: number
-    sql: ${TABLE}.mto_cupondescuentosiniva ;;
-  }
-  dimension: mto_farmacia {
-    type: number
-    sql: ${TABLE}.mto_farmacia ;;
-  }
-  dimension: mto_iva {
-    type: number
-    sql: ${TABLE}.mto_iva ;;
-  }
-  dimension: mto_montofarmaciatickitems {
-    type: number
-    sql: ${TABLE}.mto_montofarmaciatickitems ;;
-  }
-  dimension: mto_obrasocial {
-    type: number
-    sql: ${TABLE}.mto_obrasocial ;;
-  }
-  dimension: mto_percepcioniva {
-    type: number
-    sql: ${TABLE}.mto_percepcioniva ;;
-  }
-  dimension: mto_preciostotalsiniva {
-    type: number
-    sql: ${TABLE}.mto_preciostotalsiniva ;;
-  }
-  dimension: mto_preciounitariopublico {
-    type: number
-    sql: ${TABLE}.mto_preciounitariopublico ;;
-  }
-  dimension: mto_promodescuento {
-    type: number
-    sql: ${TABLE}.mto_promodescuento ;;
-  }
-  dimension: mto_rentabilidadporsku {
-    type: number
-    sql: ${TABLE}.mto_rentabilidadporsku ;;
-  }
-  dimension: mto_total {
-    type: number
-    sql: ${TABLE}.mto_total ;;
-  }
-  dimension: mto_totalempleadodescuento {
-    type: number
-    sql: ${TABLE}.mto_totalempleadodescuento ;;
-  }
-  dimension: mto_totalempleadodescuentociva {
-    type: number
-    sql: ${TABLE}.mto_totalempleadodescuentociva ;;
-  }
-  dimension: mto_totalsinivaantesdescuento {
-    type: number
+
+  dimension: num_hora { type: number sql: ${TABLE}.num_hora ;; label: "Hora del Día" }
+
+  # ---------------------------------------------------------------------------
+  # MEASURES — base (Ventas / Unidades / Tickets)
+  # ---------------------------------------------------------------------------
+  # [Vta $ T SIva Ant Desc] — filtra ESVENTA=1 vía join a dim_tipocomprobante
+  measure: venta_neta {
+    type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    value_format_name: usd_0
+    label: "Venta $ (s/IVA a/desc)"
+    drill_fields: [detalle*]
   }
-  dimension: num_hora {
+
+  # [Vta # T Unid Vend] — ESVENTA=1
+  measure: unidades {
+    type: sum
+    sql: ${TABLE}.cnt_cantidad ;;
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    value_format_name: decimal_0
+    label: "Unidades Vendidas"
+  }
+
+  # [Vta # Cant Tickets (Resta Stock)] — RESTASTOCK=1 & ESVENTA=1
+  measure: tickets {
+    type: count_distinct
+    sql: ${ticket_key} ;;
+    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
+    label: "Tickets (Resta Stock)"
+  }
+
+  measure: costo {
+    type: sum
+    sql: ${TABLE}.mto_costo ;;
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    value_format_name: usd_0
+    label: "Costo $"
+  }
+
+  # ---------------------------------------------------------------------------
+  # MEASURES — derivadas (margen y promedios)
+  # ---------------------------------------------------------------------------
+  # [Margen T $ SIva Ant Desc]
+  measure: margen_pesos {
     type: number
-    sql: ${TABLE}.num_hora ;;
+    sql: ${venta_neta} - ${costo} ;;
+    value_format_name: usd_0
+    label: "Margen $ (s/IVA a/desc)"
   }
-  dimension: pct_cupondescuento {
+
+  # [Margen SIva Ant Desc] -> es %, no participación
+  measure: margen_pct {
     type: number
-    sql: ${TABLE}.pct_cupondescuento ;;
+    sql: SAFE_DIVIDE(${venta_neta} - ${costo}, NULLIF(${venta_neta},0)) ;;
+    value_format_name: percent_2
+    label: "Margen %"
   }
-  dimension: pct_iva {
+
+  # [Ticket Promedio]
+  measure: ticket_promedio {
     type: number
-    sql: ${TABLE}.pct_iva ;;
+    sql: SAFE_DIVIDE(${venta_neta}, NULLIF(${tickets},0)) ;;
+    value_format_name: usd_0
+    label: "Ticket Promedio"
   }
-  dimension: pct_percepcioniva {
+
+  # [Unidades por Ticket]
+  measure: unidades_por_ticket {
     type: number
-    sql: ${TABLE}.pct_percepcioniva ;;
+    sql: SAFE_DIVIDE(${unidades}, NULLIF(${tickets},0)) ;;
+    value_format_name: decimal_2
+    label: "Unidades por Ticket"
   }
-  dimension: pct_promodescuento {
-    type: number
-    sql: ${TABLE}.pct_promodescuento ;;
+
+  # Participación sobre el total del contexto (para los gráficos de % del PBI).
+  measure: pct_venta_total {
+    type: percent_of_total
+    sql: ${venta_neta} ;;
+    label: "% Venta (participación)"
   }
-  dimension: pct_recargofinanciero {
-    type: number
-    sql: ${TABLE}.pct_recargofinanciero ;;
-  }
-  measure: count {
-    type: count
+
+  set: detalle {
+    fields: [venta_date, id_sucursal, cd_nrocomprobante, cd_sku,
+             id_categoria, id_marca, tipo_cobertura, unidades, venta_neta, margen_pesos]
   }
 }
