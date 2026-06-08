@@ -1,4 +1,4 @@
-# dim_departamento — bss_comercial.dim_departamento. Clave: id_departamento.
+# dim_departamento - bss_comercial.dim_departamento. Clave: id_departamento.
 view: dim_departamento {
   sql_table_name: `lakehouse-dev-483619.bss_comercial.dim_departamento` ;;
 

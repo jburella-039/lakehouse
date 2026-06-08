@@ -67,14 +67,14 @@ explore: bt_vta_ticketsformapago {}
 explore: bt_vta_ticketsofertas {}
 
 # =============================================================================
-# explore: fct_ventas — Venta Integral (con joins snowflake)
+# explore: fct_ventas - Venta Integral (con joins snowflake)
 # =============================================================================
 explore: fct_ventas {
   label: "Venta Integral"
-  description: "Ventas, tickets y unidades a nivel línea de comprobante."
+  description: "Ventas, tickets y unidades a nivel linea de comprobante."
   persist_with: venta_integral_datagroup
 
-  # Evita escaneos de 1.8B filas: siempre filtra por día contable.
+  # Evita escaneos de 1.8B filas: siempre filtra por dia contable.
   always_filter: {
     filters: [fct_ventas.dia_date: "1 months"]
   }
@@ -113,7 +113,7 @@ explore: fct_ventas {
     sql_on: ${dim_articulo.id_departamento} = ${dim_departamento.id_departamento} ;;
   }
 
-  # Sucursal -> Formato (Bis) / Región.
+  # Sucursal -> Formato (Bis) / Region.
   join: dim_sucursal {
     type: left_outer
     relationship: many_to_one

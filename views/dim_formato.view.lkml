@@ -1,5 +1,5 @@
-# dim_formato — trd_sucursales.sucursalesformato. Clave: CodFormato.
-# "Formato Bis": relabel/agrupación de presentación del Power BI.
+# dim_formato - trd_sucursales.sucursalesformato. Clave: CodFormato.
+# "Formato Bis": relabel/agrupacion de presentacion del Power BI.
 view: dim_formato {
   sql_table_name: `lakehouse-dev-483619.trd_sucursales.sucursalesformato` ;;
 

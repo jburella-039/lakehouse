@@ -1,18 +1,18 @@
-﻿# =============================================================================
-# Dashboard: Venta Integral â€” Tickets
-# RÃ©plica de "Participaciones Tickets" del Power BI. Medida principal: tickets.
+# =============================================================================
+# Dashboard: Venta Integral - Tickets
+# Replica de "Participaciones Tickets" del Power BI. Medida principal: tickets.
 # Gaps: Canal, Negocio, Marca Propia (ver venta_ventas.dashboard).
 # =============================================================================
 
 - dashboard: venta_tickets
-  title: "Venta Integral Â· Tickets"
+  title: "Venta Integral - Tickets"
   layout: newspaper
   preferred_viewer: dashboards-next
-  description: "Tickets (resta stock) por formato, departamento, categorÃ­a, marca y producto."
+  description: "Tickets (resta stock) por formato, departamento, categoria, marca y producto."
 
   filters:
   - name: fecha
-    title: "Fecha (dÃ­a contable)"
+    title: "Fecha (dia contable)"
     type: field_filter
     default_value: "2026/03/01 to 2026/04/01"
     model: lakehouse
@@ -33,7 +33,7 @@
     explore: fct_ventas
     field: dim_departamento.departamento
   - name: categoria
-    title: "CategorÃ­a"
+    title: "Categoria"
     type: field_filter
     model: lakehouse
     explore: fct_ventas
@@ -86,7 +86,7 @@
     col: 0
     width: 8
     height: 9
-  - title: "PenetraciÃ³n por Departamento"
+  - title: "Penetracion por Departamento"
     name: t_depto
     model: lakehouse
     explore: fct_ventas
@@ -99,7 +99,7 @@
     width: 16
     height: 9
 
-  - title: "Top Marcas â€” Tickets"
+  - title: "Top Marcas - Tickets"
     name: t_marcas
     model: lakehouse
     explore: fct_ventas
@@ -113,7 +113,7 @@
     col: 16
     width: 8
     height: 11
-  - title: "Top CategorÃ­as â€” Tickets"
+  - title: "Top Categorias - Tickets"
     name: t_categorias
     model: lakehouse
     explore: fct_ventas
@@ -127,7 +127,7 @@
     width: 16
     height: 11
 
-  - title: "Top Productos â€” Tickets"
+  - title: "Top Productos - Tickets"
     name: t_productos
     model: lakehouse
     explore: fct_ventas
