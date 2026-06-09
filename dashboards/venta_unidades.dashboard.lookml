@@ -1,6 +1,6 @@
 # =============================================================================
-# Dashboard: Venta Integral - Unidades
-# Replica de "Participaciones Unidades" del Power BI. Medida principal: unidades.
+# Dashboard: Venta Integral - Unidades   (PBI: "Participaciones Unidades")
+# Medida principal: unidades.
 # Gaps: Canal, Negocio, Marca Propia (ver venta_ventas.dashboard).
 # =============================================================================
 
@@ -78,9 +78,10 @@
     name: u_formato
     model: lakehouse
     explore: fct_ventas
-    type: looker_bar
-    fields: [dim_formato.formato, fct_ventas.unidades]
+    type: looker_grid
+    fields: [dim_formato.formato, fct_ventas.unidades, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.unidades desc]
+    series_cell_visualizations: { fct_ventas.unidades: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 3
     col: 0
@@ -99,6 +100,19 @@
     width: 16
     height: 9
 
+  - title: "Top Categorias - Unidades"
+    name: u_categorias
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_categoria.categoria, fct_ventas.unidades]
+    sorts: [fct_ventas.unidades desc]
+    limit: 10
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    row: 12
+    col: 0
+    width: 16
+    height: 11
   - title: "Top Marcas - Unidades"
     name: u_marcas
     model: lakehouse
@@ -112,19 +126,6 @@
     row: 12
     col: 16
     width: 8
-    height: 11
-  - title: "Top Categorias - Unidades"
-    name: u_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.unidades]
-    sorts: [fct_ventas.unidades desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 12
-    col: 0
-    width: 16
     height: 11
 
   - title: "Top Productos - Unidades"
@@ -141,3 +142,12 @@
     col: 0
     width: 24
     height: 9
+
+  - name: u_gaps
+    type: text
+    title_text: "Pendientes (no migrados de BigQuery)"
+    body_text: "Canal, Negocio (Salud/Belleza/Alimentacion) y Marca Propia eran columnas calculadas en SSAS; requieren reproducirse en el ETL para volver a graficarse aca."
+    row: 32
+    col: 0
+    width: 24
+    height: 2
