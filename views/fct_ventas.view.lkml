@@ -179,6 +179,18 @@ view: fct_ventas {
     label: "% Venta (participacion)"
   }
 
+  measure: pct_tickets_total {
+    type: percent_of_total
+    sql: ${tickets} ;;
+    label: "% Tickets (participacion)"
+  }
+
+  measure: pct_unidades_total {
+    type: percent_of_total
+    sql: ${unidades} ;;
+    label: "% Unidades (participacion)"
+  }
+
   set: detalle {
     fields: [venta_date, id_sucursal, cd_nrocomprobante, cd_sku,
              id_categoria, id_marca, tipo_cobertura, unidades, venta_neta, margen_pesos]

@@ -1,6 +1,6 @@
 # =============================================================================
-# Dashboard: Venta Integral - Tickets
-# Replica de "Participaciones Tickets" del Power BI. Medida principal: tickets.
+# Dashboard: Venta Integral - Tickets   (PBI: "Participaciones Tickets")
+# Medida principal: tickets (resta stock).
 # Gaps: Canal, Negocio, Marca Propia (ver venta_ventas.dashboard).
 # =============================================================================
 
@@ -78,9 +78,10 @@
     name: t_formato
     model: lakehouse
     explore: fct_ventas
-    type: looker_bar
-    fields: [dim_formato.formato, fct_ventas.tickets]
+    type: looker_grid
+    fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.tickets desc]
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 3
     col: 0
@@ -99,6 +100,19 @@
     width: 16
     height: 9
 
+  - title: "Top Categorias - Tickets"
+    name: t_categorias
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_categoria.categoria, fct_ventas.tickets]
+    sorts: [fct_ventas.tickets desc]
+    limit: 10
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    row: 12
+    col: 0
+    width: 16
+    height: 11
   - title: "Top Marcas - Tickets"
     name: t_marcas
     model: lakehouse
@@ -112,19 +126,6 @@
     row: 12
     col: 16
     width: 8
-    height: 11
-  - title: "Top Categorias - Tickets"
-    name: t_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.tickets]
-    sorts: [fct_ventas.tickets desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 12
-    col: 0
-    width: 16
     height: 11
 
   - title: "Top Productos - Tickets"
@@ -141,3 +142,12 @@
     col: 0
     width: 24
     height: 9
+
+  - name: t_gaps
+    type: text
+    title_text: "Pendientes (no migrados de BigQuery)"
+    body_text: "Canal, Negocio (Salud/Belleza/Alimentacion) y Marca Propia eran columnas calculadas en SSAS; requieren reproducirse en el ETL para volver a graficarse aca."
+    row: 32
+    col: 0
+    width: 24
+    height: 2

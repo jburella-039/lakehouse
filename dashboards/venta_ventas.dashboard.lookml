@@ -1,12 +1,12 @@
 # =============================================================================
-# Dashboard: Venta Integral - Ventas en $
-# Replica de la pagina "Participaciones $" del Power BI. Viz nativas de Looker.
+# Dashboard: Venta Integral - Ventas en $   (PBI: "Participaciones $")
+# Medida principal: venta_neta (s/IVA antes de descuento). Viz nativas de Looker.
 # Filtros default = marzo 2026 (periodo de las capturas de referencia).
 #
 # GAPS respecto al PBI (no reproducibles con la data actual de BigQuery):
-#  - Canal (era columna calculada en SSAS)
-#  - Negocio / treemap Salud-Belleza-Alimentacion (flags calculados en SSAS)
-#  - Marca Propia (flag EsMarcaPropia sin poblar)
+#  - Canal (barra 100% apilada): id_canal era columna calculada en SSAS.
+#  - Negocio / treemap Salud-Belleza-Alimentacion: flags calculados en SSAS.
+#  - Marca Propia (barra): flag EsMarcaPropia sin poblar.
 # =============================================================================
 
 - dashboard: venta_ventas
@@ -25,21 +25,18 @@
     field: fct_ventas.dia_date
     allow_multiple_values: true
     required: false
-
   - name: formato
     title: "Formato"
     type: field_filter
     model: lakehouse
     explore: fct_ventas
     field: dim_formato.formato
-
   - name: departamento
     title: "Departamento"
     type: field_filter
     model: lakehouse
     explore: fct_ventas
     field: dim_departamento.departamento
-
   - name: categoria
     title: "Categoria"
     type: field_filter
@@ -60,7 +57,6 @@
     col: 0
     width: 6
     height: 3
-
   - title: "Margen $"
     name: v_kpi_margen
     model: lakehouse
@@ -72,7 +68,6 @@
     col: 6
     width: 6
     height: 3
-
   - title: "Margen %"
     name: v_kpi_margenpct
     model: lakehouse
@@ -84,7 +79,6 @@
     col: 12
     width: 6
     height: 3
-
   - title: "Ticket Promedio"
     name: v_kpi_tktprom
     model: lakehouse
@@ -97,14 +91,15 @@
     width: 6
     height: 3
 
-  # ---------------- Venta por Formato (barras) ----------------
+  # ---------------- Formato (tabla con participacion) ----------------
   - title: "Venta por Formato"
     name: v_formato
     model: lakehouse
     explore: fct_ventas
-    type: looker_bar
-    fields: [dim_formato.formato, fct_ventas.venta_neta]
+    type: looker_grid
+    fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.venta_neta desc]
+    series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 3
     col: 0
@@ -125,6 +120,21 @@
     width: 16
     height: 9
 
+  # ---------------- Top Categorias (barras) ----------------
+  - title: "Top Categorias"
+    name: v_categorias
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_categoria.categoria, fct_ventas.venta_neta]
+    sorts: [fct_ventas.venta_neta desc]
+    limit: 10
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    row: 12
+    col: 0
+    width: 16
+    height: 11
+
   # ---------------- Top Marcas (tabla) ----------------
   - title: "Top Marcas - Venta y Margen"
     name: v_marcas
@@ -139,21 +149,6 @@
     row: 12
     col: 16
     width: 8
-    height: 11
-
-  # ---------------- Top Categorias (barras) ----------------
-  - title: "Top Categorias"
-    name: v_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.venta_neta]
-    sorts: [fct_ventas.venta_neta desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 12
-    col: 0
-    width: 16
     height: 11
 
   # ---------------- Top Productos (tabla) ----------------
@@ -171,3 +166,13 @@
     col: 0
     width: 24
     height: 9
+
+  # ---------------- Nota de GAPs ----------------
+  - name: v_gaps
+    type: text
+    title_text: "Pendientes (no migrados de BigQuery)"
+    body_text: "Canal, Negocio (Salud/Belleza/Alimentacion) y Marca Propia eran columnas calculadas en SSAS; requieren reproducirse en el ETL para volver a graficarse aca."
+    row: 32
+    col: 0
+    width: 24
+    height: 2
