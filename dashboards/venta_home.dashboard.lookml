@@ -1,27 +1,32 @@
 # =============================================================================
 # Dashboard: Venta Integral - Home   (PBI: "Total" / portada Venta Integral)
-# Resumen ejecutivo: Ventas, Tickets, Unidades + ratios y tendencias diarias.
+# Resumen ejecutivo: Ventas, Tickets, Unidades + ratios y tabla por Formato.
 #
-# Reconciliacion marzo 2026 (vs captura HOME.png):
-#  - Ventas   192.01B  (captura 192.10B  -> 0.05%)
-#  - Tickets  5.711M   (captura 5.683M)
-#  - Unidades 22.78M   (captura 22.43M)
-#  - Margen % 29.4%    (captura 29.75%)
-#  - Remitos  ~2.45M   (captura 2.443M)
-#  Formato: Farmacity 173.4B (cap 173.8B), Simplicity 11.4B, Farmacity.com/ML
-#  5.71B, Get The Look 0.85B, The Food Market 0.61B. Todo cuadra.
+# Reconciliacion marzo 2026 (vs HOME.png):
+#  - Ventas 192.01B (cap 192.10B) / Tickets 5.71M (5.68M) / Unidades 22.78M (22.43M)
+#  - Margen % 29.4% (29.75%) / Remitos ~2.45M (2.443M)
+#  Variacion interanual Ventas por Formato (vs captura tabla "Ano Ant"):
+#  - Farmacity +35.0% (cap +35.3%), Simplicity +25.7% (+25.2%),
+#    Farmacity.com/ML +36.5% (+37.1%), The Food Market +34.6% (+33.1%),
+#    Get The Look -15.3% (-9.2%). La diferencia en Get The Look es el ajuste de
+#    bisiesto/Madurez del cubo (SAMEPERIODLASTYEAR), no replicado.
 #
-# NO migrado de la captura (GAPs de BigQuery, ver venta_ventas.dashboard):
-#  - Variaciones interanuales "2025: X%" (medidas MMAA / SAMEPERIODLASTYEAR del cubo).
-#  - Split Total = Retail (184B) + Farmacia (7.6B): requiere la columna calculada
-#    Canal. OJO: esos 7.6B son el CANAL Farmacia, no los 95.5B de la pagina Remitos.
+# DECISIONES (acordadas con el usuario):
+#  - Bloque "Retail 184B / Farmacia 7.63B": OMITIDO. El split es por Id Canal,
+#    columna calculada DAX que NO existe en BigQuery (verificado: no es obra
+#    social, que da 96B/96B). Reproducir Id Canal en el ETL para habilitarlo.
+#  - Interanual ("Ano Ant"): table calc con pivote por anio (sin precalcular en
+#    BQ). La tabla de Formato compara marzo 2025 vs marzo 2026 (meses fijos);
+#    para que siga otros periodos haria falta precalcular MMAA en BigQuery.
+#  - Badges "2025: %" en los KPIs: requieren medidas MMAA (precalc en BQ); no se
+#    pueden en un single_value con solo table calc, por eso no van por ahora.
 # =============================================================================
 
 - dashboard: venta_home
   title: "Venta Integral - Home"
   layout: newspaper
   preferred_viewer: dashboards-next
-  description: "Resumen ejecutivo: Ventas, Tickets, Unidades, margen y tendencias diarias."
+  description: "Resumen ejecutivo: Ventas, Tickets, Unidades, margen y tabla por Formato con variacion interanual."
 
   filters:
   - name: fecha
@@ -133,65 +138,51 @@
     width: 4
     height: 3
 
-  # ---------------- Tendencias diarias (sparklines de la portada) ----------------
-  - title: "Ventas por dia"
-    name: h_trend_ventas
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_area
-    fields: [fct_ventas.dia_date, fct_ventas.venta_neta]
-    sorts: [fct_ventas.dia_date]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato }
-    row: 7
-    col: 0
-    width: 8
-    height: 7
-  - title: "Tickets por dia"
-    name: h_trend_tickets
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_area
-    fields: [fct_ventas.dia_date, fct_ventas.tickets]
-    sorts: [fct_ventas.dia_date]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato }
-    row: 7
-    col: 8
-    width: 8
-    height: 7
-  - title: "Unidades por dia"
-    name: h_trend_unidades
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_area
-    fields: [fct_ventas.dia_date, fct_ventas.unidades]
-    sorts: [fct_ventas.dia_date]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato }
-    row: 7
-    col: 16
-    width: 8
-    height: 7
-
-  # ---------------- Tabla por Formato (Ventas / Tickets / Unidades) ----------------
-  - title: "Resumen por Formato"
+  # ---------------- Tabla por Formato con variacion interanual ----------------
+  # Pivote por anio (marzo 2025 vs marzo 2026); las columnas "Ano Ant" son table
+  # calcs %. Filtro de meses fijo en el tile (no escucha "fecha") para traer ambos
+  # anios; "formato" si se escucha.
+  - title: "Resumen por Formato (vs Ano Anterior)"
     name: h_formato
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
-    fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
-    sorts: [fct_ventas.venta_neta desc]
-    series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato }
-    row: 14
+    fields: [dim_formato.formato, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
+    pivots: [fct_ventas.dia_year]
+    filters:
+      fct_ventas.dia_month: "2025-03, 2026-03"
+    sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
+    dynamic_fields:
+    - table_calculation: ventas_anio_ant
+      label: "Ventas Ano Ant"
+      expression: "${fct_ventas.venta_neta}/pivot_offset(${fct_ventas.venta_neta},-1)-1"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tickets_anio_ant
+      label: "Tickets Ano Ant"
+      expression: "${fct_ventas.tickets}/pivot_offset(${fct_ventas.tickets},-1)-1"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: unidades_anio_ant
+      label: "Unidades Ano Ant"
+      expression: "${fct_ventas.unidades}/pivot_offset(${fct_ventas.unidades},-1)-1"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    listen: { formato: dim_formato.formato }
+    row: 7
     col: 0
     width: 24
-    height: 9
+    height: 10
 
   # ---------------- Nota de GAPs ----------------
   - name: h_gaps
     type: text
     title_text: "Pendientes (no migrados de BigQuery)"
-    body_text: "Variaciones interanuales (2025: %) y el split Total = Retail + Farmacia por Canal no estan en la data actual; las columnas Ano Anterior y el desglose por canal requieren reproducirse en el ETL."
-    row: 23
+    body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). Badges interanuales en los KPIs y comparativa por periodo libre: requieren precalcular MMAA en BigQuery."
+    row: 17
     col: 0
     width: 24
     height: 2
