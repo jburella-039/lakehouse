@@ -154,9 +154,24 @@ view: fct_remitos {
     label: "Unidades por Remito"
   }
 
+  # [% Vta $ T SIva Ant Desc Remitos]
   measure: pct_venta_total {
     type: percent_of_total
     sql: ${venta_remito} ;;
     label: "% Venta Remitos (participacion)"
+  }
+
+  # [% Vta # Cant Remitos (Resta Stock)]
+  measure: pct_remitos_total {
+    type: percent_of_total
+    sql: ${remitos} ;;
+    label: "% Remitos (participacion)"
+  }
+
+  # [% Vta # T Unid Vend Remitos]
+  measure: pct_unidades_total {
+    type: percent_of_total
+    sql: ${unidades_remito} ;;
+    label: "% Unidades Remitos (participacion)"
   }
 }
