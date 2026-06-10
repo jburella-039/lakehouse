@@ -149,7 +149,10 @@
     type: looker_grid
     fields: [dim_formato.formato, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     pivots: [fct_ventas.dia_year]
+    # dia_date acota a 13 meses y SOBRE-ESCRIBE el always_filter "1 months" del
+    # explore (este tile no escucha "fecha"); dia_month deja solo los dos marzos.
     filters:
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
       fct_ventas.dia_month: "2025-03, 2026-03"
     sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
     dynamic_fields:
