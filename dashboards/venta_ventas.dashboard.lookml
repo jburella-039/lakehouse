@@ -1,19 +1,26 @@
 # =============================================================================
 # Dashboard: Venta Integral - Ventas en $   (PBI: "Participaciones $")
-# Medida principal: venta_neta (s/IVA antes de descuento). Viz nativas de Looker.
-# Filtros default = marzo 2026 (periodo de las capturas de referencia).
+# Medida principal: venta_neta (s/IVA antes de descuento).
+# Layout fiel a la captura "Ventas en $.png": participacion por Formato (izq),
+# Departamento (%), Top Marcas (Venta + Margen $), Categoria (%) y Top Productos.
+# Sin tarjetas KPI (no estan en la foto).
 #
-# GAPS respecto al PBI (no reproducibles con la data actual de BigQuery):
-#  - Canal (barra 100% apilada): id_canal era columna calculada en SSAS.
-#  - Negocio / treemap Salud-Belleza-Alimentacion: flags calculados en SSAS.
-#  - Marca Propia (barra): flag EsMarcaPropia sin poblar.
+# Reconciliacion marzo 2026: Ventas 192.01B (cap 192.10B). Formato: Farmacity
+# 90.3% / Simplicity 6.0% / Farmacity.com-ML 3.0% / Get The Look 0.4% /
+# The Food Market 0.3% (coincide con la captura).
+#
+# OMITIDO (verificado, no reproducible con la data actual; reproducir en ETL):
+#  - Canal (barra 100%): id_origenventa existe pero dim_origenventa esta vacia
+#    (sin nombres Brick/Envio/MercadoLibre...).
+#  - Negocio (treemap Salud/Belleza/Alimentacion): no hay tabla de segmento.
+#  - Marca Propia (barra 100%): flag EsMarcaPropia despoblado (todo false).
 # =============================================================================
 
 - dashboard: venta_ventas
   title: "Venta Integral - Ventas en $"
   layout: newspaper
   preferred_viewer: dashboards-next
-  description: "Ventas s/IVA antes de descuento por formato, departamento, categoria, marca y producto."
+  description: "Ventas s/IVA antes de descuento: participacion por formato, departamento, categoria, marca y producto."
 
   filters:
   - name: fecha
@@ -45,54 +52,8 @@
     field: dim_categoria.categoria
 
   elements:
-  # ---------------- KPIs ----------------
-  - title: "Venta $"
-    name: v_kpi_venta
-    model: lakehouse
-    explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.venta_neta]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
-    col: 0
-    width: 6
-    height: 3
-  - title: "Margen $"
-    name: v_kpi_margen
-    model: lakehouse
-    explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.margen_pesos]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
-    col: 6
-    width: 6
-    height: 3
-  - title: "Margen %"
-    name: v_kpi_margenpct
-    model: lakehouse
-    explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.margen_pct]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
-    col: 12
-    width: 6
-    height: 3
-  - title: "Ticket Promedio"
-    name: v_kpi_tktprom
-    model: lakehouse
-    explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.ticket_promedio]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
-    col: 18
-    width: 6
-    height: 3
-
-  # ---------------- Formato (tabla con participacion) ----------------
-  - title: "Venta por Formato"
+  # ---------------- Formato (participacion, columna izquierda) ----------------
+  - title: "Ventas por Formato"
     name: v_formato
     model: lakehouse
     explore: fct_ventas
@@ -101,78 +62,78 @@
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 3
+    row: 0
     col: 0
-    width: 8
+    width: 6
     height: 9
 
-  # ---------------- Departamento (columnas) ----------------
+  # ---------------- Departamento (% participacion, columnas) ----------------
   - title: "Participacion por Departamento"
     name: v_depto
     model: lakehouse
     explore: fct_ventas
     type: looker_column
-    fields: [dim_departamento.departamento, fct_ventas.venta_neta]
-    sorts: [fct_ventas.venta_neta desc]
+    fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
+    sorts: [fct_ventas.pct_venta_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 3
-    col: 8
-    width: 16
+    row: 0
+    col: 6
+    width: 12
     height: 9
 
-  # ---------------- Top Categorias (barras) ----------------
-  - title: "Top Categorias"
-    name: v_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.venta_neta]
-    sorts: [fct_ventas.venta_neta desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 12
-    col: 0
-    width: 16
-    height: 11
-
-  # ---------------- Top Marcas (tabla) ----------------
-  - title: "Top Marcas - Venta y Margen"
+  # ---------------- Top Marcas (Venta + Margen $, columna derecha) ----------------
+  - title: "Top Marcas - Venta y Margen $"
     name: v_marcas
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
-    fields: [dim_marca.marca, fct_ventas.venta_neta, fct_ventas.margen_pct]
+    fields: [dim_marca.marca, fct_ventas.venta_neta, fct_ventas.margen_pesos]
     sorts: [fct_ventas.venta_neta desc]
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 12
-    col: 16
-    width: 8
-    height: 11
+    row: 0
+    col: 18
+    width: 6
+    height: 18
 
-  # ---------------- Top Productos (tabla) ----------------
+  # ---------------- Categoria (% participacion, barras) ----------------
+  - title: "Top Categorias (participacion)"
+    name: v_categorias
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_categoria.categoria, fct_ventas.pct_venta_total]
+    sorts: [fct_ventas.pct_venta_total desc]
+    limit: 10
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    row: 9
+    col: 0
+    width: 9
+    height: 9
+
+  # ---------------- Top Productos ----------------
   - title: "Top Productos - Venta"
     name: v_productos
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
-    fields: [dim_articulo.producto, fct_ventas.venta_neta, fct_ventas.unidades]
+    fields: [dim_articulo.producto, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 23
-    col: 0
-    width: 24
+    row: 9
+    col: 9
+    width: 9
     height: 9
 
-  # ---------------- Nota de GAPs ----------------
+  # ---------------- Nota de visuales omitidas ----------------
   - name: v_gaps
     type: text
-    title_text: "Pendientes (no migrados de BigQuery)"
-    body_text: "Canal, Negocio (Salud/Belleza/Alimentacion) y Marca Propia eran columnas calculadas en SSAS; requieren reproducirse en el ETL para volver a graficarse aca."
-    row: 32
+    title_text: "Visuales no reproducibles (pendientes de ETL)"
+    body_text: "Canal (id_origenventa sin tabla de nombres), Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Verificado contra BigQuery; requieren reproducirse en el ETL."
+    row: 18
     col: 0
-    width: 24
+    width: 18
     height: 2
