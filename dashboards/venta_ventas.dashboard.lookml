@@ -1,8 +1,9 @@
 # =============================================================================
 # Dashboard: Venta Integral - Ventas en $   (PBI: "Participaciones $")
 # Medida principal: venta_neta (s/IVA antes de descuento).
-# Layout fiel a la captura "Ventas en $.png": participacion por Formato (izq),
-# Departamento (%), Top Marcas (Venta + Margen $), Categoria (%) y Top Productos.
+# Layout fiel a la captura "Ventas en $.png": arriba notas de Canal y Marca Propia
+# (no reproducibles), luego participacion por Formato (izq), Departamento (%), Top
+# Marcas (Venta + Margen $), nota de Campana (slot pendiente) y Top Productos.
 # Sin tarjetas KPI (no estan en la foto).
 #
 # Reconciliacion marzo 2026: Ventas 192.01B (cap 192.10B). Formato: Farmacity
@@ -11,9 +12,10 @@
 #
 # OMITIDO (verificado, no reproducible con la data actual; reproducir en ETL):
 #  - Canal (barra 100%): id_origenventa existe pero dim_origenventa esta vacia
-#    (sin nombres Brick/Envio/MercadoLibre...).
+#    (sin nombres Brick/Envio/MercadoLibre...) -> nota arriba.
+#  - Marca Propia (barra 100%): flag EsMarcaPropia despoblado (todo false) -> nota arriba.
+#  - Campana: sin dimension de campana en BigQuery (solo descuentos promo) -> nota.
 #  - Negocio (treemap Salud/Belleza/Alimentacion): no hay tabla de segmento.
-#  - Marca Propia (barra 100%): flag EsMarcaPropia despoblado (todo false).
 # =============================================================================
 
 - dashboard: venta_ventas
@@ -52,6 +54,31 @@
     field: dim_categoria.categoria
 
   elements:
+  # ---------------- Canal (no disponible) - arriba del dashboard ----------------
+  # Barra 100% por Canal (Brick / Envio a Domicilio / Farmacity.com / Mercado Libre
+  # / Pedidos Ya / Rappi / Simplicity / The Food Market...). No se puede construir:
+  # id_origenventa existe en el hecho pero la tabla de nombres dim_origenventa esta
+  # vacia, no hay como rotular los canales. Reproducir en ETL.
+  - name: v_canal
+    type: text
+    title_text: "Canal (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Canal (barra 100%: Brick, Envio a Domicilio, Farmacity.com, Mercado Libre, Pedidos Ya, Rappi, Simplicity, The Food Market...). No se puede construir todavia: la columna id_origenventa existe en el hecho, pero la tabla de nombres dim_origenventa esta vacia, por lo que no hay forma de rotular los canales. Requiere poblar dim_origenventa en el ETL."
+    row: 0
+    col: 0
+    width: 24
+    height: 3
+
+  # ---------------- Marca Propia (no disponible) - arriba del dashboard ----------------
+  # Barra Marca Propia vs Resto. El flag EsMarcaPropia esta despoblado (todo false).
+  - name: v_marcapropia
+    type: text
+    title_text: "Marca Propia (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Marca Propia (Marca Propia vs Resto). No se puede construir todavia: el flag EsMarcaPropia esta despoblado en BigQuery (todos los articulos en false), por lo que no hay forma de separar Marca Propia del Resto. Requiere repoblar EsMarcaPropia en el ETL."
+    row: 3
+    col: 0
+    width: 24
+    height: 3
+
   # ---------------- Formato (participacion, columna izquierda) ----------------
   - title: "Ventas por Formato"
     name: v_formato
@@ -62,7 +89,7 @@
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
+    row: 6
     col: 0
     width: 6
     height: 9
@@ -76,7 +103,7 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.pct_venta_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
+    row: 6
     col: 6
     width: 12
     height: 9
@@ -92,22 +119,18 @@
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
+    row: 6
     col: 18
     width: 6
     height: 18
 
-  # ---------------- Categoria (% participacion, barras) ----------------
-  - title: "Top Categorias (participacion)"
-    name: v_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.pct_venta_total]
-    sorts: [fct_ventas.pct_venta_total desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 9
+  # ---------------- Campana (slot de Top Categorias, no disponible) ----------------
+  # Aqui iria el grafico de Campana. Se quito Top Categorias de este lugar.
+  - name: v_campania
+    type: text
+    title_text: "Campana (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
+    row: 15
     col: 0
     width: 9
     height: 9
@@ -123,7 +146,7 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 9
+    row: 15
     col: 9
     width: 9
     height: 9
@@ -132,8 +155,8 @@
   - name: v_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Canal (id_origenventa sin tabla de nombres), Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Verificado contra BigQuery; requieren reproducirse en el ETL."
-    row: 18
+    body_text: "Negocio (treemap Salud/Belleza/Alimentacion): no hay tabla de segmento en BigQuery. Canal y Marca Propia tienen su propia nota arriba. Verificado contra BigQuery; requieren reproducirse en el ETL."
+    row: 24
     col: 0
     width: 18
     height: 2
