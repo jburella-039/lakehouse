@@ -1,9 +1,10 @@
 # =============================================================================
 # Dashboard: Venta Integral - Unidades   (PBI: "Participaciones Unidades")
 # Medida principal: unidades.
-# Layout fiel a "Unidades.png": participacion por Formato (izq), nota de Marca
-# Propia + Departamento (%), Top Marcas (Marca | Unidades 2025 | Unidades 2026),
-# nota de Campana (slot pendiente) y Top Productos. Sin tarjetas KPI (no en la foto).
+# Layout fiel a "Unidades.png": arriba nota de Canal (no reproducible), luego
+# participacion por Formato (izq), nota de Marca Propia + Departamento (%), Top
+# Marcas (Marca | Unidades 2025 | Unidades 2026), nota de Campana (slot pendiente)
+# y Top Productos. Sin tarjetas KPI (no en la foto).
 #
 # Reconciliacion marzo 2026: Unidades 22.78M (cap 22.43M). Formato: Farmacity
 # 86.8% / Simplicity 9.0% / Farmacity.com-ML 3.0% / The Food Market 0.9% /
@@ -51,6 +52,20 @@
     field: dim_categoria.categoria
 
   elements:
+  # ---------------- Canal (no disponible) - arriba del dashboard ----------------
+  # Barra 100% por Canal (Brick / Envio a Domicilio / Farmacity.com / Mercado Libre
+  # / Pedidos Ya / Rappi / Simplicity / The Food Market...). No se puede construir:
+  # id_origenventa existe en el hecho pero la tabla de nombres dim_origenventa esta
+  # vacia, no hay como rotular los canales. Reproducir en ETL.
+  - name: u_canal
+    type: text
+    title_text: "Canal (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Canal (barra 100%: Brick, Envio a Domicilio, Farmacity.com, Mercado Libre, Pedidos Ya, Rappi, Simplicity, The Food Market...). No se puede construir todavia: la columna id_origenventa existe en el hecho, pero la tabla de nombres dim_origenventa esta vacia, por lo que no hay forma de rotular los canales. Requiere poblar dim_origenventa en el ETL."
+    row: 0
+    col: 0
+    width: 24
+    height: 3
+
   # ---------------- Formato (participacion) ----------------
   - title: "Unidades por Formato"
     name: u_formato
@@ -61,7 +76,7 @@
     sorts: [fct_ventas.unidades desc]
     series_cell_visualizations: { fct_ventas.unidades: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
+    row: 3
     col: 0
     width: 6
     height: 9
@@ -74,7 +89,7 @@
     type: text
     title_text: "Marca Propia (no disponible por ahora)"
     body_text: "Aqui iria el grafico de Marca Propia (Marca Propia vs Resto). No se puede construir todavia: el flag EsMarcaPropia esta despoblado en BigQuery (todos los articulos en false), por lo que no hay forma de separar Marca Propia del Resto. Requiere repoblar EsMarcaPropia en el ETL."
-    row: 0
+    row: 3
     col: 6
     width: 10
     height: 3
@@ -88,7 +103,7 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.pct_unidades_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 3
+    row: 6
     col: 6
     width: 10
     height: 6
@@ -111,7 +126,7 @@
     # Sin columna "Unidades Ano Ant" (se quito el table calc de variacion %).
     # El pivote por anio deja Marca | Unidades 2025 | Unidades 2026.
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
+    row: 3
     col: 16
     width: 8
     height: 18
@@ -122,7 +137,7 @@
     type: text
     title_text: "Campana (no disponible por ahora)"
     body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
-    row: 9
+    row: 12
     col: 0
     width: 8
     height: 9
@@ -138,7 +153,7 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.unidades: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 9
+    row: 12
     col: 8
     width: 8
     height: 9
@@ -147,8 +162,8 @@
   - name: u_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Canal (id_origenventa sin tabla de nombres), Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Verificado contra BigQuery."
-    row: 18
+    body_text: "Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento). Canal y Marca Propia tienen su propia nota arriba. Verificado contra BigQuery."
+    row: 21
     col: 0
     width: 16
     height: 2
