@@ -87,7 +87,10 @@
     type: looker_grid
     fields: [dim_marca.marca, fct_ventas.dia_year, fct_ventas.tickets]
     pivots: [fct_ventas.dia_year]
+    # dia_date acota a 13 meses y SOBRE-ESCRIBE el always_filter "1 months" del
+    # explore (este tile no escucha "fecha"); dia_month deja solo los dos marzos.
     filters:
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
       fct_ventas.dia_month: "2025-03, 2026-03"
     sorts: [fct_ventas.dia_year, fct_ventas.tickets desc]
     limit: 15
@@ -110,8 +113,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.pct_tickets_total]
-    sorts: [fct_ventas.pct_tickets_total desc]
+    # Ordena por la medida base (tickets); ordenar por pct_tickets_total
+    # (percent_of_total de un count_distinct) con limit deja el tile en blanco.
+    # tickets se consulta para el sort pero se oculta: la barra muestra el %.
+    fields: [dim_categoria.categoria, fct_ventas.tickets, fct_ventas.pct_tickets_total]
+    hidden_fields: [fct_ventas.tickets]
+    sorts: [fct_ventas.tickets desc]
     limit: 10
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 9
