@@ -1,17 +1,18 @@
 # =============================================================================
 # Dashboard: Venta Integral - Unidades   (PBI: "Participaciones Unidades")
 # Medida principal: unidades.
-# Layout fiel a "Unidades.png": participacion por Formato (izq), Departamento (%),
-# Top Marcas (Unidades + variacion interanual), Categoria (%) y Top Productos.
-# Sin tarjetas KPI (no estan en la foto).
+# Layout fiel a "Unidades.png": participacion por Formato (izq), nota de Marca
+# Propia + Departamento (%), Top Marcas (Marca | Unidades 2025 | Unidades 2026),
+# nota de Campana (slot pendiente) y Top Productos. Sin tarjetas KPI (no en la foto).
 #
 # Reconciliacion marzo 2026: Unidades 22.78M (cap 22.43M). Formato: Farmacity
 # 86.8% / Simplicity 9.0% / Farmacity.com-ML 3.0% / The Food Market 0.9% /
 # Get The Look 0.2% (coincide con la captura).
 #
 # OMITIDO (verificado en BigQuery, reproducir en ETL):
-#  - Canal (id_origenventa sin tabla de nombres), Negocio (sin tabla de segmento),
-#    Marca Propia (flag EsMarcaPropia despoblado).
+#  - Marca Propia (flag EsMarcaPropia despoblado) -> nota en el dashboard.
+#  - Campana (sin dimension de campana en BigQuery; solo descuentos promo) -> nota.
+#  - Canal (id_origenventa sin tabla de nombres), Negocio (sin tabla de segmento).
 # =============================================================================
 
 - dashboard: venta_unidades
@@ -65,6 +66,19 @@
     width: 6
     height: 9
 
+  # ---------------- Marca Propia (no disponible) ----------------
+  # Va encima de "Participacion por Departamento". El grafico Marca Propia / Resto
+  # no se puede construir: el flag EsMarcaPropia esta despoblado en BigQuery (todo
+  # false), asi que no hay como separar Marca Propia del Resto. Reproducir en ETL.
+  - name: u_marcapropia
+    type: text
+    title_text: "Marca Propia (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Marca Propia (Marca Propia vs Resto). No se puede construir todavia: el flag EsMarcaPropia esta despoblado en BigQuery (todos los articulos en false), por lo que no hay forma de separar Marca Propia del Resto. Requiere repoblar EsMarcaPropia en el ETL."
+    row: 0
+    col: 6
+    width: 10
+    height: 3
+
   # ---------------- Departamento (%) ----------------
   - title: "Participacion por Departamento"
     name: u_depto
@@ -74,10 +88,10 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.pct_unidades_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
+    row: 3
     col: 6
     width: 10
-    height: 9
+    height: 6
 
   # ---------------- Top Marcas (Unidades + variacion interanual) ----------------
   - title: "Top Marcas - Unidades (vs Ano Ant)"
@@ -94,29 +108,20 @@
       fct_ventas.dia_month: "2025-03, 2026-03"
     sorts: [fct_ventas.dia_year, fct_ventas.unidades desc]
     limit: 15
-    dynamic_fields:
-    - table_calculation: unidades_anio_ant
-      label: "Unidades Ano Ant"
-      expression: "${fct_ventas.unidades}/pivot_offset(${fct_ventas.unidades},-1)-1"
-      value_format_name: percent_1
-      _kind_hint: measure
-      _type_hint: number
+    # Sin columna "Unidades Ano Ant" (se quito el table calc de variacion %).
+    # El pivote por anio deja Marca | Unidades 2025 | Unidades 2026.
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 16
     width: 8
     height: 18
 
-  # ---------------- Categoria (%) ----------------
-  - title: "Top Categorias (participacion)"
-    name: u_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.pct_unidades_total]
-    sorts: [fct_ventas.pct_unidades_total desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+  # ---------------- Campana (slot de Top Categorias, no disponible) ----------------
+  # Aqui iria el grafico de Campana. Se quito Top Categorias de este lugar.
+  - name: u_campania
+    type: text
+    title_text: "Campana (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
     row: 9
     col: 0
     width: 8
