@@ -2,14 +2,11 @@
 # Dashboard: Venta Integral - Tickets   (PBI: "Participaciones Tickets")
 # Medida principal: tickets (resta stock).
 # Layout fiel a "Tickets.png": participacion por Formato (izq), Departamento (%),
-# Top Marcas (Tickets + variacion interanual), Categoria (%) y Top Productos.
-# Sin tarjetas KPI (no estan en la foto).
-#
-# NOTA: la captura Tickets.png es de baja resolucion; la columna derecha (Top
-# Marcas) se replica del patron visible en Unidades.png (medida + var. interanual).
-# Confirmar si en Tickets esa columna mostraba otra cosa.
+# Top Marcas (Marca | Tickets Resta Stock | Tickets vs Ano Ant), nota de Campana
+# (slot pendiente) y Top Productos. Sin tarjetas KPI (no estan en la foto).
 #
 # OMITIDO (verificado en BigQuery, reproducir en ETL):
+#  - Campana (sin dimension de campana en BigQuery; solo descuentos promo).
 #  - Canal (id_origenventa sin tabla de nombres), Negocio (sin tabla de segmento),
 #    Marca Propia (flag EsMarcaPropia despoblado).
 # =============================================================================
@@ -80,6 +77,9 @@
     height: 9
 
   # ---------------- Top Marcas (Tickets + variacion interanual) ----------------
+  # Solo 3 columnas: Marca | Tickets Resta Stock | Tickets vs Ano Ant.
+  # pivot_index colapsa el pivote de anio a columnas planas y oculta la medida
+  # base pivoteada; index 1 = 2025-03, index 2 = 2026-03 (orden por dia_year asc).
   - title: "Top Marcas - Tickets (vs Ano Ant)"
     name: t_marcas
     model: lakehouse
@@ -94,10 +94,17 @@
       fct_ventas.dia_month: "2025-03, 2026-03"
     sorts: [fct_ventas.dia_year, fct_ventas.tickets desc]
     limit: 15
+    hidden_fields: [fct_ventas.tickets]
     dynamic_fields:
+    - table_calculation: tickets_rs
+      label: "Tickets Resta Stock"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
     - table_calculation: tickets_anio_ant
-      label: "Tickets Ano Ant"
-      expression: "${fct_ventas.tickets}/pivot_offset(${fct_ventas.tickets},-1)-1"
+      label: "Tickets vs Ano Ant"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -107,20 +114,12 @@
     width: 8
     height: 18
 
-  # ---------------- Categoria (%) ----------------
-  - title: "Top Categorias (participacion)"
-    name: t_categorias
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_bar
-    # Ordena por la medida base (tickets); ordenar por pct_tickets_total
-    # (percent_of_total de un count_distinct) con limit deja el tile en blanco.
-    # tickets se consulta para el sort pero se oculta: la barra muestra el %.
-    fields: [dim_categoria.categoria, fct_ventas.tickets, fct_ventas.pct_tickets_total]
-    hidden_fields: [fct_ventas.tickets]
-    sorts: [fct_ventas.tickets desc]
-    limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+  # ---------------- Campana (slot de Top Categorias, no disponible) ----------------
+  # Aqui iria el grafico de Campana. Se quito Top Categorias de este lugar.
+  - name: t_campania
+    type: text
+    title_text: "Campana (no disponible por ahora)"
+    body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
     row: 9
     col: 0
     width: 8
