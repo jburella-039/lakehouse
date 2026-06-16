@@ -26,7 +26,7 @@
 
   filters:
   - name: fecha
-    title: "Fecha (dia contable)"
+    title: "Fecha"
     type: field_filter
     default_value: "2026/03/01 to 2026/04/01"
     model: lakehouse

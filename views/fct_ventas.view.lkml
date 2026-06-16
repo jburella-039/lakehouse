@@ -94,7 +94,7 @@ view: fct_ventas {
     type: time
     timeframes: [raw, date, week, month, quarter, year]
     sql: ${TABLE}.fec_dia ;;
-    label: "Dia Contable"
+    label: "Fecha"
   }
 
   dimension: num_hora { type: number sql: ${TABLE}.num_hora ;; label: "Hora del Dia" }
