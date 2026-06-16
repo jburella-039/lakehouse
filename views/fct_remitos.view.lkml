@@ -83,7 +83,7 @@ view: fct_remitos {
     type: time
     timeframes: [raw, date, week, month, quarter, year]
     sql: ${TABLE}.ID_TIE_DIA ;;
-    label: "Dia Contable"
+    label: "Fecha"
   }
 
   # ---------------------------------------------------------------------------
