@@ -74,9 +74,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_venta_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.venta_remito}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.venta_remito}, 2)/pivot_index(${fct_remitos.venta_remito}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -84,12 +84,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
     col: 0
     width: 8
-    height: 3
+    height: 5
   - title: "Remitos"
     name: r_kpi_remitos
     model: lakehouse
@@ -110,9 +110,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_remitos_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.remitos}, 1)"
-      value_format_name: decimal_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.remitos}, 2)/pivot_index(${fct_remitos.remitos}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -120,12 +120,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
     col: 8
     width: 8
-    height: 3
+    height: 5
   - title: "Unidades Remitos"
     name: r_kpi_unidades
     model: lakehouse
@@ -146,9 +146,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_unidades_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.unidades_remito}, 1)"
-      value_format_name: decimal_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.unidades_remito}, 2)/pivot_index(${fct_remitos.unidades_remito}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -156,12 +156,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
     col: 16
     width: 8
-    height: 3
+    height: 5
 
   # ---------------- KPIs fila 2 (con YoY) ----------------
   - title: "Remito Promedio"
@@ -184,9 +184,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_promedio_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.remito_promedio}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.remito_promedio}, 2)/pivot_index(${fct_remitos.remito_promedio}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -194,12 +194,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 3
+    row: 5
     col: 0
     width: 6
-    height: 3
+    height: 5
   - title: "Unidades por Remito"
     name: r_kpi_uxr
     model: lakehouse
@@ -220,9 +220,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_uxr_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.unidades_por_remito}, 1)"
-      value_format_name: decimal_2
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.unidades_por_remito}, 2)/pivot_index(${fct_remitos.unidades_por_remito}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -230,12 +230,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 3
+    row: 5
     col: 6
     width: 6
-    height: 3
+    height: 5
   - title: "Margen %"
     name: r_kpi_margenpct
     model: lakehouse
@@ -256,9 +256,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_margenpct_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.margen_pct}, 1)"
-      value_format_name: percent_2
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.margen_pct}, 2)/pivot_index(${fct_remitos.margen_pct}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -266,12 +266,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 3
+    row: 5
     col: 12
     width: 6
-    height: 3
+    height: 5
   - title: "Margen $"
     name: r_kpi_margen
     model: lakehouse
@@ -292,9 +292,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_margen_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.margen_pesos}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.margen_pesos}, 2)/pivot_index(${fct_remitos.margen_pesos}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -302,12 +302,12 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 3
+    row: 5
     col: 18
     width: 6
-    height: 3
+    height: 5
 
   # ---------------- Tendencias diarias (area) ----------------
   - title: "Venta Remitos por dia"
@@ -318,7 +318,7 @@
     fields: [fct_remitos.dia_date, fct_remitos.venta_remito]
     sorts: [fct_remitos.dia_date]
     listen: { fecha: fct_remitos.dia_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 6
+    row: 10
     col: 0
     width: 24
     height: 8
@@ -331,7 +331,7 @@
     fields: [fct_remitos.dia_date, fct_remitos.remitos]
     sorts: [fct_remitos.dia_date]
     listen: { fecha: fct_remitos.dia_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 14
+    row: 18
     col: 0
     width: 12
     height: 7
@@ -343,7 +343,7 @@
     fields: [fct_remitos.dia_date, fct_remitos.unidades_remito]
     sorts: [fct_remitos.dia_date]
     listen: { fecha: fct_remitos.dia_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 14
+    row: 18
     col: 12
     width: 12
     height: 7
@@ -358,7 +358,7 @@
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
     listen: { fecha: fct_remitos.dia_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 21
+    row: 25
     col: 0
     width: 24
     height: 9
@@ -374,7 +374,7 @@
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
     listen: { fecha: fct_remitos.dia_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 30
+    row: 34
     col: 0
     width: 24
     height: 9
