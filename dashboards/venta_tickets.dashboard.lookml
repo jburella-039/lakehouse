@@ -102,9 +102,11 @@
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.tickets desc]
     stacking: percent
-    # Limita los canales a los de peso real; los de ~0% (Glovo, WhatsApp, VNP TFM,
-    # GTL Online, PDV Delivery...) quedan fuera para no ensuciar la barra.
-    column_limit: 6
+    # Oculta los canales con menos de ~1% de los tickets. Looker NO permite filtrar
+    # sobre un percent_of_total, asi que se filtra por el conteo base (HAVING):
+    # ~1% de ~5.7M tickets de marzo ~= 57.000. Ajustar el umbral si cambia el periodo.
+    filters:
+      fct_ventas.tickets: ">=57000"
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
