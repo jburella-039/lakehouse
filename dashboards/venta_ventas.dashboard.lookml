@@ -1,21 +1,19 @@
 # =============================================================================
 # Dashboard: Venta Integral - Ventas en $   (PBI: "Participaciones $")
 # Medida principal: venta_neta (s/IVA antes de descuento).
-# Layout fiel a la captura "Ventas en $.png": arriba notas de Canal y Marca Propia
-# (no reproducibles), luego participacion por Formato (izq), Departamento (%), Top
-# Marcas (Venta + Margen $), nota de Campana (slot pendiente) y Top Productos.
-# Sin tarjetas KPI (no estan en la foto).
+# Layout fiel a la captura "Ventas en $.png": arriba tarjeta KPI + graficos de
+# Canal y Marca Propia (apilados 100%), luego participacion por Formato (izq),
+# Departamento (%), Top Marcas (Venta + Margen $), nota de Campana y Top Productos.
 #
 # Reconciliacion marzo 2026: Ventas 192.01B (cap 192.10B). Formato: Farmacity
 # 90.3% / Simplicity 6.0% / Farmacity.com-ML 3.0% / Get The Look 0.4% /
 # The Food Market 0.3% (coincide con la captura).
 #
-# OMITIDO (verificado, no reproducible con la data actual; reproducir en ETL):
-#  - Canal (barra 100%): id_origenventa existe pero dim_origenventa esta vacia
-#    (sin nombres Brick/Envio/MercadoLibre...) -> nota arriba.
-#  - Marca Propia (barra 100%): flag EsMarcaPropia despoblado (todo false) -> nota arriba.
+# REPRODUCIBLE: Canal (dim_origenventa) y Marca Propia (sector id_sector 3) -> graficos.
+# OMITIDO:
 #  - Campana: sin dimension de campana en BigQuery (solo descuentos promo) -> nota.
-#  - Negocio (treemap Salud/Belleza/Alimentacion): no hay tabla de segmento.
+#  - Negocio (treemap Salud/Belleza/Alimentacion): no hay columna; requiere mapeo
+#    de departamentos definido por el negocio.
 # =============================================================================
 
 - dashboard: venta_ventas
@@ -93,26 +91,39 @@
     width: 6
     height: 5
 
-  # ---------------- Canal (no disponible) - arriba del dashboard ----------------
-  # Barra 100% por Canal (Brick / Envio a Domicilio / Farmacity.com / Mercado Libre
-  # / Pedidos Ya / Rappi / Simplicity / The Food Market...). No se puede construir:
-  # id_origenventa existe en el hecho pero la tabla de nombres dim_origenventa esta
-  # vacia, no hay como rotular los canales. Reproducir en ETL.
-  - name: v_canal
-    type: text
-    title_text: "Canal (no disponible por ahora)"
-    body_text: "Aqui iria el grafico de Canal (barra 100%: Brick, Envio a Domicilio, Farmacity.com, Mercado Libre, Pedidos Ya, Rappi, Simplicity, The Food Market...). No se puede construir todavia: la columna id_origenventa existe en el hecho, pero la tabla de nombres dim_origenventa esta vacia, por lo que no hay forma de rotular los canales. Requiere poblar dim_origenventa en el ETL."
+  # ---------------- Canal (origen de venta) ----------------
+  # Barra horizontal apilada al 100% (segmentos = canales) desde dim_origenventa.
+  # Filtra canales con <1% de venta (1% de ~192B ~= 1.92B) por la medida base.
+  - title: "Ventas por Canal"
+    name: v_canal
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_origenventa.canal, fct_ventas.venta_neta]
+    pivots: [dim_origenventa.canal]
+    sorts: [fct_ventas.venta_neta desc]
+    stacking: percent
+    filters:
+      fct_ventas.venta_neta: ">=1920000000"
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
     width: 18
     height: 5
 
-  # ---------------- Marca Propia (no disponible) - arriba del dashboard ----------------
-  # Barra Marca Propia vs Resto. El flag EsMarcaPropia esta despoblado (todo false).
-  - name: v_marcapropia
-    type: text
-    title_text: "Marca Propia (no disponible por ahora)"
-    body_text: "Aqui iria el grafico de Marca Propia (Marca Propia vs Resto). No se puede construir todavia: el flag EsMarcaPropia esta despoblado en BigQuery (todos los articulos en false), por lo que no hay forma de separar Marca Propia del Resto. Requiere repoblar EsMarcaPropia en el ETL."
+  # ---------------- Marca Propia vs Resto ----------------
+  # Barra apilada al 100% (Marca Propia vs Resto) por venta. Marca Propia = sector
+  # "Marca Propia" (id_sector 3 en dim_articulo); venta mar-2026 ~8.2%.
+  - title: "Marca Propia vs Resto (venta)"
+    name: v_marcapropia
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_articulo.marca_propia, fct_ventas.venta_neta]
+    pivots: [dim_articulo.marca_propia]
+    sorts: [fct_ventas.venta_neta desc]
+    stacking: percent
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 5
     col: 0
     width: 24
@@ -194,7 +205,7 @@
   - name: v_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Negocio (treemap Salud/Belleza/Alimentacion): no hay tabla de segmento en BigQuery. Canal y Marca Propia tienen su propia nota arriba. Verificado contra BigQuery; requieren reproducirse en el ETL."
+    body_text: "Negocio (treemap Salud/Belleza/Alimentacion): no hay columna en BigQuery; requiere mapeo de departamentos definido por el negocio. Canal y Marca Propia ya son graficos. Campana sin fuente. Verificado contra BigQuery."
     row: 26
     col: 0
     width: 18
