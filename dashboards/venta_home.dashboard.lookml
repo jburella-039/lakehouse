@@ -120,8 +120,8 @@
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 0
     col: 0
-    width: 8
-    height: 4
+    width: 6
+    height: 5
   - title: "Tickets"
     name: h_kpi_tickets
     model: lakehouse
@@ -155,9 +155,9 @@
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 0
-    col: 8
-    width: 8
-    height: 4
+    col: 6
+    width: 6
+    height: 5
   - title: "Unidades"
     name: h_kpi_unidades
     model: lakehouse
@@ -191,9 +191,9 @@
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 0
-    col: 16
-    width: 8
-    height: 4
+    col: 12
+    width: 6
+    height: 5
 
   # ---------------- KPIs fila 2: ratios + Remitos (con YoY) ----------------
   - title: "Ticket Promedio"
@@ -228,10 +228,10 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
-    row: 4
+    row: 5
     col: 0
-    width: 5
-    height: 3
+    width: 6
+    height: 5
   - title: "Unidades por Ticket"
     name: h_kpi_uxt
     model: lakehouse
@@ -264,10 +264,10 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
-    row: 4
-    col: 5
-    width: 5
-    height: 3
+    row: 5
+    col: 6
+    width: 6
+    height: 5
   - title: "Margen %"
     name: h_kpi_margenpct
     model: lakehouse
@@ -300,10 +300,10 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
-    row: 4
-    col: 10
-    width: 5
-    height: 3
+    row: 5
+    col: 12
+    width: 6
+    height: 5
   - title: "Margen $"
     name: h_kpi_margen
     model: lakehouse
@@ -336,10 +336,10 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
-    row: 4
-    col: 15
-    width: 5
-    height: 3
+    row: 5
+    col: 18
+    width: 6
+    height: 5
   - title: "Remitos"
     name: h_kpi_remitos
     model: lakehouse
@@ -372,10 +372,10 @@
     comparison_reverse_colors: false
     show_comparison_label: true
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento }
-    row: 4
-    col: 20
-    width: 4
-    height: 3
+    row: 0
+    col: 18
+    width: 6
+    height: 5
 
   # ---------------- Tabla por Formato con variacion interanual ----------------
   # Pivote por anio. Trae marzo 2024, 2025 y 2026 para que las columnas "Año Ant"
@@ -416,7 +416,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
-    row: 7
+    row: 10
     col: 0
     width: 24
     height: 10
@@ -426,7 +426,7 @@
     type: text
     title_text: "Pendientes (no migrados de BigQuery)"
     body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). KPIs con YoY anclados a marzo (no siguen el filtro Fecha); para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA en BigQuery. Presencial vs No Presencial: pendiente de confirmar la Dim Origen (Canal)."
-    row: 17
+    row: 20
     col: 0
     width: 24
     height: 2
