@@ -54,6 +54,7 @@ view: fct_ventas {
   dimension: cd_sku            { type: number sql: ${TABLE}.cd_sku ;;            label: "SKU (Articulo)" }
   dimension: id_obrasocial     { type: number sql: ${TABLE}.id_obrasocial ;;     label: "Obra Social (ID)" }
   dimension: id_proveedor      { type: number sql: ${TABLE}.id_proveedor ;;      label: "Proveedor (ID)" }
+  dimension: id_origenventa    { type: number sql: ${TABLE}.id_origenventa ;;    label: "Origen Venta / Canal (ID)" hidden: yes }
 
   # Jerarquia de producto historica directa en la fct (alternativa al snowflake).
   dimension: id_departamento   { type: number sql: ${TABLE}.id_departamento ;;   label: "Departamento (ID)" }
