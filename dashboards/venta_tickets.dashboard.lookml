@@ -102,6 +102,9 @@
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.tickets desc]
     stacking: percent
+    # Limita los canales a los de peso real; los de ~0% (Glovo, WhatsApp, VNP TFM,
+    # GTL Online, PDV Delivery...) quedan fuera para no ensuciar la barra.
+    column_limit: 6
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
