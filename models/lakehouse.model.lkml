@@ -136,6 +136,13 @@ explore: fct_ventas {
     relationship: many_to_one
     sql_on: ${fct_ventas.id_obrasocial} = ${dim_obrasocial.id_obrasocial} ;;
   }
+
+  # Canal / Origen de Venta (PDV, Farmacity Online, MERCADOFULL, ...) + presencialidad.
+  join: dim_origenventa {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas.id_origenventa} = ${dim_origenventa.id_origenventa} ;;
+  }
 }
 
 # =============================================================================

@@ -1,13 +1,13 @@
 # =============================================================================
 # Dashboard: Venta Integral - Tickets   (PBI: "Participaciones Tickets")
 # Medida principal: tickets (resta stock).
-# Layout fiel a "Tickets.png": arriba nota de Canal (no reproducible), luego
-# participacion por Formato (izq), Departamento (%), Top Marcas (Marca | Tickets
-# Resta Stock | Tickets vs Año Ant), nota de Campana (slot pendiente) y Top
-# Productos. Sin tarjetas KPI (no estan en la foto).
+# Layout fiel a "Tickets.png": arriba tarjeta KPI Tickets (YoY) + grafico de Canal
+# (dim_origenventa), luego participacion por Formato (izq), Departamento (%), Top
+# Marcas (Marca | Tickets Resta Stock | Tickets vs Año Ant), nota de Campana (slot
+# pendiente) y Top Productos.
 #
+# Canal: REPRODUCIBLE desde bss_comercial.dim_origenventa (join por id_origenventa).
 # OMITIDO (verificado en BigQuery, reproducir en ETL):
-#  - Canal (id_origenventa sin tabla de nombres dim_origenventa) -> nota arriba.
 #  - Campana (sin dimension de campana en BigQuery; solo descuentos promo) -> nota.
 #  - Negocio (sin tabla de segmento), Marca Propia (flag EsMarcaPropia despoblado).
 # =============================================================================
@@ -87,15 +87,19 @@
     width: 6
     height: 5
 
-  # ---------------- Canal (no disponible) - arriba del dashboard ----------------
-  # Barra 100% por Canal (Brick / Envio a Domicilio / Farmacity.com / Mercado Libre
-  # / Pedidos Ya / Rappi / Simplicity / The Food Market...). No se puede construir:
-  # id_origenventa existe en el hecho pero la tabla de nombres dim_origenventa esta
-  # vacia, no hay como rotular los canales. Reproducir en ETL.
-  - name: t_canal
-    type: text
-    title_text: "Canal (no disponible por ahora)"
-    body_text: "Aqui iria el grafico de Canal (barra 100%: Brick, Envio a Domicilio, Farmacity.com, Mercado Libre, Pedidos Ya, Rappi, Simplicity, The Food Market...). No se puede construir todavia: la columna id_origenventa existe en el hecho, pero la tabla de nombres dim_origenventa esta vacia, por lo que no hay forma de rotular los canales. Requiere poblar dim_origenventa en el ETL."
+  # ---------------- Canal (origen de venta) ----------------
+  # Tickets por Canal desde dim_origenventa (dsc_origenventa). Nombres tal cual la
+  # dim (PDV, Farmacity Online, MERCADOFULL, ...); si se quiere el relabel del Power
+  # BI (Brick, Farmacity.com, ...) hay que mapearlos en la vista.
+  - title: "Tickets por Canal"
+    name: t_canal
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_origenventa.canal, fct_ventas.tickets]
+    sorts: [fct_ventas.tickets desc]
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
     width: 18
@@ -199,7 +203,7 @@
   - name: t_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Canal tiene su propia nota arriba. Verificado contra BigQuery."
+    body_text: "Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Canal ya es un grafico arriba (dim_origenventa). Verificado contra BigQuery."
     row: 23
     col: 0
     width: 16
