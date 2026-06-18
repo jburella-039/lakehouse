@@ -76,9 +76,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: vkpi_ventas_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.venta_neta}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -86,7 +86,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 0

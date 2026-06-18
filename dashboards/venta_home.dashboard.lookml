@@ -106,9 +106,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_ventas_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.venta_neta}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -116,7 +116,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 0
     col: 0
@@ -142,9 +142,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tickets_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.tickets}, 1)"
-      value_format_name: decimal_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -152,7 +152,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 0
     col: 6
@@ -178,9 +178,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_unidades_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.unidades}, 1)"
-      value_format_name: decimal_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -188,7 +188,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 0
     col: 12
@@ -216,9 +216,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tktprom_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.ticket_promedio}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.ticket_promedio}, 2)/pivot_index(${fct_ventas.ticket_promedio}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -226,7 +226,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 5
     col: 0
@@ -252,9 +252,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_uxt_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.unidades_por_ticket}, 1)"
-      value_format_name: decimal_2
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.unidades_por_ticket}, 2)/pivot_index(${fct_ventas.unidades_por_ticket}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -262,7 +262,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 5
     col: 6
@@ -288,9 +288,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margenpct_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.margen_pct}, 1)"
-      value_format_name: percent_2
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.margen_pct}, 2)/pivot_index(${fct_ventas.margen_pct}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -298,7 +298,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 5
     col: 12
@@ -324,9 +324,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margen_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_ventas.margen_pesos}, 1)"
-      value_format_name: usd_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_ventas.margen_pesos}, 2)/pivot_index(${fct_ventas.margen_pesos}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -334,7 +334,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 5
     col: 18
@@ -360,9 +360,9 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_remitos_ant
-      label: "Año Ant"
-      expression: "pivot_index(${fct_remitos.remitos}, 1)"
-      value_format_name: decimal_0
+      label: "vs Año Ant"
+      expression: "pivot_index(${fct_remitos.remitos}, 2)/pivot_index(${fct_remitos.remitos}, 1)-1"
+      value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
@@ -370,7 +370,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
+    show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento }
     row: 0
     col: 18
