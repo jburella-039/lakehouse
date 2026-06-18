@@ -6,10 +6,14 @@
 # Marcas (Marca | Tickets Resta Stock | Tickets vs Año Ant), nota de Campana (slot
 # pendiente) y Top Productos.
 #
-# Canal: REPRODUCIBLE desde bss_comercial.dim_origenventa (join por id_origenventa).
-# OMITIDO (verificado en BigQuery, reproducir en ETL):
+# REPRODUCIBLE (verificado en BigQuery):
+#  - Canal: bss_comercial.dim_origenventa (join por id_origenventa) -> grafico.
+#  - Marca Propia: sector "Marca Propia" = id_sector 3 (dim_articulo); venta 8.2%
+#    coincide con el PBI -> grafico.
+# OMITIDO:
 #  - Campana (sin dimension de campana en BigQuery; solo descuentos promo) -> nota.
-#  - Negocio (sin tabla de segmento), Marca Propia (flag EsMarcaPropia despoblado).
+#  - Negocio (Salud/Belleza/Alimentacion): no hay columna; Sector no es lo mismo.
+#    Requiere mapeo de departamentos definido por el negocio -> nota.
 # =============================================================================
 
 - dashboard: venta_tickets
@@ -207,12 +211,39 @@
     width: 8
     height: 9
 
+  # ---------------- Marca Propia vs Resto ----------------
+  # Marca Propia = sector "Marca Propia" (id_sector 3 en dim_articulo). Se muestra por
+  # unidades (split limpio que suma 100%); por tickets el count_distinct duplicaria
+  # los tickets que tienen items de ambos grupos.
+  - title: "Marca Propia vs Resto (unidades)"
+    name: t_marcapropia
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_articulo.marca_propia, fct_ventas.pct_unidades_total]
+    sorts: [dim_articulo.marca_propia]
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    row: 23
+    col: 0
+    width: 8
+    height: 6
+
+  # ---------------- Negocio (Salud/Belleza/Alimentacion) - pendiente de mapeo ----------------
+  - name: t_negocio
+    type: text
+    title_text: "Negocio (Salud / Belleza / Alimentacion): pendiente de definicion"
+    body_text: "No hay una columna de Negocio en BigQuery. Lo mas parecido es Sector (Farmacia, Masivos, Marca Propia, Suministros, em-commerce), que NO es Salud/Belleza/Alimentacion. Para armar este grafico hace falta que el negocio defina como se agrupan los departamentos (COSMETICA Y FRAGANCIAS, MEDICAMENTOS, ALIMENTOS Y BEBIDAS, HIGIENE Y CUIDADO PERSONAL, OTC FARMA/NO FARMA...) en Salud/Belleza/Alimentacion."
+    row: 23
+    col: 8
+    width: 8
+    height: 6
+
   # ---------------- Nota de visuales omitidas ----------------
   - name: t_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Canal ya es un grafico arriba (dim_origenventa). Verificado contra BigQuery."
-    row: 23
+    body_text: "Campana: sin dimension de campana en BigQuery (solo descuentos promo). Canal y Marca Propia ya son graficos. Negocio: ver nota (necesita mapeo de departamentos). Verificado contra BigQuery."
+    row: 29
     col: 0
     width: 16
     height: 2
