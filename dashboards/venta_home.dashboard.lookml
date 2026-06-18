@@ -113,6 +113,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Ventas (mar 2026 vs 2025)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -148,6 +149,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Tickets (mar 2026 vs 2025)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -183,6 +185,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Unidades (mar 2026 vs 2025)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -220,6 +223,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Ticket Prom (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -255,6 +259,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Unid x Ticket (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -290,6 +295,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Margen % (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -325,6 +331,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Margen $ (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -360,6 +367,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Remitos (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
