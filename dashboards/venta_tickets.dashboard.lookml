@@ -48,6 +48,45 @@
     field: dim_categoria.categoria
 
   elements:
+  # ---------------- KPI Tickets (YoY) ----------------
+  # Tarjeta con la variacion % vs anio anterior (marzo 2026 vs 2025), igual que Home.
+  - title: "Tickets (mar 26 vs 25)"
+    name: t_kpi_tickets
+    model: lakehouse
+    explore: fct_ventas
+    type: single_value
+    fields: [fct_ventas.tickets, fct_ventas.dia_year]
+    pivots: [fct_ventas.dia_year]
+    filters:
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
+      fct_ventas.dia_month: "2025-03, 2026-03"
+    sorts: [fct_ventas.dia_year]
+    hidden_fields: [fct_ventas.tickets]
+    dynamic_fields:
+    - table_calculation: tkpi_tickets
+      label: "Tickets"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tkpi_tickets_ant
+      label: "Año Ant"
+      expression: "pivot_index(${fct_ventas.tickets}, 1)"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    show_single_value_title: true
+    single_value_title: "Tickets (mar 26 vs 25)"
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    row: 0
+    col: 0
+    width: 6
+    height: 5
+
   # ---------------- Canal (no disponible) - arriba del dashboard ----------------
   # Barra 100% por Canal (Brick / Envio a Domicilio / Farmacity.com / Mercado Libre
   # / Pedidos Ya / Rappi / Simplicity / The Food Market...). No se puede construir:
@@ -58,9 +97,9 @@
     title_text: "Canal (no disponible por ahora)"
     body_text: "Aqui iria el grafico de Canal (barra 100%: Brick, Envio a Domicilio, Farmacity.com, Mercado Libre, Pedidos Ya, Rappi, Simplicity, The Food Market...). No se puede construir todavia: la columna id_origenventa existe en el hecho, pero la tabla de nombres dim_origenventa esta vacia, por lo que no hay forma de rotular los canales. Requiere poblar dim_origenventa en el ETL."
     row: 0
-    col: 0
-    width: 24
-    height: 3
+    col: 6
+    width: 18
+    height: 5
 
   # ---------------- Formato (participacion) ----------------
   - title: "Tickets por Formato"
@@ -72,7 +111,7 @@
     sorts: [fct_ventas.tickets desc]
     series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 3
+    row: 5
     col: 0
     width: 6
     height: 9
@@ -86,7 +125,7 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.pct_tickets_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 3
+    row: 5
     col: 6
     width: 10
     height: 9
@@ -124,7 +163,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 3
+    row: 5
     col: 16
     width: 8
     height: 18
@@ -135,7 +174,7 @@
     type: text
     title_text: "Campana (no disponible por ahora)"
     body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
-    row: 12
+    row: 14
     col: 0
     width: 8
     height: 9
@@ -151,7 +190,7 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 12
+    row: 14
     col: 8
     width: 8
     height: 9
@@ -161,7 +200,7 @@
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
     body_text: "Negocio (Salud/Belleza/Alimentacion, sin tabla de segmento) y Marca Propia (flag EsMarcaPropia despoblado). Canal tiene su propia nota arriba. Verificado contra BigQuery."
-    row: 21
+    row: 23
     col: 0
     width: 16
     height: 2
