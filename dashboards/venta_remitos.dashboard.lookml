@@ -81,6 +81,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Venta Remitos (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -116,6 +117,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Remitos (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -151,6 +153,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Unidades Rem (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -188,6 +191,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Remito Prom (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -223,6 +227,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Unid x Remito (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -258,6 +263,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Margen % (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
@@ -293,6 +299,7 @@
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Margen $ (mar 26 vs 25)"
+    show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
