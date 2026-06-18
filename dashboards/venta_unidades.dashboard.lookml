@@ -109,7 +109,7 @@
     height: 6
 
   # ---------------- Top Marcas (Unidades + variacion interanual) ----------------
-  - title: "Top Marcas - Unidades (vs Ano Ant)"
+  - title: "Top Marcas - Unidades (vs Año Ant)"
     name: u_marcas
     model: lakehouse
     explore: fct_ventas
@@ -123,7 +123,7 @@
       fct_ventas.dia_month: "2025-03, 2026-03"
     sorts: [fct_ventas.dia_year, fct_ventas.unidades desc]
     limit: 15
-    # Sin columna "Unidades Ano Ant" (se quito el table calc de variacion %).
+    # Sin columna "Unidades Año Ant" (se quito el table calc de variacion %).
     # El pivote por anio deja Marca | Unidades 2025 | Unidades 2026.
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 3

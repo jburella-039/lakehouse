@@ -3,7 +3,7 @@
 # Medida principal: tickets (resta stock).
 # Layout fiel a "Tickets.png": arriba nota de Canal (no reproducible), luego
 # participacion por Formato (izq), Departamento (%), Top Marcas (Marca | Tickets
-# Resta Stock | Tickets vs Ano Ant), nota de Campana (slot pendiente) y Top
+# Resta Stock | Tickets vs Año Ant), nota de Campana (slot pendiente) y Top
 # Productos. Sin tarjetas KPI (no estan en la foto).
 #
 # OMITIDO (verificado en BigQuery, reproducir en ETL):
@@ -92,10 +92,10 @@
     height: 9
 
   # ---------------- Top Marcas (Tickets + variacion interanual) ----------------
-  # Solo 3 columnas: Marca | Tickets Resta Stock | Tickets vs Ano Ant.
+  # Solo 3 columnas: Marca | Tickets Resta Stock | Tickets vs Año Ant.
   # pivot_index colapsa el pivote de anio a columnas planas y oculta la medida
   # base pivoteada; index 1 = 2025-03, index 2 = 2026-03 (orden por dia_year asc).
-  - title: "Top Marcas - Tickets (vs Ano Ant)"
+  - title: "Top Marcas - Tickets (vs Año Ant)"
     name: t_marcas
     model: lakehouse
     explore: fct_ventas
@@ -118,7 +118,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tickets_anio_ant
-      label: "Tickets vs Ano Ant"
+      label: "Tickets vs Año Ant"
       expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure

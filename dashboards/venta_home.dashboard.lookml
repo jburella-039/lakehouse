@@ -5,7 +5,7 @@
 # Reconciliacion marzo 2026 (vs HOME.png):
 #  - Ventas 192.01B (cap 192.10B) / Tickets 5.71M (5.68M) / Unidades 22.78M (22.43M)
 #  - Margen % 29.4% (29.75%) / Remitos ~2.45M (2.443M)
-#  Variacion interanual Ventas por Formato (vs captura tabla "Ano Ant"):
+#  Variacion interanual Ventas por Formato (vs captura tabla "Año Ant"):
 #  - Farmacity +35.0% (cap +35.3%), Simplicity +25.7% (+25.2%),
 #    Farmacity.com/ML +36.5% (+37.1%), The Food Market +34.6% (+33.1%),
 #    Get The Look -15.3% (-9.2%). La diferencia en Get The Look es el ajuste de
@@ -15,16 +15,16 @@
 #  - Bloque "Retail 184B / Farmacia 7.63B": OMITIDO. El split es por Id Canal,
 #    columna calculada DAX que NO existe en BigQuery (verificado: no es obra
 #    social, que da 96B/96B). Reproducir Id Canal en el ETL para habilitarlo.
-#  - Interanual ("Ano Ant") en la tabla de Formato: table calc con pivote por anio
+#  - Interanual ("Año Ant") en la tabla de Formato: table calc con pivote por anio
 #    (sin precalcular en BQ). Ahora trae marzo 2024/2025/2026 para que el 2025
-#    tambien muestre su "Ano Ant" (2025 vs 2024). El 2024 es el anio base (Ano Ant
+#    tambien muestre su "Año Ant" (2025 vs 2024). El 2024 es el anio base (Año Ant
 #    en blanco). Periodo fijo (marzo); para periodos libres haria falta MMAA en BQ.
 #  - KPIs con comparacion interanual (comparison_type: change): pivote por anio +
 #    pivot_index (valor 2026 vs 2025), PERIODO FIJO marzo. Como consecuencia, los
 #    KPIs NO siguen el filtro "Fecha" (quedan anclados a la comparacion marzo
 #    26 vs 25). Para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA
 #    en BigQuery. PENDIENTE validar el render del single_value con comparacion.
-#  - Filtros nuevos: Anio (para la tabla final), Departamento, Categoria, Marca
+#  - Filtros nuevos: Año (para la tabla final), Departamento, Categoria, Marca
 #    (todos con DIM). Canal/Marca Propia/Negocio pendientes de confirmar fuente.
 # =============================================================================
 
@@ -45,7 +45,7 @@
     allow_multiple_values: true
     required: false
   - name: anio
-    title: "Anio (tabla final)"
+    title: "Año (tabla final)"
     type: field_filter
     model: lakehouse
     explore: fct_ventas
@@ -106,7 +106,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_ventas_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.venta_neta}, 1)"
       value_format_name: usd_0
       _kind_hint: measure
@@ -141,7 +141,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tickets_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.tickets}, 1)"
       value_format_name: decimal_0
       _kind_hint: measure
@@ -176,7 +176,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_unidades_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.unidades}, 1)"
       value_format_name: decimal_0
       _kind_hint: measure
@@ -213,7 +213,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tktprom_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.ticket_promedio}, 1)"
       value_format_name: usd_0
       _kind_hint: measure
@@ -248,7 +248,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_uxt_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.unidades_por_ticket}, 1)"
       value_format_name: decimal_2
       _kind_hint: measure
@@ -283,7 +283,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margenpct_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.margen_pct}, 1)"
       value_format_name: percent_2
       _kind_hint: measure
@@ -318,7 +318,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margen_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_ventas.margen_pesos}, 1)"
       value_format_name: usd_0
       _kind_hint: measure
@@ -353,7 +353,7 @@
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_remitos_ant
-      label: "Ano Ant"
+      label: "Año Ant"
       expression: "pivot_index(${fct_remitos.remitos}, 1)"
       value_format_name: decimal_0
       _kind_hint: measure
@@ -370,12 +370,12 @@
     height: 3
 
   # ---------------- Tabla por Formato con variacion interanual ----------------
-  # Pivote por anio. Trae marzo 2024, 2025 y 2026 para que las columnas "Ano Ant"
+  # Pivote por anio. Trae marzo 2024, 2025 y 2026 para que las columnas "Año Ant"
   # del 2025 (2025 vs 2024) Y del 2026 (2026 vs 2025) muestren valor. El 2024 es el
-  # anio base, por eso su "Ano Ant" queda en blanco (no hay 2023 en la consulta).
+  # anio base, por eso su "Año Ant" queda en blanco (no hay 2023 en la consulta).
   # Filtro de meses fijo en el tile (no escucha "fecha"); escucha "anio" (dia_year),
   # "formato", "departamento", "categoria" y "marca".
-  - title: "Resumen por Formato (vs Ano Anterior)"
+  - title: "Resumen por Formato (vs Año Anterior)"
     name: h_formato
     model: lakehouse
     explore: fct_ventas
@@ -390,19 +390,19 @@
     sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
     dynamic_fields:
     - table_calculation: ventas_anio_ant
-      label: "Ventas Ano Ant"
+      label: "Ventas Año Ant"
       expression: "${fct_ventas.venta_neta}/pivot_offset(${fct_ventas.venta_neta},-1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tickets_anio_ant
-      label: "Tickets Ano Ant"
+      label: "Tickets Año Ant"
       expression: "${fct_ventas.tickets}/pivot_offset(${fct_ventas.tickets},-1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     - table_calculation: unidades_anio_ant
-      label: "Unidades Ano Ant"
+      label: "Unidades Año Ant"
       expression: "${fct_ventas.unidades}/pivot_offset(${fct_ventas.unidades},-1)-1"
       value_format_name: percent_1
       _kind_hint: measure
