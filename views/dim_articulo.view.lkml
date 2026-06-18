@@ -5,13 +5,13 @@ view: dim_articulo {
 
   dimension: cd_sku { primary_key: yes type: number sql: ${TABLE}.cd_sku ;; label: "SKU" }
 
-  dimension: descripcion { type: string sql: ${TABLE}.dsc_cuf ;; label: "Descripcion" }
+  dimension: descripcion { type: string sql: ${TABLE}.dsc_sku ;; label: "Descripcion" }
 
   # "220246 - OZEMPIC 1MG/DOSIS X 3ML" (como en el Power BI)
   dimension: producto {
     type: string
-    sql: CONCAT(CAST(${cd_sku} AS STRING), ' - ', ${TABLE}.dsc_cuf) ;;
-    label: "Producto (CUF - Descripcion)"
+    sql: CONCAT(CAST(${cd_sku} AS STRING), ' - ', ${TABLE}.dsc_sku) ;;
+    label: "Producto (SKU - Descripcion)"
   }
 
   # claves de join hacia la jerarquia (ocultas; se usan en el explore)
@@ -20,8 +20,15 @@ view: dim_articulo {
   dimension: id_subcategoria { hidden: yes type: number sql: ${TABLE}.id_subcategoria ;; }
   dimension: id_departamento { hidden: yes type: number sql: ${TABLE}.id_departamento ;; }
 
-  # GAP Marca Propia: id_marcapropia NO es un flag (es un id de marca; 1666 = ~96%).
-  # No reproduce el 8,10% del Power BI. Pendiente de definicion del negocio/ETL.
+  # Marca Propia REPRODUCIBLE: sector "Marca Propia" = IdSector 3 (trd_comercial.sector).
+  # Venta marzo 2026 del sector 3 = 8.2% (coincide con el 8.1% del Power BI).
+  # (El flag EsMarcaPropia esta despoblado y id_marcapropia es un id-centinela, no sirven.)
+  dimension: id_sector { hidden: yes type: number sql: ${TABLE}.id_sector ;; }
+  dimension: marca_propia {
+    type: string
+    sql: CASE WHEN ${TABLE}.id_sector = 3 THEN 'Marca Propia' ELSE 'Resto' END ;;
+    label: "Marca Propia"
+  }
   dimension: id_marcapropia { hidden: yes type: number sql: ${TABLE}.id_marcapropia ;; }
 
   dimension: es_ecommerce {
