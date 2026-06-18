@@ -220,8 +220,10 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_articulo.marca_propia, fct_ventas.pct_unidades_total]
-    sorts: [dim_articulo.marca_propia]
+    fields: [dim_articulo.marca_propia, fct_ventas.unidades]
+    pivots: [dim_articulo.marca_propia]
+    sorts: [fct_ventas.unidades desc]
+    stacking: percent
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 23
     col: 0
