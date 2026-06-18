@@ -91,14 +91,17 @@
   # Tickets por Canal desde dim_origenventa (dsc_origenventa). Nombres tal cual la
   # dim (PDV, Farmacity Online, MERCADOFULL, ...); si se quiere el relabel del Power
   # BI (Brick, Farmacity.com, ...) hay que mapearlos en la vista.
+  # Barra horizontal apilada al 100% (una sola barra, segmentos = canales), como
+  # el visual original del Power BI. Canal va como pivote y stacking: percent.
   - title: "Tickets por Canal"
     name: t_canal
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
     fields: [dim_origenventa.canal, fct_ventas.tickets]
+    pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.tickets desc]
-    series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
+    stacking: percent
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
