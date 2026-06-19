@@ -177,15 +177,23 @@
 
   # ---------------- Top Categorias (participacion) ----------------
   # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo.
-  # Mismo patron que el grafico de Departamento: categoria + percent_of_total.
+  # % con table calc (consistente con Tickets). % sobre las categorias mostradas.
   - title: "Top Categorias (participacion)"
     name: v_categorias
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.pct_venta_total]
-    sorts: [fct_ventas.pct_venta_total desc]
+    fields: [dim_categoria.categoria, fct_ventas.venta_neta]
+    sorts: [fct_ventas.venta_neta desc]
     limit: 10
+    dynamic_fields:
+    - table_calculation: pct_categoria
+      label: "% Participacion"
+      expression: "${fct_ventas.venta_neta}/sum(${fct_ventas.venta_neta})"
+      value_format_name: percent_2
+      _kind_hint: measure
+      _type_hint: number
+    hidden_fields: [fct_ventas.venta_neta]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 17
     col: 0
