@@ -183,16 +183,15 @@
 
   # ---------------- Top Categorias (participacion) ----------------
   # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo.
-  # Se ordena por la medida base (unidades) y se oculta.
+  # Mismo patron que el grafico de Departamento: categoria + percent_of_total.
   - title: "Top Categorias (participacion)"
     name: u_categorias
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.unidades, fct_ventas.pct_unidades_total]
-    sorts: [fct_ventas.unidades desc]
+    fields: [dim_categoria.categoria, fct_ventas.pct_unidades_total]
+    sorts: [fct_ventas.pct_unidades_total desc]
     limit: 10
-    hidden_fields: [fct_ventas.unidades]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0
