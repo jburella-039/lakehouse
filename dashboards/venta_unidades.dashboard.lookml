@@ -3,16 +3,16 @@
 # Medida principal: unidades.
 # Layout fiel a "Unidades.png": arriba tarjeta KPI + grafico de Canal, luego
 # participacion por Formato (izq), grafico de Marca Propia + Departamento (%), Top
-# Marcas (Marca | Unidades 2025 | Unidades 2026), nota de Campana (slot pendiente)
-# y Top Productos.
+# Marcas (Marca | Unidades 2025 | Unidades 2026), Top Categorias (participacion,
+# lo que el PBI llamaba Campana) y Top Productos.
 #
 # Reconciliacion marzo 2026: Unidades 22.78M (cap 22.43M). Formato: Farmacity
 # 86.8% / Simplicity 9.0% / Farmacity.com-ML 3.0% / The Food Market 0.9% /
 # Get The Look 0.2% (coincide con la captura).
 #
-# REPRODUCIBLE: Canal (dim_origenventa) y Marca Propia (sector id_sector 3) -> graficos.
+# REPRODUCIBLE: Canal (dim_origenventa), Marca Propia (sector id_sector 3) y
+# Categoria -lo que el PBI llamaba Campana- (dim_categoria.categoria) -> graficos.
 # OMITIDO:
-#  - Campana (sin dimension de campana en BigQuery; solo descuentos promo) -> nota.
 #  - Negocio (Salud/Belleza/Alimentacion): no hay columna; requiere mapeo de deptos.
 # =============================================================================
 
@@ -181,12 +181,19 @@
     width: 8
     height: 18
 
-  # ---------------- Campana (slot de Top Categorias, no disponible) ----------------
-  # Aqui iria el grafico de Campana. Se quito Top Categorias de este lugar.
-  - name: u_campania
-    type: text
-    title_text: "Campana (no disponible por ahora)"
-    body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
+  # ---------------- Top Categorias (participacion) ----------------
+  # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo.
+  # Se ordena por la medida base (unidades) y se oculta.
+  - title: "Top Categorias (participacion)"
+    name: u_categorias
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_categoria.categoria, fct_ventas.unidades, fct_ventas.pct_unidades_total]
+    sorts: [fct_ventas.unidades desc]
+    limit: 10
+    hidden_fields: [fct_ventas.unidades]
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0
     width: 8
@@ -212,7 +219,7 @@
   - name: u_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Negocio (Salud/Belleza/Alimentacion): no hay columna en BigQuery; requiere mapeo de departamentos definido por el negocio. Canal y Marca Propia ya son graficos. Campana sin fuente. Verificado contra BigQuery."
+    body_text: "Negocio (Salud/Belleza/Alimentacion): no hay columna en BigQuery; requiere mapeo de departamentos definido por el negocio. Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Verificado contra BigQuery."
     row: 23
     col: 0
     width: 16

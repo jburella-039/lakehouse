@@ -10,8 +10,9 @@
 #  - Canal: bss_comercial.dim_origenventa (join por id_origenventa) -> grafico.
 #  - Marca Propia: sector "Marca Propia" = id_sector 3 (dim_articulo); venta 8.2%
 #    coincide con el PBI -> grafico.
+#  - "Campana": el negocio confirmo que es Categoria de Articulo
+#    (dim_categoria.categoria) -> grafico Top Categorias (participacion).
 # OMITIDO:
-#  - Campana (sin dimension de campana en BigQuery; solo descuentos promo) -> nota.
 #  - Negocio (Salud/Belleza/Alimentacion): no hay columna; Sector no es lo mismo.
 #    Requiere mapeo de departamentos definido por el negocio -> nota.
 # =============================================================================
@@ -184,12 +185,20 @@
     width: 8
     height: 18
 
-  # ---------------- Campana (slot de Top Categorias, no disponible) ----------------
-  # Aqui iria el grafico de Campana. Se quito Top Categorias de este lugar.
-  - name: t_campania
-    type: text
-    title_text: "Campana (no disponible por ahora)"
-    body_text: "Aqui iria el grafico de Campana. No se puede construir todavia: no existe una dimension de campana en BigQuery (no hay tabla dim_campania ni columna de id de campana en fct_ventas; solo hay montos de descuento promocional mto/cnt/pct_promodescuento). Requiere reproducir la dimension Campana en el ETL."
+  # ---------------- Top Categorias (participacion) ----------------
+  # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo
+  # (dim_categoria.categoria). Se ordena por la medida base (tickets) y se oculta,
+  # para evitar el render en blanco al ordenar por un percent_of_total de count_distinct.
+  - title: "Top Categorias (participacion)"
+    name: t_categorias
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_bar
+    fields: [dim_categoria.categoria, fct_ventas.tickets, fct_ventas.pct_tickets_total]
+    sorts: [fct_ventas.tickets desc]
+    limit: 10
+    hidden_fields: [fct_ventas.tickets]
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0
     width: 8
@@ -244,7 +253,7 @@
   - name: t_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Campana: sin dimension de campana en BigQuery (solo descuentos promo). Canal y Marca Propia ya son graficos. Negocio: ver nota (necesita mapeo de departamentos). Verificado contra BigQuery."
+    body_text: "Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Pendiente: Negocio (Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
     row: 29
     col: 0
     width: 16
