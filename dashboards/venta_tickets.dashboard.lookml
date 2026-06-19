@@ -187,17 +187,16 @@
 
   # ---------------- Top Categorias (participacion) ----------------
   # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo
-  # (dim_categoria.categoria). Se ordena por la medida base (tickets) y se oculta,
-  # para evitar el render en blanco al ordenar por un percent_of_total de count_distinct.
+  # (dim_categoria.categoria). Mismo patron que el grafico de Departamento (que
+  # renderiza OK): solo categoria + percent_of_total, ordenado por ese campo.
   - title: "Top Categorias (participacion)"
     name: t_categorias
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.tickets, fct_ventas.pct_tickets_total]
-    sorts: [fct_ventas.tickets desc]
+    fields: [dim_categoria.categoria, fct_ventas.pct_tickets_total]
+    sorts: [fct_ventas.pct_tickets_total desc]
     limit: 10
-    hidden_fields: [fct_ventas.tickets]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0
