@@ -122,7 +122,7 @@ explore: fct_ventas {
   join: dim_formato {
     type: left_outer
     relationship: many_to_one
-    sql_on: ${dim_sucursal.id_formato} = ${dim_formato.cod_formato} ;;
+    sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
   }
   join: dim_region {
     type: left_outer
@@ -200,7 +200,7 @@ explore: fct_remitos {
   join: dim_formato {
     type: left_outer
     relationship: many_to_one
-    sql_on: ${dim_sucursal.id_formato} = ${dim_formato.cod_formato} ;;
+    sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
   }
   join: dim_region {
     type: left_outer
