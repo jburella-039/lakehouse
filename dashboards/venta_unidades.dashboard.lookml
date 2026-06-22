@@ -181,17 +181,16 @@
     width: 8
     height: 18
 
-  # ---------------- Top Categorias (participacion) ----------------
-  # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo.
-  # Mismo patron que Departamento: categoria + percent_of_total, sin limit (para
-  # que el % sea sobre el total de todas las categorias).
-  - title: "Top Categorias (participacion)"
+  # ---------------- Top 10 Categorias ----------------
+  # Categoria de Articulo (lo que el PBI llamaba "Campana"). Top 10 por unidades.
+  - title: "Top 10 Categorias - Unidades"
     name: u_categorias
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.pct_unidades_total]
-    sorts: [fct_ventas.pct_unidades_total desc]
+    fields: [dim_categoria.categoria, fct_ventas.unidades]
+    sorts: [fct_ventas.unidades desc]
+    limit: 10
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0

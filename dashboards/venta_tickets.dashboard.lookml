@@ -185,19 +185,19 @@
     width: 8
     height: 18
 
-  # ---------------- Top Categorias (participacion) ----------------
-  # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo
-  # (dim_categoria, ahora bss_comercial -> nombres reales). Mismo patron que el
-  # grafico de Departamento (que renderiza OK): categoria + percent_of_total.
-  # SIN limit: con limit el % se divide por el total del top N y queda inflado;
-  # sin limit el denominador es el total de TODAS las categorias (% real del PBI).
-  - title: "Top Categorias (participacion)"
+  # ---------------- Top 10 Categorias ----------------
+  # El visual que el PBI llamaba "Campana" es Categoria de Articulo (dim_categoria,
+  # ahora bss_comercial -> nombres reales). Top 10 por la medida (tickets). NO se usa
+  # percent_of_total: con limit Looker lo deja en null (necesita todo el set) y sin
+  # limit se ven demasiadas categorias. El orden por valor = orden por participacion.
+  - title: "Top 10 Categorias - Tickets"
     name: t_categorias
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.pct_tickets_total]
-    sorts: [fct_ventas.pct_tickets_total desc]
+    fields: [dim_categoria.categoria, fct_ventas.tickets]
+    sorts: [fct_ventas.tickets desc]
+    limit: 10
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0
