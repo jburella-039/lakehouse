@@ -187,25 +187,17 @@
 
   # ---------------- Top Categorias (participacion) ----------------
   # El visual que el PBI llamaba "Campana" es en realidad Categoria de Articulo
-  # (dim_categoria.categoria). El % se calcula con table calc (no percent_of_total)
-  # porque percent_of_total sobre tickets=count_distinct genera un SQL que BigQuery
-  # no resuelve y la tile sale en blanco. % sobre el total de las categorias mostradas.
+  # (dim_categoria, ahora bss_comercial -> nombres reales). Mismo patron que el
+  # grafico de Departamento (que renderiza OK): categoria + percent_of_total.
+  # SIN limit: con limit el % se divide por el total del top N y queda inflado;
+  # sin limit el denominador es el total de TODAS las categorias (% real del PBI).
   - title: "Top Categorias (participacion)"
     name: t_categorias
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
-    fields: [dim_categoria.categoria, fct_ventas.tickets]
-    sorts: [fct_ventas.tickets desc]
-    limit: 10
-    dynamic_fields:
-    - table_calculation: pct_categoria
-      label: "% Participacion"
-      expression: "${fct_ventas.tickets}/sum(${fct_ventas.tickets})"
-      value_format_name: percent_2
-      _kind_hint: measure
-      _type_hint: number
-    hidden_fields: [fct_ventas.tickets]
+    fields: [dim_categoria.categoria, fct_ventas.pct_tickets_total]
+    sorts: [fct_ventas.pct_tickets_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 14
     col: 0
