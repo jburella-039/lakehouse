@@ -128,7 +128,7 @@
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
-    width: 6
+    width: 8
     height: 5
   - title: "Tickets"
     name: h_kpi_tickets
@@ -163,8 +163,8 @@
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
-    col: 6
-    width: 6
+    col: 8
+    width: 8
     height: 5
   - title: "Unidades"
     name: h_kpi_unidades
@@ -199,8 +199,8 @@
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
-    col: 12
-    width: 6
+    col: 16
+    width: 8
     height: 5
 
   # ---------------- KPIs fila 2: ratios + Remitos (con YoY) ----------------
@@ -236,9 +236,9 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
+    row: 11
     col: 0
-    width: 6
+    width: 5
     height: 5
   - title: "Unidades por Ticket"
     name: h_kpi_uxt
@@ -272,9 +272,9 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
-    col: 6
-    width: 6
+    row: 11
+    col: 5
+    width: 5
     height: 5
   - title: "Margen %"
     name: h_kpi_margenpct
@@ -308,9 +308,9 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
-    col: 12
-    width: 6
+    row: 11
+    col: 10
+    width: 5
     height: 5
   - title: "Margen $"
     name: h_kpi_margen
@@ -344,9 +344,9 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
-    col: 18
-    width: 6
+    row: 11
+    col: 15
+    width: 5
     height: 5
   - title: "Remitos"
     name: h_kpi_remitos
@@ -380,10 +380,51 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 18
-    width: 6
+    row: 11
+    col: 20
+    width: 4
     height: 5
+
+  # ---------------- Evoluciones por dia (lineas) ----------------
+  # Replica los sparkline/area que el PBI muestra detras de cada KPI principal.
+  # Evolucion diaria de Ventas, Tickets y Unidades en el periodo seleccionado
+  # (default marzo 2026). Escuchan todos los filtros, incluido Fecha.
+  - title: "Ventas por dia"
+    name: h_trend_ventas
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_line
+    fields: [fct_ventas.dia_date, fct_ventas.venta_neta]
+    sorts: [fct_ventas.dia_date]
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    row: 5
+    col: 0
+    width: 8
+    height: 6
+  - title: "Tickets por dia"
+    name: h_trend_tickets
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_line
+    fields: [fct_ventas.dia_date, fct_ventas.tickets]
+    sorts: [fct_ventas.dia_date]
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    row: 5
+    col: 8
+    width: 8
+    height: 6
+  - title: "Unidades por dia"
+    name: h_trend_unidades
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_line
+    fields: [fct_ventas.dia_date, fct_ventas.unidades]
+    sorts: [fct_ventas.dia_date]
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    row: 5
+    col: 16
+    width: 8
+    height: 6
 
   # ---------------- Tabla por Formato con variacion interanual ----------------
   # Muestra el anio actual (2026) y su variacion % vs el anterior (2025). El tile
@@ -443,7 +484,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 10
+    row: 16
     col: 0
     width: 24
     height: 10
@@ -452,8 +493,8 @@
   - name: h_gaps
     type: text
     title_text: "Pendientes (no migrados de BigQuery)"
-    body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). KPIs con YoY anclados a marzo (no siguen el filtro Fecha); para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA en BigQuery. Presencial vs No Presencial: pendiente de confirmar la Dim Origen (Canal)."
-    row: 20
+    body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). KPIs con YoY anclados a marzo (no siguen el filtro Fecha); para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA en BigQuery. Las evoluciones por dia (lineas) si siguen el filtro Fecha."
+    row: 26
     col: 0
     width: 24
     height: 2
