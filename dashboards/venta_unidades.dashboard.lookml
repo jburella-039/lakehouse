@@ -104,6 +104,7 @@
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.unidades desc]
     stacking: percent
+    show_value_labels: true
     filters:
       fct_ventas.unidades: ">=227000"
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
@@ -138,6 +139,7 @@
     pivots: [dim_articulo.marca_propia]
     sorts: [fct_ventas.unidades desc]
     stacking: percent
+    show_value_labels: true
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 5
     col: 6
