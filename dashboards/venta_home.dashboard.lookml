@@ -69,9 +69,24 @@
     model: lakehouse
     explore: fct_ventas
     field: dim_marca.marca
-  # PENDIENTE (fuente a confirmar en BigQuery, ver fuentes_vistas_venta_integral.xlsx):
-  # Canal (Dim Origen), Marca Propia (flag sin poblar) y Negocio (sin tabla de
-  # segmento). Se agregan como filtros cuando se confirme la fuente.
+  - name: canal
+    title: "Canal"
+    type: field_filter
+    model: lakehouse
+    explore: fct_ventas
+    field: dim_origenventa.canal
+  - name: marca_propia
+    title: "Marca Propia (Origen)"
+    type: field_filter
+    model: lakehouse
+    explore: fct_ventas
+    field: dim_articulo.marca_propia
+  # Negocio (Alimentacion/Belleza/Salud/Alimentacion Saludable): NO se incluye porque
+  # no existe como columna en BigQuery (verificado: ni dim, ni sector/grupo). Es un
+  # agrupador DAX del PBI; requiere que el negocio defina el mapeo departamento/categoria
+  # -> Negocio (en especial "Alimentacion Saludable", subconjunto curado).
+  # NOTA: la tarjeta de Remitos (explore fct_remitos) NO tiene join a Dim Origen, por eso
+  # NO escucha el filtro Canal (si lo hiciera, daria error de campo inexistente).
 
   elements:
   # ---------------- KPIs fila 1: Ventas / Tickets / Unidades (con YoY) ----------------
@@ -110,7 +125,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
     width: 6
@@ -146,7 +161,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 6
     width: 6
@@ -182,7 +197,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 12
     width: 6
@@ -220,7 +235,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 0
     width: 6
@@ -256,7 +271,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 6
     width: 6
@@ -292,7 +307,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 12
     width: 6
@@ -328,7 +343,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 18
     width: 6
@@ -364,7 +379,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 18
     width: 6
@@ -427,7 +442,7 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 10
     col: 0
     width: 24
