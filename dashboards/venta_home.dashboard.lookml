@@ -47,6 +47,7 @@
   - name: anio
     title: "Año (tabla final)"
     type: field_filter
+    default_value: "2026"
     model: lakehouse
     explore: fct_ventas
     field: fct_ventas.dia_year
@@ -378,44 +379,63 @@
     height: 5
 
   # ---------------- Tabla por Formato con variacion interanual ----------------
-  # Pivote por anio. Trae marzo 2024, 2025 y 2026 para que las columnas "Año Ant"
-  # del 2025 (2025 vs 2024) Y del 2026 (2026 vs 2025) muestren valor. El 2024 es el
-  # anio base, por eso su "Año Ant" queda en blanco (no hay 2023 en la consulta).
-  # Filtro de meses fijo en el tile (no escucha "fecha"); escucha "anio" (dia_year),
-  # "formato", "departamento", "categoria" y "marca".
-  - title: "Resumen por Formato (vs Año Anterior)"
+  # Muestra el anio actual (2026) y su variacion % vs el anterior (2025). El tile
+  # trae SIEMPRE 2025 y 2026 (meses fijos marzo) para poder calcular el YoY; con
+  # pivot_index se colapsa el pivote: index 2 = 2026 (valor) y el ratio 2026/2025-1
+  # = "Año Ant". Se ocultan las medidas base pivoteadas.
+  # NO escucha "anio": si lo escuchara y el filtro queda en 2026, se iria el 2025 y
+  # el YoY quedaria vacio (era el bug). El filtro "Año" arriba esta preseteado en
+  # 2026 a modo de referencia del anio actual mostrado.
+  - title: "Resumen por Formato (2026 vs Año Anterior)"
     name: h_formato
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
     fields: [dim_formato.formato, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     pivots: [fct_ventas.dia_year]
-    # dia_date acota el rango y SOBRE-ESCRIBE el always_filter "1 months" del explore;
-    # dia_month deja los tres marzos (2024/2025/2026).
     filters:
-      fct_ventas.dia_date: "2024/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2024-03, 2025-03, 2026-03"
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
+      fct_ventas.dia_month: "2025-03, 2026-03"
     sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
+    hidden_fields: [fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     dynamic_fields:
+    - table_calculation: ventas_cur
+      label: "Ventas"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
     - table_calculation: ventas_anio_ant
       label: "Ventas Año Ant"
-      expression: "${fct_ventas.venta_neta}/pivot_offset(${fct_ventas.venta_neta},-1)-1"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
       value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tickets_cur
+      label: "Tickets"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)"
+      value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tickets_anio_ant
       label: "Tickets Año Ant"
-      expression: "${fct_ventas.tickets}/pivot_offset(${fct_ventas.tickets},-1)-1"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
       value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: unidades_cur
+      label: "Unidades"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)"
+      value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: unidades_anio_ant
       label: "Unidades Año Ant"
-      expression: "${fct_ventas.unidades}/pivot_offset(${fct_ventas.unidades},-1)-1"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca }
     row: 10
     col: 0
     width: 24
