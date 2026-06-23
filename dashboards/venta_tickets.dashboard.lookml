@@ -220,7 +220,7 @@
   - name: t_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Pendiente: Negocio (Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
+    body_text: "Pendiente: Negocio (Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
     row: 22
     col: 0
     width: 16
