@@ -24,8 +24,9 @@
 #    KPIs NO siguen el filtro "Fecha" (quedan anclados a la comparacion marzo
 #    26 vs 25). Para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA
 #    en BigQuery. PENDIENTE validar el render del single_value con comparacion.
-#  - Filtros nuevos: Año (para la tabla final), Departamento, Categoria, Marca
-#    (todos con DIM). Canal/Marca Propia/Negocio pendientes de confirmar fuente.
+#  - Filtros: Departamento, Categoria, Marca (todos con DIM) + Fecha. La tabla final
+#    queda prefiltrada al anio actual (2026 vs 2025) por sus propios filtros, sin un
+#    filtro de Año arriba. Canal/Marca Propia/Negocio pendientes de confirmar fuente.
 # =============================================================================
 
 - dashboard: venta_home
@@ -42,15 +43,6 @@
     model: lakehouse
     explore: fct_ventas
     field: fct_ventas.dia_date
-    allow_multiple_values: true
-    required: false
-  - name: anio
-    title: "Año (tabla final)"
-    type: field_filter
-    default_value: "2026"
-    model: lakehouse
-    explore: fct_ventas
-    field: fct_ventas.dia_year
     allow_multiple_values: true
     required: false
   - name: formato
@@ -383,9 +375,9 @@
   # trae SIEMPRE 2025 y 2026 (meses fijos marzo) para poder calcular el YoY; con
   # pivot_index se colapsa el pivote: index 2 = 2026 (valor) y el ratio 2026/2025-1
   # = "Año Ant". Se ocultan las medidas base pivoteadas.
-  # NO escucha "anio": si lo escuchara y el filtro queda en 2026, se iria el 2025 y
-  # el YoY quedaria vacio (era el bug). El filtro "Año" arriba esta preseteado en
-  # 2026 a modo de referencia del anio actual mostrado.
+  # La tabla esta prefiltrada por anio actual (2026 vs 2025) directamente en sus
+  # filtros (dia_month "2025-03, 2026-03"); por eso NO hay un filtro de Año arriba del
+  # dashboard. Si se filtrara a un solo anio se iria el 2025 y el YoY quedaria vacio.
   - title: "Resumen por Formato (2026 vs Año Anterior)"
     name: h_formato
     model: lakehouse
