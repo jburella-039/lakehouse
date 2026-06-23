@@ -1,10 +1,11 @@
 # =============================================================================
 # Dashboard: Venta Integral - Ventas en $   (PBI: "Participaciones $")
 # Medida principal: venta_neta (s/IVA antes de descuento).
-# Layout fiel a la captura "Ventas en $.png": arriba tarjeta KPI + graficos de
-# Canal y Marca Propia (apilados 100%), luego participacion por Formato (izq),
-# Departamento (%), Top Marcas (Venta + Margen $), Top Categorias (participacion,
-# lo que el PBI llamaba Campana) y Top Productos.
+# Layout fiel a "Ventas en $.png": Formato (izq) | columna central = Canal apilado 100%
+# + Marca Propia + Departamento (%) | Top Marcas (Venta + Margen $) a la derecha (misma
+# altura que Formato). Debajo: Top 10 Categorias y Top Productos. SIN tarjeta KPI (no
+# estaba en el original). Los apilados al 100% (Canal, Marca Propia) muestran el % dentro
+# de la barra (show_value_labels).
 #
 # Reconciliacion marzo 2026: Ventas 192.01B (cap 192.10B). Formato: Farmacity
 # 90.3% / Simplicity 6.0% / Farmacity.com-ML 3.0% / Get The Look 0.4% /
@@ -53,45 +54,6 @@
     field: dim_categoria.categoria
 
   elements:
-  # ---------------- KPI Ventas (YoY) ----------------
-  # Tarjeta con la variacion % vs anio anterior (marzo 2026 vs 2025), igual que Home.
-  - title: "Ventas (mar 26 vs 25)"
-    name: v_kpi_ventas
-    model: lakehouse
-    explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.venta_neta, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.venta_neta]
-    dynamic_fields:
-    - table_calculation: vkpi_ventas
-      label: "Ventas"
-      expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
-      value_format_name: usd_0
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: vkpi_ventas_ant
-      label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
-      value_format_name: percent_1
-      _kind_hint: measure
-      _type_hint: number
-    show_single_value_title: true
-    single_value_title: "Ventas (mar 26 vs 25)"
-    show_comparison: true
-    comparison_type: change
-    comparison_reverse_colors: false
-    show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
-    col: 0
-    width: 6
-    height: 5
-
   # ---------------- Canal (origen de venta) ----------------
   # Barra horizontal apilada al 100% (segmentos = canales) desde dim_origenventa.
   # Filtra canales con <1% de venta (1% de ~192B ~= 1.92B) por la medida base.
@@ -110,7 +72,7 @@
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
-    width: 18
+    width: 10
     height: 5
 
   # ---------------- Marca Propia vs Resto ----------------
@@ -128,8 +90,8 @@
     show_value_labels: true
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 5
-    col: 0
-    width: 24
+    col: 6
+    width: 10
     height: 3
 
   # ---------------- Formato (participacion, columna izquierda) ----------------
@@ -142,10 +104,10 @@
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 8
+    row: 0
     col: 0
     width: 6
-    height: 9
+    height: 13
 
   # ---------------- Departamento (% participacion, columnas) ----------------
   - title: "Participacion por Departamento"
@@ -158,8 +120,8 @@
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 8
     col: 6
-    width: 12
-    height: 9
+    width: 10
+    height: 5
 
   # ---------------- Top Marcas (Venta + Margen $, columna derecha) ----------------
   - title: "Top Marcas - Venta y Margen $"
@@ -172,10 +134,10 @@
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 8
-    col: 18
-    width: 6
-    height: 18
+    row: 0
+    col: 16
+    width: 8
+    height: 13
 
   # ---------------- Top 10 Categorias ----------------
   # Categoria de Articulo (lo que el PBI llamaba "Campana"). Top 10 por venta.
@@ -188,9 +150,9 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 10
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 17
+    row: 13
     col: 0
-    width: 9
+    width: 8
     height: 9
 
   # ---------------- Top Productos ----------------
@@ -204,17 +166,17 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 17
-    col: 9
-    width: 9
+    row: 13
+    col: 8
+    width: 8
     height: 9
 
   # ---------------- Nota de visuales omitidas ----------------
   - name: v_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Negocio (treemap Salud/Belleza/Alimentacion): no hay columna en BigQuery; requiere mapeo de departamentos definido por el negocio. Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Verificado contra BigQuery."
-    row: 26
+    body_text: "Pendiente: Negocio (treemap Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
+    row: 22
     col: 0
-    width: 18
+    width: 16
     height: 2
