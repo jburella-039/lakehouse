@@ -1,10 +1,11 @@
 # =============================================================================
 # Dashboard: Venta Integral - Unidades   (PBI: "Participaciones Unidades")
 # Medida principal: unidades.
-# Layout fiel a "Unidades.png": arriba tarjeta KPI + grafico de Canal, luego
-# participacion por Formato (izq), grafico de Marca Propia + Departamento (%), Top
-# Marcas (Marca | Unidades 2025 | Unidades 2026), Top Categorias (participacion,
-# lo que el PBI llamaba Campana) y Top Productos.
+# Layout fiel a "Unidades.png": Formato (izq) | columna central = Canal apilado 100% +
+# Marca Propia + Departamento (%) | Top Marcas (Marca | Unidades 2025 | Unidades 2026)
+# a la derecha (misma altura que Formato). Debajo: Top 10 Categorias y Top Productos.
+# SIN tarjeta KPI (no estaba en el original). Los apilados al 100% (Canal, Marca Propia)
+# muestran el % dentro de la barra (show_value_labels).
 #
 # Reconciliacion marzo 2026: Unidades 22.78M (cap 22.43M). Formato: Farmacity
 # 86.8% / Simplicity 9.0% / Farmacity.com-ML 3.0% / The Food Market 0.9% /
@@ -52,45 +53,6 @@
     field: dim_categoria.categoria
 
   elements:
-  # ---------------- KPI Unidades (YoY) ----------------
-  # Tarjeta con la variacion % vs anio anterior (marzo 2026 vs 2025), igual que Home.
-  - title: "Unidades (mar 26 vs 25)"
-    name: u_kpi_unidades
-    model: lakehouse
-    explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.unidades, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.unidades]
-    dynamic_fields:
-    - table_calculation: ukpi_unidades
-      label: "Unidades"
-      expression: "pivot_index(${fct_ventas.unidades}, 2)"
-      value_format_name: decimal_0
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: ukpi_unidades_ant
-      label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
-      value_format_name: percent_1
-      _kind_hint: measure
-      _type_hint: number
-    show_single_value_title: true
-    single_value_title: "Unidades (mar 26 vs 25)"
-    show_comparison: true
-    comparison_type: change
-    comparison_reverse_colors: false
-    show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 0
-    col: 0
-    width: 6
-    height: 5
-
   # ---------------- Canal (origen de venta) ----------------
   # Barra horizontal apilada al 100% (segmentos = canales) desde dim_origenventa.
   # Filtra canales con <1% de unidades (1% de ~22.78M ~= 227.000) por la medida base
@@ -110,7 +72,7 @@
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
-    width: 18
+    width: 10
     height: 5
 
   # ---------------- Formato (participacion) ----------------
@@ -123,10 +85,10 @@
     sorts: [fct_ventas.unidades desc]
     series_cell_visualizations: { fct_ventas.unidades: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 5
+    row: 0
     col: 0
     width: 6
-    height: 9
+    height: 13
 
   # ---------------- Marca Propia vs Resto ----------------
   # Marca Propia = sector "Marca Propia" (id_sector 3 en dim_articulo). Por unidades.
@@ -158,7 +120,7 @@
     row: 8
     col: 6
     width: 10
-    height: 6
+    height: 5
 
   # ---------------- Top Marcas (Unidades + variacion interanual) ----------------
   - title: "Top Marcas - Unidades (vs Año Ant)"
@@ -178,10 +140,10 @@
     # Sin columna "Unidades Año Ant" (se quito el table calc de variacion %).
     # El pivote por anio deja Marca | Unidades 2025 | Unidades 2026.
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 5
+    row: 0
     col: 16
     width: 8
-    height: 18
+    height: 13
 
   # ---------------- Top 10 Categorias ----------------
   # Categoria de Articulo (lo que el PBI llamaba "Campana"). Top 10 por unidades.
@@ -194,7 +156,7 @@
     sorts: [fct_ventas.unidades desc]
     limit: 10
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 14
+    row: 13
     col: 0
     width: 8
     height: 9
@@ -210,7 +172,7 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.unidades: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 14
+    row: 13
     col: 8
     width: 8
     height: 9
@@ -219,8 +181,8 @@
   - name: u_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
-    body_text: "Negocio (Salud/Belleza/Alimentacion): no hay columna en BigQuery; requiere mapeo de departamentos definido por el negocio. Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Verificado contra BigQuery."
-    row: 23
+    body_text: "Pendiente: Negocio (Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
+    row: 22
     col: 0
     width: 16
     height: 2
