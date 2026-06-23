@@ -1,10 +1,11 @@
 # =============================================================================
 # Dashboard: Venta Integral - Tickets   (PBI: "Participaciones Tickets")
 # Medida principal: tickets (resta stock).
-# Layout fiel a "Tickets.png": Formato (izq) | Canal apilado 100% arriba + Departamento
-# (%) debajo, al centro | Top Marcas (Marca | Tickets Resta Stock | Tickets vs Año Ant)
-# a la derecha. Debajo: Top 10 Categorias, Top Productos, Marca Propia. SIN tarjeta KPI
-# (no estaba en el original).
+# Layout fiel a "Tickets.png": Formato (izq) | columna central = Canal apilado 100% +
+# Marca Propia + Departamento (%) | Top Marcas (Marca | Tickets Resta Stock | Tickets vs
+# Año Ant) a la derecha (misma altura que Formato). Debajo: Top 10 Categorias, Top
+# Productos, nota Negocio. SIN tarjeta KPI (no estaba en el original). Los apilados al
+# 100% (Canal, Marca Propia) muestran el % dentro de la barra (show_value_labels).
 #
 # REPRODUCIBLE (verificado en BigQuery):
 #  - Canal: bss_comercial.dim_origenventa (join por id_origenventa) -> grafico.
@@ -84,6 +85,9 @@
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.tickets desc]
     stacking: percent
+    # Muestra el % dentro de cada segmento (con stacking percent los value labels
+    # se renderizan como porcentaje), igual que el visual original del Power BI.
+    show_value_labels: true
     # Oculta los canales con menos de ~1% de los tickets. Looker NO permite filtrar
     # sobre un percent_of_total, asi que se filtra por el conteo base (HAVING):
     # ~1% de ~5.7M tickets de marzo ~= 57.000. Ajustar el umbral si cambia el periodo.
@@ -104,10 +108,10 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.pct_tickets_total desc]
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 5
+    row: 8
     col: 6
     width: 10
-    height: 8
+    height: 5
 
   # ---------------- Top Marcas (Tickets + variacion interanual) ----------------
   # Solo 3 columnas: Marca | Tickets Resta Stock | Tickets vs Año Ant.
@@ -145,7 +149,7 @@
     row: 0
     col: 16
     width: 8
-    height: 18
+    height: 13
 
   # ---------------- Top 10 Categorias ----------------
   # El visual que el PBI llamaba "Campana" es Categoria de Articulo (dim_categoria,
@@ -195,28 +199,29 @@
     pivots: [dim_articulo.marca_propia]
     sorts: [fct_ventas.unidades desc]
     stacking: percent
+    show_value_labels: true
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 18
-    col: 16
-    width: 8
-    height: 6
+    row: 5
+    col: 6
+    width: 10
+    height: 3
 
   # ---------------- Negocio (Salud/Belleza/Alimentacion) - pendiente de mapeo ----------------
   - name: t_negocio
     type: text
     title_text: "Negocio (Salud / Belleza / Alimentacion): pendiente de definicion"
     body_text: "No hay una columna de Negocio en BigQuery. Lo mas parecido es Sector (Farmacia, Masivos, Marca Propia, Suministros, em-commerce), que NO es Salud/Belleza/Alimentacion. Para armar este grafico hace falta que el negocio defina como se agrupan los departamentos (COSMETICA Y FRAGANCIAS, MEDICAMENTOS, ALIMENTOS Y BEBIDAS, HIGIENE Y CUIDADO PERSONAL, OTC FARMA/NO FARMA...) en Salud/Belleza/Alimentacion."
-    row: 22
-    col: 0
+    row: 13
+    col: 16
     width: 8
-    height: 6
+    height: 9
 
   # ---------------- Nota de visuales omitidas ----------------
   - name: t_gaps
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
     body_text: "Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Pendiente: Negocio (Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
-    row: 28
+    row: 22
     col: 0
     width: 16
     height: 2
