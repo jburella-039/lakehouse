@@ -1,10 +1,10 @@
 # =============================================================================
 # Dashboard: Venta Integral - Tickets   (PBI: "Participaciones Tickets")
 # Medida principal: tickets (resta stock).
-# Layout fiel a "Tickets.png": arriba tarjeta KPI Tickets (YoY) + grafico de Canal
-# (dim_origenventa), luego participacion por Formato (izq), Departamento (%), Top
-# Marcas (Marca | Tickets Resta Stock | Tickets vs Año Ant), nota de Campana (slot
-# pendiente) y Top Productos.
+# Layout fiel a "Tickets.png": Formato (izq) | Canal apilado 100% arriba + Departamento
+# (%) debajo, al centro | Top Marcas (Marca | Tickets Resta Stock | Tickets vs Año Ant)
+# a la derecha. Debajo: Top 10 Categorias, Top Productos, Marca Propia. SIN tarjeta KPI
+# (no estaba en el original).
 #
 # REPRODUCIBLE (verificado en BigQuery):
 #  - Canal: bss_comercial.dim_origenventa (join por id_origenventa) -> grafico.
@@ -53,44 +53,21 @@
     field: dim_categoria.categoria
 
   elements:
-  # ---------------- KPI Tickets (YoY) ----------------
-  # Tarjeta con la variacion % vs anio anterior (marzo 2026 vs 2025), igual que Home.
-  - title: "Tickets (mar 26 vs 25)"
-    name: t_kpi_tickets
+  # ---------------- Formato (participacion, columna izquierda) ----------------
+  # Va arriba a la izquierda cubriendo la columna, como en el original.
+  - title: "Tickets por Formato"
+    name: t_formato
     model: lakehouse
     explore: fct_ventas
-    type: single_value
-    fields: [fct_ventas.tickets, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.tickets]
-    dynamic_fields:
-    - table_calculation: tkpi_tickets
-      label: "Tickets"
-      expression: "pivot_index(${fct_ventas.tickets}, 2)"
-      value_format_name: decimal_0
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: tkpi_tickets_ant
-      label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
-      value_format_name: percent_1
-      _kind_hint: measure
-      _type_hint: number
-    show_single_value_title: true
-    single_value_title: "Tickets (mar 26 vs 25)"
-    show_comparison: true
-    comparison_type: change
-    comparison_reverse_colors: false
-    show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
+    type: looker_grid
+    fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
+    sorts: [fct_ventas.tickets desc]
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
+    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 0
     width: 6
-    height: 5
+    height: 13
 
   # ---------------- Canal (origen de venta) ----------------
   # Tickets por Canal desde dim_origenventa (dsc_origenventa). Nombres tal cual la
@@ -115,23 +92,8 @@
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
     row: 0
     col: 6
-    width: 18
+    width: 10
     height: 5
-
-  # ---------------- Formato (participacion) ----------------
-  - title: "Tickets por Formato"
-    name: t_formato
-    model: lakehouse
-    explore: fct_ventas
-    type: looker_grid
-    fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
-    sorts: [fct_ventas.tickets desc]
-    series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 5
-    col: 0
-    width: 6
-    height: 9
 
   # ---------------- Departamento (%) ----------------
   - title: "Participacion por Departamento"
@@ -145,7 +107,7 @@
     row: 5
     col: 6
     width: 10
-    height: 9
+    height: 8
 
   # ---------------- Top Marcas (Tickets + variacion interanual) ----------------
   # Solo 3 columnas: Marca | Tickets Resta Stock | Tickets vs Año Ant.
@@ -180,7 +142,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 5
+    row: 0
     col: 16
     width: 8
     height: 18
@@ -199,7 +161,7 @@
     sorts: [fct_ventas.tickets desc]
     limit: 10
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 14
+    row: 13
     col: 0
     width: 8
     height: 9
@@ -215,7 +177,7 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 14
+    row: 13
     col: 8
     width: 8
     height: 9
@@ -234,8 +196,8 @@
     sorts: [fct_ventas.unidades desc]
     stacking: percent
     listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria }
-    row: 23
-    col: 0
+    row: 18
+    col: 16
     width: 8
     height: 6
 
@@ -244,8 +206,8 @@
     type: text
     title_text: "Negocio (Salud / Belleza / Alimentacion): pendiente de definicion"
     body_text: "No hay una columna de Negocio en BigQuery. Lo mas parecido es Sector (Farmacia, Masivos, Marca Propia, Suministros, em-commerce), que NO es Salud/Belleza/Alimentacion. Para armar este grafico hace falta que el negocio defina como se agrupan los departamentos (COSMETICA Y FRAGANCIAS, MEDICAMENTOS, ALIMENTOS Y BEBIDAS, HIGIENE Y CUIDADO PERSONAL, OTC FARMA/NO FARMA...) en Salud/Belleza/Alimentacion."
-    row: 23
-    col: 8
+    row: 22
+    col: 0
     width: 8
     height: 6
 
@@ -254,7 +216,7 @@
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
     body_text: "Canal, Marca Propia y Categoria (lo que el PBI llamaba Campana) ya son graficos. Pendiente: Negocio (Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
-    row: 29
+    row: 28
     col: 0
     width: 16
     height: 2
