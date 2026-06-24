@@ -86,6 +86,14 @@ view: fct_remitos {
     label: "Fecha"
   }
 
+  # Año como STRING para el filtro selector (dropdown). Ver nota en fct_ventas.
+  dimension: anio_sel {
+    type: string
+    sql: CAST(${dia_year} AS STRING) ;;
+    label: "Año"
+    suggestions: ["2026", "2025", "2024"]
+  }
+
   # ---------------------------------------------------------------------------
   # MEASURES - base
   # ---------------------------------------------------------------------------
