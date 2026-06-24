@@ -98,6 +98,16 @@ view: fct_ventas {
     label: "Fecha"
   }
 
+  # Año como STRING para el filtro selector (dropdown). Un field_filter sobre el
+  # year numerico (dia_year) renderiza un input numerico sin lista; este campo de
+  # texto con suggestions fijas muestra el desplegable con los años.
+  dimension: anio_sel {
+    type: string
+    sql: CAST(${dia_year} AS STRING) ;;
+    label: "Año"
+    suggestions: ["2026", "2025", "2024"]
+  }
+
   dimension: num_hora { type: number sql: ${TABLE}.num_hora ;; label: "Hora del Dia" }
 
   # ---------------------------------------------------------------------------
