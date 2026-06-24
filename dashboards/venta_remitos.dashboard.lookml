@@ -35,8 +35,11 @@
     model: lakehouse
     explore: fct_remitos
     field: fct_remitos.dia_year
-    allow_multiple_values: true
+    allow_multiple_values: false
     required: false
+    ui_config:
+      type: dropdown_menu
+      display: inline
   - name: formato
     title: "Formato"
     type: field_filter
