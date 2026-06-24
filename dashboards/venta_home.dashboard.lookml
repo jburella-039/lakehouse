@@ -110,7 +110,7 @@
     - table_calculation: kpi_ventas
       label: "Ventas"
       expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
-      value_format_name: usd_0
+      value_format: '$#,##0.0,,,"B"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_ventas_ant
@@ -120,7 +120,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Ventas (mar 2026 vs 2025)"
+    single_value_title: "Ventas"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -146,7 +146,7 @@
     - table_calculation: kpi_tickets
       label: "Tickets"
       expression: "pivot_index(${fct_ventas.tickets}, 2)"
-      value_format_name: decimal_0
+      value_format: '#,##0.0,,"M"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tickets_ant
@@ -156,7 +156,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Tickets (mar 2026 vs 2025)"
+    single_value_title: "Tickets"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -182,7 +182,7 @@
     - table_calculation: kpi_unidades
       label: "Unidades"
       expression: "pivot_index(${fct_ventas.unidades}, 2)"
-      value_format_name: decimal_0
+      value_format: '#,##0.0,,"M"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_unidades_ant
@@ -192,7 +192,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Unidades (mar 2026 vs 2025)"
+    single_value_title: "Unidades"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -230,7 +230,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Ticket Prom (mar 26 vs 25)"
+    single_value_title: "Ticket Promedio"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -266,7 +266,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Unid x Ticket (mar 26 vs 25)"
+    single_value_title: "Unidades por Ticket"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -302,7 +302,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Margen % (mar 26 vs 25)"
+    single_value_title: "Margen %"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -328,7 +328,7 @@
     - table_calculation: kpi_margen
       label: "Margen $"
       expression: "pivot_index(${fct_ventas.margen_pesos}, 2)"
-      value_format_name: usd_0
+      value_format: '$#,##0.0,,,"B"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margen_ant
@@ -338,7 +338,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Margen $ (mar 26 vs 25)"
+    single_value_title: "Margen $"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -364,7 +364,7 @@
     - table_calculation: kpi_remitos
       label: "Remitos"
       expression: "pivot_index(${fct_remitos.remitos}, 2)"
-      value_format_name: decimal_0
+      value_format: '#,##0.0,,"M"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_remitos_ant
@@ -374,7 +374,7 @@
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
-    single_value_title: "Remitos (mar 26 vs 25)"
+    single_value_title: "Remitos"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
@@ -489,12 +489,72 @@
     width: 24
     height: 10
 
+  # ---------------- Tabla por Tienda (sucursal) con variacion interanual ----------------
+  # Igual que la tabla por Formato pero abierta por Tienda (dim_sucursal.sucursal).
+  # Mismo esquema YoY 2026 vs 2025 (pivot_index). Limitada a las 50 tiendas con mas
+  # venta para mantenerla legible; quitar el limit para ver todas.
+  - title: "Resumen por Tienda (2026 vs Año Anterior)"
+    name: h_tienda
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_grid
+    fields: [dim_sucursal.sucursal, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
+    pivots: [fct_ventas.dia_year]
+    filters:
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
+      fct_ventas.dia_month: "2025-03, 2026-03"
+    sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
+    limit: 50
+    hidden_fields: [fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
+    dynamic_fields:
+    - table_calculation: tnd_ventas_cur
+      label: "Ventas"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tnd_ventas_anio_ant
+      label: "Ventas Año Ant"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tnd_tickets_cur
+      label: "Tickets"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tnd_tickets_anio_ant
+      label: "Tickets Año Ant"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tnd_unidades_cur
+      label: "Unidades"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: tnd_unidades_anio_ant
+      label: "Unidades Año Ant"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    row: 26
+    col: 0
+    width: 24
+    height: 10
+
   # ---------------- Nota de GAPs ----------------
   - name: h_gaps
     type: text
     title_text: "Pendientes (no migrados de BigQuery)"
     body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). KPIs con YoY anclados a marzo (no siguen el filtro Fecha); para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA en BigQuery. Las evoluciones por dia (lineas) si siguen el filtro Fecha."
-    row: 26
+    row: 36
     col: 0
     width: 24
     height: 2
