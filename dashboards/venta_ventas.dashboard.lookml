@@ -34,6 +34,14 @@
     field: fct_ventas.dia_date
     allow_multiple_values: true
     required: false
+  - name: anio
+    title: "Año"
+    type: field_filter
+    model: lakehouse
+    explore: fct_ventas
+    field: fct_ventas.dia_year
+    allow_multiple_values: true
+    required: false
   - name: formato
     title: "Formato"
     type: field_filter
@@ -92,7 +100,7 @@
     show_value_labels: true
     filters:
       fct_ventas.venta_neta: ">=1920000000"
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 6
     width: 10
@@ -111,7 +119,7 @@
     sorts: [fct_ventas.venta_neta desc]
     stacking: percent
     show_value_labels: true
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 6
     width: 10
@@ -126,7 +134,7 @@
     fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
     width: 6
@@ -140,7 +148,7 @@
     type: looker_column
     fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.pct_venta_total desc]
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 8
     col: 6
     width: 10
@@ -156,7 +164,7 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 16
     width: 8
@@ -172,7 +180,7 @@
     fields: [dim_categoria.categoria, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
     limit: 10
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
     width: 8
@@ -188,7 +196,7 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
-    listen: { fecha: fct_ventas.dia_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.dia_year, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 8
     width: 8
