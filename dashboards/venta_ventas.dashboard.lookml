@@ -88,6 +88,15 @@
   # que es un subconjunto curado, no un departamento).
 
   elements:
+  # ---------------- Barra de navegacion (botones a las demas paginas) ----------------
+  - name: nav
+    type: text
+    body_text: "<a href='/dashboards/lakehouse::venta_home' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Home</a><a href='/dashboards/lakehouse::venta_tickets' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Tickets</a><a href='/dashboards/lakehouse::venta_unidades' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Unidades</a><a href='/dashboards/lakehouse::venta_ventas' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:700;text-decoration:none;background:#000000;color:#ffffff;'>Ventas en $</a><a href='/dashboards/lakehouse::venta_remitos' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Remitos</a>"
+    row: 0
+    col: 0
+    width: 24
+    height: 2
+
   # ---------------- Canal (origen de venta) ----------------
   # Barra horizontal apilada al 100% (segmentos = canales) desde dim_origenventa.
   # Filtra canales con <1% de venta (1% de ~192B ~= 1.92B) por la medida base.
@@ -104,7 +113,7 @@
     filters:
       fct_ventas.venta_neta: ">=1920000000"
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
+    row: 2
     col: 6
     width: 10
     height: 5
@@ -123,7 +132,7 @@
     stacking: percent
     show_value_labels: true
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
+    row: 7
     col: 6
     width: 10
     height: 3
@@ -138,7 +147,7 @@
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
+    row: 2
     col: 0
     width: 6
     height: 13
@@ -152,7 +161,7 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.pct_venta_total desc]
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 8
+    row: 10
     col: 6
     width: 10
     height: 5
@@ -168,7 +177,7 @@
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
+    row: 2
     col: 16
     width: 8
     height: 13
@@ -184,7 +193,7 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 10
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
+    row: 15
     col: 0
     width: 8
     height: 9
@@ -200,7 +209,7 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: true } }
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
+    row: 15
     col: 8
     width: 8
     height: 9
@@ -210,7 +219,7 @@
     type: text
     title_text: "Visuales no reproducibles (pendientes de ETL)"
     body_text: "Pendiente: Negocio (treemap Salud/Belleza/Alimentacion), que necesita un mapeo de departamentos definido por el negocio. Verificado contra BigQuery."
-    row: 22
+    row: 24
     col: 0
     width: 16
     height: 2

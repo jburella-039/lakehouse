@@ -100,6 +100,15 @@
   # NO escucha el filtro Canal (si lo hiciera, daria error de campo inexistente).
 
   elements:
+  # ---------------- Barra de navegacion (botones a las demas paginas) ----------------
+  - name: nav
+    type: text
+    body_text: "<a href='/dashboards/lakehouse::venta_home' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:700;text-decoration:none;background:#000000;color:#ffffff;'>Home</a><a href='/dashboards/lakehouse::venta_tickets' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Tickets</a><a href='/dashboards/lakehouse::venta_unidades' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Unidades</a><a href='/dashboards/lakehouse::venta_ventas' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Ventas en $</a><a href='/dashboards/lakehouse::venta_remitos' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Remitos</a>"
+    row: 0
+    col: 0
+    width: 24
+    height: 2
+
   # ---------------- KPIs fila 1: Ventas / Tickets / Unidades (con YoY) ----------------
   # Cada KPI muestra el valor de marzo 2026 y la comparacion % vs marzo 2025
   # (comparison_type: change). Pivote por anio + pivot_index para tener valor actual
@@ -137,7 +146,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
+    row: 2
     col: 0
     width: 8
     height: 5
@@ -173,7 +182,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
+    row: 2
     col: 8
     width: 8
     height: 5
@@ -209,7 +218,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
+    row: 2
     col: 16
     width: 8
     height: 5
@@ -247,7 +256,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 11
+    row: 13
     col: 0
     width: 5
     height: 5
@@ -283,7 +292,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 11
+    row: 13
     col: 5
     width: 5
     height: 5
@@ -319,7 +328,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 11
+    row: 13
     col: 10
     width: 5
     height: 5
@@ -355,7 +364,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 11
+    row: 13
     col: 15
     width: 5
     height: 5
@@ -391,7 +400,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
-    row: 11
+    row: 13
     col: 20
     width: 4
     height: 5
@@ -408,7 +417,7 @@
     fields: [fct_ventas.dia_date, fct_ventas.venta_neta]
     sorts: [fct_ventas.dia_date]
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
+    row: 7
     col: 0
     width: 8
     height: 6
@@ -420,7 +429,7 @@
     fields: [fct_ventas.dia_date, fct_ventas.tickets]
     sorts: [fct_ventas.dia_date]
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
+    row: 7
     col: 8
     width: 8
     height: 6
@@ -432,7 +441,7 @@
     fields: [fct_ventas.dia_date, fct_ventas.unidades]
     sorts: [fct_ventas.dia_date]
     listen: { fecha: fct_ventas.dia_date, anio: fct_ventas.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
+    row: 7
     col: 16
     width: 8
     height: 6
@@ -495,7 +504,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 16
+    row: 18
     col: 0
     width: 24
     height: 10
@@ -555,7 +564,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 26
+    row: 28
     col: 0
     width: 24
     height: 10
@@ -565,7 +574,7 @@
     type: text
     title_text: "Pendientes (no migrados de BigQuery)"
     body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). KPIs con YoY anclados a marzo (no siguen el filtro Fecha); para KPIs dinamicos por periodo libre + YoY hay que precalcular MMAA en BigQuery. Las evoluciones por dia (lineas) si siguen el filtro Fecha."
-    row: 36
+    row: 38
     col: 0
     width: 24
     height: 2

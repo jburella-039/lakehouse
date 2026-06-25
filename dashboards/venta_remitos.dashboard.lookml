@@ -60,6 +60,15 @@
     field: dim_obrasocial.obrasocial
 
   elements:
+  # ---------------- Barra de navegacion (botones a las demas paginas) ----------------
+  - name: nav
+    type: text
+    body_text: "<a href='/dashboards/lakehouse::venta_home' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Home</a><a href='/dashboards/lakehouse::venta_tickets' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Tickets</a><a href='/dashboards/lakehouse::venta_unidades' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Unidades</a><a href='/dashboards/lakehouse::venta_ventas' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:600;text-decoration:none;background:#eeeeee;color:#222222;'>Ventas en $</a><a href='/dashboards/lakehouse::venta_remitos' style='display:inline-block;padding:7px 14px;margin-right:6px;border-radius:6px;font-weight:700;text-decoration:none;background:#000000;color:#ffffff;'>Remitos</a>"
+    row: 0
+    col: 0
+    width: 24
+    height: 2
+
   # ---------------- KPIs fila 1 (con YoY) ----------------
   # Cada tarjeta muestra marzo 2026 y la comparacion % vs marzo 2025
   # (comparison_type: change). Pivote por anio + pivot_index (index 2 = 2026,
@@ -97,7 +106,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 0
+    row: 2
     col: 0
     width: 8
     height: 5
@@ -133,7 +142,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 0
+    row: 2
     col: 8
     width: 8
     height: 5
@@ -169,7 +178,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 0
+    row: 2
     col: 16
     width: 8
     height: 5
@@ -207,7 +216,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 7
     col: 0
     width: 6
     height: 5
@@ -243,7 +252,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 7
     col: 6
     width: 6
     height: 5
@@ -279,7 +288,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 7
     col: 12
     width: 6
     height: 5
@@ -315,7 +324,7 @@
     comparison_reverse_colors: false
     show_comparison_label: false
     listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 7
     col: 18
     width: 6
     height: 5
@@ -329,7 +338,7 @@
     fields: [fct_remitos.dia_date, fct_remitos.venta_remito]
     sorts: [fct_remitos.dia_date]
     listen: { fecha: fct_remitos.dia_date, anio: fct_remitos.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 10
+    row: 12
     col: 0
     width: 24
     height: 8
@@ -342,7 +351,7 @@
     fields: [fct_remitos.dia_date, fct_remitos.remitos]
     sorts: [fct_remitos.dia_date]
     listen: { fecha: fct_remitos.dia_date, anio: fct_remitos.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 18
+    row: 20
     col: 0
     width: 12
     height: 7
@@ -354,7 +363,7 @@
     fields: [fct_remitos.dia_date, fct_remitos.unidades_remito]
     sorts: [fct_remitos.dia_date]
     listen: { fecha: fct_remitos.dia_date, anio: fct_remitos.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 18
+    row: 20
     col: 12
     width: 12
     height: 7
@@ -369,7 +378,7 @@
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
     listen: { fecha: fct_remitos.dia_date, anio: fct_remitos.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 25
+    row: 27
     col: 0
     width: 24
     height: 9
@@ -385,7 +394,7 @@
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
     listen: { fecha: fct_remitos.dia_date, anio: fct_remitos.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 34
+    row: 36
     col: 0
     width: 24
     height: 9
