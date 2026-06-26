@@ -217,68 +217,75 @@ view: fct_ventas {
     label: "Fecha (periodo KPI)"
   }
 
+  # Patron documentado por Looker (timeframe vs timeframe analysis): el {% condition %}
+  # va en una dimension yesno y las medidas se filtran por ella. (Ponerlo dentro del
+  # sql de la medida daba Query error en BigQuery.) en_periodo = la fila cae en el rango
+  # Fecha; en_periodo_aa = el dia + 1 año cae en el rango -> mismo periodo año anterior.
+  dimension: en_periodo {
+    hidden: yes
+    type: yesno
+    sql: {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %} ;;
+  }
+  dimension: en_periodo_aa {
+    hidden: yes
+    type: yesno
+    sql: {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %} ;;
+  }
+
   measure: venta_periodo {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
-              THEN ${TABLE}.mto_totalsinivaantesdescuento END ;;
+    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format_name: usd_0
     label: "Venta $ (periodo)"
   }
   measure: venta_periodo_aa {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${TABLE}.mto_totalsinivaantesdescuento END ;;
+    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Venta $ (periodo año ant.)"
   }
 
   measure: tickets_periodo {
     type: count_distinct
-    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
-              THEN ${ticket_key} END ;;
+    sql: ${ticket_key} ;;
+    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     label: "Tickets (periodo)"
   }
   measure: tickets_periodo_aa {
     type: count_distinct
-    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${ticket_key} END ;;
+    sql: ${ticket_key} ;;
+    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     label: "Tickets (periodo año ant.)"
   }
 
   measure: unidades_periodo {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
-              THEN ${TABLE}.cnt_cantidad END ;;
+    sql: ${TABLE}.cnt_cantidad ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format_name: decimal_0
     label: "Unidades (periodo)"
   }
   measure: unidades_periodo_aa {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${TABLE}.cnt_cantidad END ;;
+    sql: ${TABLE}.cnt_cantidad ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Unidades (periodo año ant.)"
   }
 
   measure: costo_periodo {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
-              THEN ${TABLE}.mto_costo END ;;
+    sql: ${TABLE}.mto_costo ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format_name: usd_0
     label: "Costo $ (periodo)"
   }
   measure: costo_periodo_aa {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${TABLE}.mto_costo END ;;
+    sql: ${TABLE}.mto_costo ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Costo $ (periodo año ant.)"
   }

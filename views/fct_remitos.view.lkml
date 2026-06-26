@@ -193,70 +193,75 @@ view: fct_remitos {
     label: "Fecha (periodo KPI)"
   }
 
+  # Patron documentado por Looker (timeframe vs timeframe): {% condition %} en una
+  # dimension yesno y las medidas se filtran por ella (no dentro del sql de la medida).
+  dimension: en_periodo {
+    hidden: yes
+    type: yesno
+    sql: {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %} ;;
+  }
+  dimension: en_periodo_aa {
+    hidden: yes
+    type: yesno
+    sql: {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %} ;;
+  }
+
   measure: venta_periodo {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
-              THEN ${TABLE}.FC_TKF_MONTOTOTAL END ;;
+    sql: ${TABLE}.FC_TKF_MONTOTOTAL ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
     value_format_name: usd_0
     label: "Venta Remitos $ (periodo)"
   }
   measure: venta_periodo_aa {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${TABLE}.FC_TKF_MONTOTOTAL END ;;
+    sql: ${TABLE}.FC_TKF_MONTOTOTAL ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Venta Remitos $ (periodo año ant.)"
   }
 
   measure: remitos_periodo {
     type: count_distinct
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
-              THEN ${remito_key} END ;;
+    sql: ${remito_key} ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
     value_format_name: decimal_0
     label: "Remitos (periodo)"
   }
   measure: remitos_periodo_aa {
     type: count_distinct
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${remito_key} END ;;
+    sql: ${remito_key} ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Remitos (periodo año ant.)"
   }
 
   measure: unidades_periodo {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
-              THEN ${TABLE}.FC_TKF_CANTIDAD END ;;
+    sql: ${TABLE}.FC_TKF_CANTIDAD ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
     value_format_name: decimal_0
     label: "Unidades Remitos (periodo)"
   }
   measure: unidades_periodo_aa {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${TABLE}.FC_TKF_CANTIDAD END ;;
+    sql: ${TABLE}.FC_TKF_CANTIDAD ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Unidades Remitos (periodo año ant.)"
   }
 
   measure: costo_periodo {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
-              THEN ${TABLE}.FC_TKF_COSTOFARMACIA END ;;
+    sql: ${TABLE}.FC_TKF_COSTOFARMACIA ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
     value_format_name: usd_0
     label: "Costo Farmacia $ (periodo)"
   }
   measure: costo_periodo_aa {
     type: sum
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
-    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
-              THEN ${TABLE}.FC_TKF_COSTOFARMACIA END ;;
+    sql: ${TABLE}.FC_TKF_COSTOFARMACIA ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Costo Farmacia $ (periodo año ant.)"
   }
