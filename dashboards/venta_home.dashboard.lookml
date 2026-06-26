@@ -45,17 +45,6 @@
     field: dim_fecha.fecha_date
     allow_multiple_values: true
     required: false
-  - name: anio
-    title: "Año"
-    type: field_filter
-    model: lakehouse
-    explore: fct_ventas
-    field: dim_fecha.anio_sel
-    allow_multiple_values: false
-    required: false
-    ui_config:
-      type: dropdown_menu
-      display: inline
   - name: formato
     title: "Formato"
     type: field_filter
@@ -296,7 +285,7 @@
     type: looker_line
     fields: [dim_fecha.fecha_date, fct_ventas.venta_neta]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 7
     col: 0
     width: 8
@@ -308,7 +297,7 @@
     type: looker_line
     fields: [dim_fecha.fecha_date, fct_ventas.tickets]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 7
     col: 8
     width: 8
@@ -320,7 +309,7 @@
     type: looker_line
     fields: [dim_fecha.fecha_date, fct_ventas.unidades]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 7
     col: 16
     width: 8

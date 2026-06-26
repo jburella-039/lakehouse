@@ -29,17 +29,6 @@
     field: dim_fecha.fecha_date
     allow_multiple_values: true
     required: false
-  - name: anio
-    title: "Año"
-    type: field_filter
-    model: lakehouse
-    explore: fct_remitos
-    field: dim_fecha.anio_sel
-    allow_multiple_values: false
-    required: false
-    ui_config:
-      type: dropdown_menu
-      display: inline
   - name: formato
     title: "Formato"
     type: field_filter
@@ -232,7 +221,7 @@
     type: looker_area
     fields: [dim_fecha.fecha_date, fct_remitos.venta_remito]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 12
     col: 0
     width: 24
@@ -245,7 +234,7 @@
     type: looker_area
     fields: [dim_fecha.fecha_date, fct_remitos.remitos]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 20
     col: 0
     width: 12
@@ -257,7 +246,7 @@
     type: looker_area
     fields: [dim_fecha.fecha_date, fct_remitos.unidades_remito]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 20
     col: 12
     width: 12
@@ -272,7 +261,7 @@
     fields: [fct_remitos.tipo_dispensa, fct_remitos.venta_remito, fct_remitos.pct_venta_total, fct_remitos.remitos, fct_remitos.pct_remitos_total, fct_remitos.unidades_remito, fct_remitos.pct_unidades_total]
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 27
     col: 0
     width: 24
@@ -288,7 +277,7 @@
     sorts: [fct_remitos.venta_remito desc]
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
-    listen: { fecha: dim_fecha.fecha_date, anio: dim_fecha.anio_sel, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 36
     col: 0
     width: 24
