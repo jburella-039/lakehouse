@@ -74,9 +74,13 @@ explore: fct_ventas {
   description: "Ventas, tickets y unidades a nivel linea de comprobante."
   persist_with: venta_integral_datagroup
 
-  # Evita escaneos de 1.8B filas: siempre filtra por dia contable.
-  always_filter: {
-    filters: [fct_ventas.dia_date: "1 months"]
+  # Calendario: fuente unica de Fecha/Año de los dashboards (DATE puro, sin
+  # corrimiento por timezone). Join por la fecha contable del hecho. many_to_one
+  # al mismo grano (1 fila de calendario por fecha) -> no infla las medidas.
+  join: dim_fecha {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: DATE(${fct_ventas.dia_raw}) = ${dim_fecha.fec_fecha} ;;
   }
 
   # Tipo de comprobante: trae flags ESVENTA / RESTASTOCK (filtran las medidas).
@@ -154,8 +158,12 @@ explore: fct_remitos {
   description: "Remitos de farmacia (obra social / dispensa): venta, unidades, margen."
   persist_with: venta_integral_datagroup
 
-  always_filter: {
-    filters: [fct_remitos.dia_date: "1 months"]
+  # Calendario: misma fuente unica de Fecha/Año (ver fct_ventas). Join por el dia
+  # del remito (ID_TIE_DIA). many_to_one al mismo grano -> no infla las medidas.
+  join: dim_fecha {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: DATE(${fct_remitos.dia_raw}) = ${dim_fecha.fec_fecha} ;;
   }
 
   join: dim_tipocomprobante {
