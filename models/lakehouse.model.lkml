@@ -80,7 +80,7 @@ explore: fct_ventas {
   join: dim_fecha {
     type: left_outer
     relationship: many_to_one
-    sql_on: DATE(${fct_ventas.dia_raw}) = ${dim_fecha.fec_fecha} ;;
+    sql_on: DATE(${fct_ventas.dia_raw}) = ${dim_fecha.fecha_date} ;;
   }
 
   # Tipo de comprobante: trae flags ESVENTA / RESTASTOCK (filtran las medidas).
@@ -163,7 +163,7 @@ explore: fct_remitos {
   join: dim_fecha {
     type: left_outer
     relationship: many_to_one
-    sql_on: DATE(${fct_remitos.dia_raw}) = ${dim_fecha.fec_fecha} ;;
+    sql_on: DATE(${fct_remitos.dia_raw}) = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_tipocomprobante {
