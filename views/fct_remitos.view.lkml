@@ -182,4 +182,132 @@ view: fct_remitos {
     sql: ${unidades_remito} ;;
     label: "% Unidades Remitos (participacion)"
   }
+
+  # ---------------------------------------------------------------------------
+  # MEASURES dinamicas por periodo (KPIs que responden al filtro Fecha)
+  # Mismo patron que fct_ventas: filtro_fecha via listen; "_aa" aplica el rango
+  # sobre el dia + 1 año (DATE_ADD) para el mismo periodo del año anterior.
+  # ---------------------------------------------------------------------------
+  filter: filtro_fecha {
+    type: date
+    label: "Fecha (periodo KPI)"
+  }
+
+  measure: venta_periodo {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
+              THEN ${TABLE}.FC_TKF_MONTOTOTAL END ;;
+    value_format_name: usd_0
+    label: "Venta Remitos $ (periodo)"
+  }
+  measure: venta_periodo_aa {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${TABLE}.FC_TKF_MONTOTOTAL END ;;
+    value_format_name: usd_0
+    label: "Venta Remitos $ (periodo año ant.)"
+  }
+
+  measure: remitos_periodo {
+    type: count_distinct
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
+              THEN ${remito_key} END ;;
+    value_format_name: decimal_0
+    label: "Remitos (periodo)"
+  }
+  measure: remitos_periodo_aa {
+    type: count_distinct
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${remito_key} END ;;
+    value_format_name: decimal_0
+    label: "Remitos (periodo año ant.)"
+  }
+
+  measure: unidades_periodo {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
+              THEN ${TABLE}.FC_TKF_CANTIDAD END ;;
+    value_format_name: decimal_0
+    label: "Unidades Remitos (periodo)"
+  }
+  measure: unidades_periodo_aa {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${TABLE}.FC_TKF_CANTIDAD END ;;
+    value_format_name: decimal_0
+    label: "Unidades Remitos (periodo año ant.)"
+  }
+
+  measure: costo_periodo {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %}
+              THEN ${TABLE}.FC_TKF_COSTOFARMACIA END ;;
+    value_format_name: usd_0
+    label: "Costo Farmacia $ (periodo)"
+  }
+  measure: costo_periodo_aa {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${TABLE}.FC_TKF_COSTOFARMACIA END ;;
+    value_format_name: usd_0
+    label: "Costo Farmacia $ (periodo año ant.)"
+  }
+
+  # Derivadas del periodo (margen y ratios), actual y año anterior.
+  measure: margen_periodo {
+    type: number
+    sql: ${venta_periodo} - ${costo_periodo} ;;
+    value_format_name: usd_0
+    label: "Margen $ Remitos (periodo)"
+  }
+  measure: margen_periodo_aa {
+    type: number
+    sql: ${venta_periodo_aa} - ${costo_periodo_aa} ;;
+    value_format_name: usd_0
+    label: "Margen $ Remitos (periodo año ant.)"
+  }
+  measure: margen_pct_periodo {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo} - ${costo_periodo}, NULLIF(${venta_periodo},0)) ;;
+    value_format_name: percent_2
+    label: "Margen % Remitos (periodo)"
+  }
+  measure: margen_pct_periodo_aa {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo_aa} - ${costo_periodo_aa}, NULLIF(${venta_periodo_aa},0)) ;;
+    value_format_name: percent_2
+    label: "Margen % Remitos (periodo año ant.)"
+  }
+  measure: remito_promedio_periodo {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo}, NULLIF(${remitos_periodo},0)) ;;
+    value_format_name: usd_0
+    label: "Remito Promedio (periodo)"
+  }
+  measure: remito_promedio_periodo_aa {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo_aa}, NULLIF(${remitos_periodo_aa},0)) ;;
+    value_format_name: usd_0
+    label: "Remito Promedio (periodo año ant.)"
+  }
+  measure: unidades_por_remito_periodo {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_periodo}, NULLIF(${remitos_periodo},0)) ;;
+    value_format_name: decimal_2
+    label: "Unidades por Remito (periodo)"
+  }
+  measure: unidades_por_remito_periodo_aa {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_periodo_aa}, NULLIF(${remitos_periodo_aa},0)) ;;
+    value_format_name: decimal_2
+    label: "Unidades por Remito (periodo año ant.)"
+  }
 }

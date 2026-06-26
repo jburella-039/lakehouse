@@ -79,23 +79,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.venta_remito, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.venta_remito]
+    fields: [fct_remitos.venta_periodo, fct_remitos.venta_periodo_aa]
+    hidden_fields: [fct_remitos.venta_periodo, fct_remitos.venta_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_venta
       label: "Venta Remitos $"
-      expression: "pivot_index(${fct_remitos.venta_remito}, 2)"
+      expression: "${fct_remitos.venta_periodo}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_venta_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.venta_remito}, 2)/pivot_index(${fct_remitos.venta_remito}, 1)-1"
+      expression: "${fct_remitos.venta_periodo}/${fct_remitos.venta_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -105,7 +100,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 0
     width: 8
@@ -115,23 +110,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.remitos, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.remitos]
+    fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
+    hidden_fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_remitos
       label: "Remitos"
-      expression: "pivot_index(${fct_remitos.remitos}, 2)"
+      expression: "${fct_remitos.remitos_periodo}"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_remitos_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.remitos}, 2)/pivot_index(${fct_remitos.remitos}, 1)-1"
+      expression: "${fct_remitos.remitos_periodo}/${fct_remitos.remitos_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -141,7 +131,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 8
     width: 8
@@ -151,23 +141,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.unidades_remito, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.unidades_remito]
+    fields: [fct_remitos.unidades_periodo, fct_remitos.unidades_periodo_aa]
+    hidden_fields: [fct_remitos.unidades_periodo, fct_remitos.unidades_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_unidades
       label: "Unidades Remitos"
-      expression: "pivot_index(${fct_remitos.unidades_remito}, 2)"
+      expression: "${fct_remitos.unidades_periodo}"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_unidades_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.unidades_remito}, 2)/pivot_index(${fct_remitos.unidades_remito}, 1)-1"
+      expression: "${fct_remitos.unidades_periodo}/${fct_remitos.unidades_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -177,7 +162,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 16
     width: 8
@@ -189,23 +174,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.remito_promedio, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.remito_promedio]
+    fields: [fct_remitos.remito_promedio_periodo, fct_remitos.remito_promedio_periodo_aa]
+    hidden_fields: [fct_remitos.remito_promedio_periodo, fct_remitos.remito_promedio_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_promedio
       label: "Remito Promedio"
-      expression: "pivot_index(${fct_remitos.remito_promedio}, 2)"
+      expression: "${fct_remitos.remito_promedio_periodo}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_promedio_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.remito_promedio}, 2)/pivot_index(${fct_remitos.remito_promedio}, 1)-1"
+      expression: "${fct_remitos.remito_promedio_periodo}/${fct_remitos.remito_promedio_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -215,7 +195,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 0
     width: 6
@@ -225,23 +205,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.unidades_por_remito, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.unidades_por_remito]
+    fields: [fct_remitos.unidades_por_remito_periodo, fct_remitos.unidades_por_remito_periodo_aa]
+    hidden_fields: [fct_remitos.unidades_por_remito_periodo, fct_remitos.unidades_por_remito_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_uxr
       label: "Unidades por Remito"
-      expression: "pivot_index(${fct_remitos.unidades_por_remito}, 2)"
+      expression: "${fct_remitos.unidades_por_remito_periodo}"
       value_format_name: decimal_2
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_uxr_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.unidades_por_remito}, 2)/pivot_index(${fct_remitos.unidades_por_remito}, 1)-1"
+      expression: "${fct_remitos.unidades_por_remito_periodo}/${fct_remitos.unidades_por_remito_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -251,7 +226,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 6
     width: 6
@@ -261,23 +236,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.margen_pct, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.margen_pct]
+    fields: [fct_remitos.margen_pct_periodo, fct_remitos.margen_pct_periodo_aa]
+    hidden_fields: [fct_remitos.margen_pct_periodo, fct_remitos.margen_pct_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_margenpct
       label: "Margen %"
-      expression: "pivot_index(${fct_remitos.margen_pct}, 2)"
+      expression: "${fct_remitos.margen_pct_periodo}"
       value_format_name: percent_2
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_margenpct_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.margen_pct}, 2)/pivot_index(${fct_remitos.margen_pct}, 1)-1"
+      expression: "${fct_remitos.margen_pct_periodo}/${fct_remitos.margen_pct_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -287,7 +257,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 12
     width: 6
@@ -297,23 +267,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.margen_pesos, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.margen_pesos]
+    fields: [fct_remitos.margen_periodo, fct_remitos.margen_periodo_aa]
+    hidden_fields: [fct_remitos.margen_periodo, fct_remitos.margen_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_margen
       label: "Margen $"
-      expression: "pivot_index(${fct_remitos.margen_pesos}, 2)"
+      expression: "${fct_remitos.margen_periodo}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rkpi_margen_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.margen_pesos}, 2)/pivot_index(${fct_remitos.margen_pesos}, 1)-1"
+      expression: "${fct_remitos.margen_periodo}/${fct_remitos.margen_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -323,7 +288,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 18
     width: 6

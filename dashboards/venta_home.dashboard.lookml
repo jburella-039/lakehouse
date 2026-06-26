@@ -119,23 +119,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.venta_neta, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.venta_neta]
+    fields: [fct_ventas.venta_periodo, fct_ventas.venta_periodo_aa]
+    hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_ventas
       label: "Ventas"
-      expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
+      expression: "${fct_ventas.venta_periodo}"
       value_format: '$#,##0.0,,,"B"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_ventas_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
+      expression: "${fct_ventas.venta_periodo}/${fct_ventas.venta_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -145,7 +140,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 0
     width: 8
@@ -155,23 +150,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.tickets, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.tickets]
+    fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_periodo_aa]
+    hidden_fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_tickets
       label: "Tickets"
-      expression: "pivot_index(${fct_ventas.tickets}, 2)"
+      expression: "${fct_ventas.tickets_periodo}"
       value_format: '#,##0.0,,"M"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tickets_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
+      expression: "${fct_ventas.tickets_periodo}/${fct_ventas.tickets_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -181,7 +171,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 8
     width: 8
@@ -191,23 +181,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.unidades, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.unidades]
+    fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_periodo_aa]
+    hidden_fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_unidades
       label: "Unidades"
-      expression: "pivot_index(${fct_ventas.unidades}, 2)"
+      expression: "${fct_ventas.unidades_periodo}"
       value_format: '#,##0.0,,"M"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_unidades_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
+      expression: "${fct_ventas.unidades_periodo}/${fct_ventas.unidades_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -217,7 +202,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
     width: 8
@@ -229,23 +214,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.ticket_promedio, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.ticket_promedio]
+    fields: [fct_ventas.ticket_promedio_periodo, fct_ventas.ticket_promedio_periodo_aa]
+    hidden_fields: [fct_ventas.ticket_promedio_periodo, fct_ventas.ticket_promedio_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_tktprom
       label: "Ticket Promedio"
-      expression: "pivot_index(${fct_ventas.ticket_promedio}, 2)"
+      expression: "${fct_ventas.ticket_promedio_periodo}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_tktprom_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.ticket_promedio}, 2)/pivot_index(${fct_ventas.ticket_promedio}, 1)-1"
+      expression: "${fct_ventas.ticket_promedio_periodo}/${fct_ventas.ticket_promedio_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -255,7 +235,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
     width: 5
@@ -265,23 +245,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.unidades_por_ticket, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.unidades_por_ticket]
+    fields: [fct_ventas.unidades_por_ticket_periodo, fct_ventas.unidades_por_ticket_periodo_aa]
+    hidden_fields: [fct_ventas.unidades_por_ticket_periodo, fct_ventas.unidades_por_ticket_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_uxt
       label: "Unidades por Ticket"
-      expression: "pivot_index(${fct_ventas.unidades_por_ticket}, 2)"
+      expression: "${fct_ventas.unidades_por_ticket_periodo}"
       value_format_name: decimal_2
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_uxt_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.unidades_por_ticket}, 2)/pivot_index(${fct_ventas.unidades_por_ticket}, 1)-1"
+      expression: "${fct_ventas.unidades_por_ticket_periodo}/${fct_ventas.unidades_por_ticket_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -291,7 +266,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 5
     width: 5
@@ -301,23 +276,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.margen_pct, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.margen_pct]
+    fields: [fct_ventas.margen_pct_periodo, fct_ventas.margen_pct_periodo_aa]
+    hidden_fields: [fct_ventas.margen_pct_periodo, fct_ventas.margen_pct_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_margenpct
       label: "Margen %"
-      expression: "pivot_index(${fct_ventas.margen_pct}, 2)"
+      expression: "${fct_ventas.margen_pct_periodo}"
       value_format_name: percent_2
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margenpct_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.margen_pct}, 2)/pivot_index(${fct_ventas.margen_pct}, 1)-1"
+      expression: "${fct_ventas.margen_pct_periodo}/${fct_ventas.margen_pct_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -327,7 +297,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 10
     width: 5
@@ -337,23 +307,18 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.margen_pesos, fct_ventas.dia_year]
-    pivots: [fct_ventas.dia_year]
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year]
-    hidden_fields: [fct_ventas.margen_pesos]
+    fields: [fct_ventas.margen_periodo, fct_ventas.margen_periodo_aa]
+    hidden_fields: [fct_ventas.margen_periodo, fct_ventas.margen_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_margen
       label: "Margen $"
-      expression: "pivot_index(${fct_ventas.margen_pesos}, 2)"
+      expression: "${fct_ventas.margen_periodo}"
       value_format: '$#,##0.0,,,"B"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_margen_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_ventas.margen_pesos}, 2)/pivot_index(${fct_ventas.margen_pesos}, 1)-1"
+      expression: "${fct_ventas.margen_periodo}/${fct_ventas.margen_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -363,7 +328,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 15
     width: 5
@@ -373,23 +338,18 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.remitos, fct_remitos.dia_year]
-    pivots: [fct_remitos.dia_year]
-    filters:
-      fct_remitos.dia_date: "2025/03/01 to 2026/04/01"
-      fct_remitos.dia_month: "2025-03, 2026-03"
-    sorts: [fct_remitos.dia_year]
-    hidden_fields: [fct_remitos.remitos]
+    fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
+    hidden_fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
     dynamic_fields:
     - table_calculation: kpi_remitos
       label: "Remitos"
-      expression: "pivot_index(${fct_remitos.remitos}, 2)"
+      expression: "${fct_remitos.remitos_periodo}"
       value_format: '#,##0.0,,"M"'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: kpi_remitos_ant
       label: "vs Año Ant"
-      expression: "pivot_index(${fct_remitos.remitos}, 2)/pivot_index(${fct_remitos.remitos}, 1)-1"
+      expression: "${fct_remitos.remitos_periodo}/${fct_remitos.remitos_periodo_aa}-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
@@ -399,7 +359,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 20
     width: 4
@@ -503,7 +463,7 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 18
     col: 0
     width: 24
@@ -563,7 +523,7 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 28
     col: 0
     width: 24

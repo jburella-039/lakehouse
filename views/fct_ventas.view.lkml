@@ -202,6 +202,137 @@ view: fct_ventas {
     label: "% Unidades (participacion)"
   }
 
+  # ---------------------------------------------------------------------------
+  # MEASURES dinamicas por periodo (KPIs que responden al filtro Fecha)
+  # El filtro Fecha del dashboard se mapea (listen) a filtro_fecha en las
+  # tarjetas KPI. La version "_aa" aplica el MISMO rango pero sobre la fecha + 1
+  # año (DATE_ADD), por lo que devuelve el mismo periodo del año anterior:
+  # comparacion interanual dinamica (validada en BigQuery: marzo 26 vs 25 = +34.1%).
+  # Estas medidas NO usan el filtro Fecha como filtro normal de la query (la
+  # tarjeta escucha fecha -> filtro_fecha), porque la "_aa" necesita ver las
+  # filas del año anterior, que un filtro normal sobre la fecha excluiria.
+  # ---------------------------------------------------------------------------
+  filter: filtro_fecha {
+    type: date
+    label: "Fecha (periodo KPI)"
+  }
+
+  measure: venta_periodo {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
+              THEN ${TABLE}.mto_totalsinivaantesdescuento END ;;
+    value_format_name: usd_0
+    label: "Venta $ (periodo)"
+  }
+  measure: venta_periodo_aa {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${TABLE}.mto_totalsinivaantesdescuento END ;;
+    value_format_name: usd_0
+    label: "Venta $ (periodo año ant.)"
+  }
+
+  measure: tickets_periodo {
+    type: count_distinct
+    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
+              THEN ${ticket_key} END ;;
+    label: "Tickets (periodo)"
+  }
+  measure: tickets_periodo_aa {
+    type: count_distinct
+    filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${ticket_key} END ;;
+    label: "Tickets (periodo año ant.)"
+  }
+
+  measure: unidades_periodo {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
+              THEN ${TABLE}.cnt_cantidad END ;;
+    value_format_name: decimal_0
+    label: "Unidades (periodo)"
+  }
+  measure: unidades_periodo_aa {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${TABLE}.cnt_cantidad END ;;
+    value_format_name: decimal_0
+    label: "Unidades (periodo año ant.)"
+  }
+
+  measure: costo_periodo {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %}
+              THEN ${TABLE}.mto_costo END ;;
+    value_format_name: usd_0
+    label: "Costo $ (periodo)"
+  }
+  measure: costo_periodo_aa {
+    type: sum
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    sql: CASE WHEN {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %}
+              THEN ${TABLE}.mto_costo END ;;
+    value_format_name: usd_0
+    label: "Costo $ (periodo año ant.)"
+  }
+
+  # Derivadas del periodo (margen y ratios), actual y año anterior.
+  measure: margen_periodo {
+    type: number
+    sql: ${venta_periodo} - ${costo_periodo} ;;
+    value_format_name: usd_0
+    label: "Margen $ (periodo)"
+  }
+  measure: margen_periodo_aa {
+    type: number
+    sql: ${venta_periodo_aa} - ${costo_periodo_aa} ;;
+    value_format_name: usd_0
+    label: "Margen $ (periodo año ant.)"
+  }
+  measure: margen_pct_periodo {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo} - ${costo_periodo}, NULLIF(${venta_periodo},0)) ;;
+    value_format_name: percent_2
+    label: "Margen % (periodo)"
+  }
+  measure: margen_pct_periodo_aa {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo_aa} - ${costo_periodo_aa}, NULLIF(${venta_periodo_aa},0)) ;;
+    value_format_name: percent_2
+    label: "Margen % (periodo año ant.)"
+  }
+  measure: ticket_promedio_periodo {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo}, NULLIF(${tickets_periodo},0)) ;;
+    value_format_name: usd_0
+    label: "Ticket Promedio (periodo)"
+  }
+  measure: ticket_promedio_periodo_aa {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo_aa}, NULLIF(${tickets_periodo_aa},0)) ;;
+    value_format_name: usd_0
+    label: "Ticket Promedio (periodo año ant.)"
+  }
+  measure: unidades_por_ticket_periodo {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_periodo}, NULLIF(${tickets_periodo},0)) ;;
+    value_format_name: decimal_2
+    label: "Unidades por Ticket (periodo)"
+  }
+  measure: unidades_por_ticket_periodo_aa {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_periodo_aa}, NULLIF(${tickets_periodo_aa},0)) ;;
+    value_format_name: decimal_2
+    label: "Unidades por Ticket (periodo año ant.)"
+  }
+
   set: detalle {
     fields: [venta_date, id_sucursal, cd_nrocomprobante, cd_sku,
              id_categoria, id_marca, tipo_cobertura, unidades, venta_neta, margen_pesos]
