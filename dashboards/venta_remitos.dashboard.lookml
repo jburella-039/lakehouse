@@ -6,11 +6,10 @@
 # el cruce de margen; el nivel absoluto queda ~3% sobre la captura por estado de
 # slicers (igual que las otras 3 paginas).
 #
-# Interanual: las tarjetas KPI muestran la comparacion vs anio anterior
-# (comparison_type: change) via pivote por anio + pivot_index, con periodo FIJO
-# marzo 2026 vs 2025 (no siguen el filtro "Fecha"). Para KPIs dinamicos por
-# periodo libre + YoY haria falta precalcular MMAA en BigQuery. Falta validar el
-# render del single_value con comparacion en Looker.
+# Interanual: las tarjetas KPI muestran el % de variacion vs el mismo periodo del
+# año anterior (comparison_type: change), DINAMICO por el filtro "Fecha". El valor es
+# la medida _periodo (rango elegido) y la comparacion es vs _periodo_aa (mismo rango
+# sobre la fecha + 1 año). Escuchan fecha -> fct_remitos.filtro_fecha.
 # =============================================================================
 
 - dashboard: venta_remitos
@@ -58,28 +57,36 @@
     width: 24
     height: 2
 
-  # ---------------- KPIs fila 1 (con YoY) ----------------
-  # Cada tarjeta muestra marzo 2026 y la comparacion % vs marzo 2025
-  # (comparison_type: change). Pivote por anio + pivot_index (index 2 = 2026,
-  # index 1 = 2025). Periodo FIJO marzo (no escucha "fecha"); para periodo libre
-  # + YoY haria falta precalcular MMAA en BigQuery. Falta validar render en Looker.
+  # ---------------- KPIs fila 1 (con % YoY dinamico) ----------------
+  # value = medida _periodo (rango Fecha actual); comparacion = % vs _periodo_aa
+  # (mismo periodo año anterior, DATE_ADD +1 año). Escuchan fecha -> fct_remitos.filtro_fecha.
   - title: "Venta Remitos $"
     name: r_kpi_venta
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.venta_remito]
-    hidden_fields: [fct_remitos.venta_remito]
+    fields: [fct_remitos.venta_periodo, fct_remitos.venta_periodo_aa]
+    hidden_fields: [fct_remitos.venta_periodo, fct_remitos.venta_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_venta
       label: "Venta Remitos $"
-      expression: "${fct_remitos.venta_remito}"
+      expression: "${fct_remitos.venta_periodo}"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_venta_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.venta_periodo_aa}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Venta Remitos $"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 0
     width: 8
@@ -89,18 +96,28 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.remitos]
-    hidden_fields: [fct_remitos.remitos]
+    fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
+    hidden_fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_remitos
       label: "Remitos"
-      expression: "${fct_remitos.remitos}"
+      expression: "${fct_remitos.remitos_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_remitos_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.remitos_periodo_aa}"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Remitos"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 8
     width: 8
@@ -110,41 +127,61 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.unidades_remito]
-    hidden_fields: [fct_remitos.unidades_remito]
+    fields: [fct_remitos.unidades_periodo, fct_remitos.unidades_periodo_aa]
+    hidden_fields: [fct_remitos.unidades_periodo, fct_remitos.unidades_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_unidades
       label: "Unidades Remitos"
-      expression: "${fct_remitos.unidades_remito}"
+      expression: "${fct_remitos.unidades_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_unidades_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.unidades_periodo_aa}"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Unidades Remitos"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 16
     width: 8
     height: 5
 
-  # ---------------- KPIs fila 2 (con YoY) ----------------
+  # ---------------- KPIs fila 2 (con % YoY dinamico) ----------------
   - title: "Remito Promedio"
     name: r_kpi_promedio
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.remito_promedio]
-    hidden_fields: [fct_remitos.remito_promedio]
+    fields: [fct_remitos.remito_promedio_periodo, fct_remitos.remito_promedio_periodo_aa]
+    hidden_fields: [fct_remitos.remito_promedio_periodo, fct_remitos.remito_promedio_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_promedio
       label: "Remito Promedio"
-      expression: "${fct_remitos.remito_promedio}"
+      expression: "${fct_remitos.remito_promedio_periodo}"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_promedio_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.remito_promedio_periodo_aa}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Remito Promedio"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 0
     width: 6
@@ -154,18 +191,28 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.unidades_por_remito]
-    hidden_fields: [fct_remitos.unidades_por_remito]
+    fields: [fct_remitos.unidades_por_remito_periodo, fct_remitos.unidades_por_remito_periodo_aa]
+    hidden_fields: [fct_remitos.unidades_por_remito_periodo, fct_remitos.unidades_por_remito_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_uxr
       label: "Unidades por Remito"
-      expression: "${fct_remitos.unidades_por_remito}"
+      expression: "${fct_remitos.unidades_por_remito_periodo}"
+      value_format_name: decimal_2
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_uxr_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.unidades_por_remito_periodo_aa}"
       value_format_name: decimal_2
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Unidades por Remito"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 6
     width: 6
@@ -175,18 +222,28 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.margen_pct]
-    hidden_fields: [fct_remitos.margen_pct]
+    fields: [fct_remitos.margen_pct_periodo, fct_remitos.margen_pct_periodo_aa]
+    hidden_fields: [fct_remitos.margen_pct_periodo, fct_remitos.margen_pct_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_margenpct
       label: "Margen %"
-      expression: "${fct_remitos.margen_pct}"
+      expression: "${fct_remitos.margen_pct_periodo}"
+      value_format_name: percent_2
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_margenpct_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.margen_pct_periodo_aa}"
       value_format_name: percent_2
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Margen %"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 12
     width: 6
@@ -196,18 +253,28 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.margen_pesos]
-    hidden_fields: [fct_remitos.margen_pesos]
+    fields: [fct_remitos.margen_periodo, fct_remitos.margen_periodo_aa]
+    hidden_fields: [fct_remitos.margen_periodo, fct_remitos.margen_periodo_aa]
     dynamic_fields:
     - table_calculation: rkpi_margen
       label: "Margen $"
-      expression: "${fct_remitos.margen_pesos}"
+      expression: "${fct_remitos.margen_periodo}"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rkpi_margen_aa
+      label: "vs Año Ant"
+      expression: "${fct_remitos.margen_periodo_aa}"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     show_single_value_title: true
     single_value_title: "Margen $"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    show_comparison: true
+    comparison_type: change
+    comparison_reverse_colors: false
+    show_comparison_label: true
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 18
     width: 6
