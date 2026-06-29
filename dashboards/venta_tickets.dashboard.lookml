@@ -148,39 +148,19 @@
     width: 10
     height: 5
 
-  # ---------------- Top Marcas (Tickets + variacion interanual) ----------------
-  # Solo 3 columnas: Marca | Tickets Resta Stock | Tickets vs Año Ant.
-  # pivot_index colapsa el pivote de anio a columnas planas y oculta la medida
-  # base pivoteada; index 1 = 2025-03, index 2 = 2026-03 (orden por dia_year asc).
-  - title: "Top Marcas - Tickets (vs Año Ant)"
+  # ---------------- Top Marcas (Tickets) ----------------
+  # Top 15 marcas por tickets del periodo seleccionado. Escucha el filtro Fecha
+  # (sin comparacion interanual, para que el filtro de fecha funcione correctamente).
+  - title: "Top Marcas - Tickets"
     name: t_marcas
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
-    fields: [dim_marca.marca, fct_ventas.dia_year, fct_ventas.tickets]
-    pivots: [fct_ventas.dia_year]
-    # dia_date acota a 13 meses y SOBRE-ESCRIBE el always_filter "1 months" del
-    # explore (este tile no escucha "fecha"); dia_month deja solo los dos marzos.
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year, fct_ventas.tickets desc]
+    fields: [dim_marca.marca, fct_ventas.tickets]
+    sorts: [fct_ventas.tickets desc]
     limit: 15
-    hidden_fields: [fct_ventas.tickets]
-    dynamic_fields:
-    - table_calculation: tickets_rs
-      label: "Tickets Resta Stock"
-      expression: "pivot_index(${fct_ventas.tickets}, 2)"
-      value_format_name: decimal_0
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: tickets_anio_ant
-      label: "Tickets vs Año Ant"
-      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
-      value_format_name: percent_1
-      _kind_hint: measure
-      _type_hint: number
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
     width: 8

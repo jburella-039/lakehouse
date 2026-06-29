@@ -154,24 +154,19 @@
     width: 10
     height: 5
 
-  # ---------------- Top Marcas (Unidades + variacion interanual) ----------------
-  - title: "Top Marcas - Unidades (vs Año Ant)"
+  # ---------------- Top Marcas (Unidades) ----------------
+  # Top 15 marcas por unidades del periodo seleccionado. Escucha el filtro Fecha
+  # (sin comparacion interanual, para que el filtro de fecha funcione correctamente).
+  - title: "Top Marcas - Unidades"
     name: u_marcas
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
-    fields: [dim_marca.marca, fct_ventas.dia_year, fct_ventas.unidades]
-    pivots: [fct_ventas.dia_year]
-    # dia_date acota a 13 meses y SOBRE-ESCRIBE el always_filter "1 months" del
-    # explore (este tile no escucha "fecha"); dia_month deja solo los dos marzos.
-    filters:
-      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
-      fct_ventas.dia_month: "2025-03, 2026-03"
-    sorts: [fct_ventas.dia_year, fct_ventas.unidades desc]
+    fields: [dim_marca.marca, fct_ventas.unidades]
+    sorts: [fct_ventas.unidades desc]
     limit: 15
-    # Sin columna "Unidades Año Ant" (se quito el table calc de variacion %).
-    # El pivote por anio deja Marca | Unidades 2025 | Unidades 2026.
-    listen: { formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    series_cell_visualizations: { fct_ventas.unidades: { is_active: true } }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
     width: 8
