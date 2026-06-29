@@ -221,15 +221,20 @@ view: fct_ventas {
   # va en una dimension yesno y las medidas se filtran por ella. (Ponerlo dentro del
   # sql de la medida daba Query error en BigQuery.) en_periodo = la fila cae en el rango
   # Fecha; en_periodo_aa = el dia + 1 año cae en el rango -> mismo periodo año anterior.
+  # NOTA: filtro_fecha es un filter type: date que Looker trata como TIMESTAMP, por
+  # lo que {% condition %} genera literales TIMESTAMP. El lado izquierdo debe ser
+  # TIMESTAMP tambien (BigQuery no compara DATE >= TIMESTAMP). Se normaliza a la fecha
+  # (DATE) y se reconvierte a TIMESTAMP(midnight UTC), mismo bucketing que usan las
+  # tendencias/tablas (DATE(fec_dia)).
   dimension: en_periodo {
     hidden: yes
     type: yesno
-    sql: {% condition filtro_fecha %} DATE(${TABLE}.fec_dia) {% endcondition %} ;;
+    sql: {% condition filtro_fecha %} TIMESTAMP(DATE(${TABLE}.fec_dia)) {% endcondition %} ;;
   }
   dimension: en_periodo_aa {
     hidden: yes
     type: yesno
-    sql: {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR) {% endcondition %} ;;
+    sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
 
   measure: venta_periodo {

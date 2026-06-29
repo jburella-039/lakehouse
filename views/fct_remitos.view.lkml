@@ -195,15 +195,18 @@ view: fct_remitos {
 
   # Patron documentado por Looker (timeframe vs timeframe): {% condition %} en una
   # dimension yesno y las medidas se filtran por ella (no dentro del sql de la medida).
+  # filtro_fecha (filter type: date) genera literales TIMESTAMP; el lado izquierdo
+  # debe ser TIMESTAMP (BigQuery no compara DATE >= TIMESTAMP). Se normaliza a DATE y
+  # se reconvierte a TIMESTAMP(midnight UTC). Ver nota equivalente en fct_ventas.
   dimension: en_periodo {
     hidden: yes
     type: yesno
-    sql: {% condition filtro_fecha %} DATE(${TABLE}.ID_TIE_DIA) {% endcondition %} ;;
+    sql: {% condition filtro_fecha %} TIMESTAMP(DATE(${TABLE}.ID_TIE_DIA)) {% endcondition %} ;;
   }
   dimension: en_periodo_aa {
     hidden: yes
     type: yesno
-    sql: {% condition filtro_fecha %} DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR) {% endcondition %} ;;
+    sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.ID_TIE_DIA), INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
 
   measure: venta_periodo {
