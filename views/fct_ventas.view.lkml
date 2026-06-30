@@ -241,7 +241,7 @@ view: fct_ventas {
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
-    value_format_name: usd_0
+    value_format: '$#,##0.0,,,"B"'
     label: "Venta $ (periodo)"
   }
   measure: venta_periodo_aa {
@@ -256,6 +256,7 @@ view: fct_ventas {
     type: count_distinct
     sql: ${ticket_key} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
+    value_format: '#,##0.0,,"M"'
     label: "Tickets (periodo)"
   }
   measure: tickets_periodo_aa {
@@ -269,7 +270,7 @@ view: fct_ventas {
     type: sum
     sql: ${TABLE}.cnt_cantidad ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
-    value_format_name: decimal_0
+    value_format: '#,##0.0,,"M"'
     label: "Unidades (periodo)"
   }
   measure: unidades_periodo_aa {
@@ -299,7 +300,7 @@ view: fct_ventas {
   measure: margen_periodo {
     type: number
     sql: ${venta_periodo} - ${costo_periodo} ;;
-    value_format_name: usd_0
+    value_format: '$#,##0.0,,,"B"'
     label: "Margen $ (periodo)"
   }
   measure: margen_periodo_aa {
@@ -343,6 +344,58 @@ view: fct_ventas {
     sql: SAFE_DIVIDE(${unidades_periodo_aa}, NULLIF(${tickets_periodo_aa},0)) ;;
     value_format_name: decimal_2
     label: "Unidades por Ticket (periodo año ant.)"
+  }
+
+  # ---------------------------------------------------------------------------
+  # MEASURES YoY (% de variacion vs mismo periodo del año anterior)
+  # Reutilizables desde el explore. Variacion relativa = (actual - año ant) / año ant
+  # sobre las medidas _periodo / _periodo_aa (que ya siguen el filtro Fecha via
+  # filtro_fecha). En las tarjetas KPI se usan como campo de comparacion (single_value
+  # comparison_type: change): muestran el % con flecha verde/roja segun el signo.
+  # Margen %: variacion en PUNTOS porcentuales (diferencia), no relativa.
+  # ---------------------------------------------------------------------------
+  measure: venta_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo} - ${venta_periodo_aa}, NULLIF(${venta_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Ventas Var % (YoY)"
+  }
+  measure: tickets_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${tickets_periodo} - ${tickets_periodo_aa}, NULLIF(${tickets_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Tickets Var % (YoY)"
+  }
+  measure: unidades_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_periodo} - ${unidades_periodo_aa}, NULLIF(${unidades_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Unidades Var % (YoY)"
+  }
+  measure: ticket_promedio_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${ticket_promedio_periodo} - ${ticket_promedio_periodo_aa}, NULLIF(${ticket_promedio_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Ticket Promedio Var % (YoY)"
+  }
+  measure: unidades_por_ticket_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_por_ticket_periodo} - ${unidades_por_ticket_periodo_aa}, NULLIF(${unidades_por_ticket_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Unidades por Ticket Var % (YoY)"
+  }
+  measure: margen_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${margen_periodo} - ${margen_periodo_aa}, NULLIF(${margen_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Margen $ Var % (YoY)"
+  }
+  # Margen %: diferencia en puntos porcentuales (x100 para mostrar "pp").
+  measure: margen_pct_yoy {
+    type: number
+    sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;
+    value_format: '+0.00" pp";-0.00" pp"'
+    label: "Margen % Var (pp YoY)"
   }
 
   set: detalle {

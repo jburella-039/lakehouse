@@ -213,7 +213,7 @@ view: fct_remitos {
     type: sum
     sql: ${TABLE}.FC_TKF_MONTOTOTAL ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
-    value_format_name: usd_0
+    value_format: '$#,##0.0,,,"B"'
     label: "Venta Remitos $ (periodo)"
   }
   measure: venta_periodo_aa {
@@ -228,7 +228,7 @@ view: fct_remitos {
     type: count_distinct
     sql: ${remito_key} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
-    value_format_name: decimal_0
+    value_format: '#,##0.0,,"M"'
     label: "Remitos (periodo)"
   }
   measure: remitos_periodo_aa {
@@ -243,7 +243,7 @@ view: fct_remitos {
     type: sum
     sql: ${TABLE}.FC_TKF_CANTIDAD ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
-    value_format_name: decimal_0
+    value_format: '#,##0.0,,"M"'
     label: "Unidades Remitos (periodo)"
   }
   measure: unidades_periodo_aa {
@@ -273,7 +273,7 @@ view: fct_remitos {
   measure: margen_periodo {
     type: number
     sql: ${venta_periodo} - ${costo_periodo} ;;
-    value_format_name: usd_0
+    value_format: '$#,##0.0,,,"B"'
     label: "Margen $ Remitos (periodo)"
   }
   measure: margen_periodo_aa {
@@ -317,5 +317,53 @@ view: fct_remitos {
     sql: SAFE_DIVIDE(${unidades_periodo_aa}, NULLIF(${remitos_periodo_aa},0)) ;;
     value_format_name: decimal_2
     label: "Unidades por Remito (periodo año ant.)"
+  }
+
+  # ---------------------------------------------------------------------------
+  # MEASURES YoY (% de variacion vs mismo periodo del año anterior). Ver nota en
+  # fct_ventas. Se usan como campo de comparacion en las tarjetas KPI.
+  # ---------------------------------------------------------------------------
+  measure: venta_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${venta_periodo} - ${venta_periodo_aa}, NULLIF(${venta_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Venta Remitos Var % (YoY)"
+  }
+  measure: remitos_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${remitos_periodo} - ${remitos_periodo_aa}, NULLIF(${remitos_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Remitos Var % (YoY)"
+  }
+  measure: unidades_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_periodo} - ${unidades_periodo_aa}, NULLIF(${unidades_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Unidades Remitos Var % (YoY)"
+  }
+  measure: remito_promedio_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${remito_promedio_periodo} - ${remito_promedio_periodo_aa}, NULLIF(${remito_promedio_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Remito Promedio Var % (YoY)"
+  }
+  measure: unidades_por_remito_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${unidades_por_remito_periodo} - ${unidades_por_remito_periodo_aa}, NULLIF(${unidades_por_remito_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Unidades por Remito Var % (YoY)"
+  }
+  measure: margen_yoy {
+    type: number
+    sql: SAFE_DIVIDE(${margen_periodo} - ${margen_periodo_aa}, NULLIF(${margen_periodo_aa}, 0)) ;;
+    value_format_name: percent_1
+    label: "Margen $ Remitos Var % (YoY)"
+  }
+  # Margen %: diferencia en puntos porcentuales (x100 para mostrar "pp").
+  measure: margen_pct_yoy {
+    type: number
+    sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;
+    value_format: '+0.00" pp";-0.00" pp"'
+    label: "Margen % Remitos Var (pp YoY)"
   }
 }

@@ -2,24 +2,16 @@
 # Dashboard: Venta Integral - Home   (PBI: "Total" / portada Venta Integral)
 # Resumen ejecutivo: Ventas, Tickets, Unidades + ratios y tabla por Formato.
 #
-# Reconciliacion marzo 2026 (vs HOME.png):
-#  - Ventas 192.01B (cap 192.10B) / Tickets 5.71M (5.68M) / Unidades 22.78M (22.43M)
-#  - Margen % 29.4% (29.75%) / Remitos ~2.45M (2.443M)
+# Reconciliacion marzo 2026 (validado en BigQuery):
+#  - Ventas 192.006B / Tickets 5.711.430 / Unidades 22.782.411 / Margen % 29.39%
+#  - vs marzo 2025: Ventas 143.137B (+34.1%), Unidades 23.977.266 (-4.98%), etc.
 #
-# KPIs con % de variacion interanual DINAMICO (validado en Looker/BigQuery):
-#  - El valor grande es la medida _periodo (el rango elegido en el filtro Fecha).
-#  - El % de comparacion es vs _periodo_aa (mismo rango sobre la fecha + 1 año,
-#    DATE_ADD), o sea el mismo periodo del año anterior (single_value +
-#    comparison_type: change). Marzo 2026 192.006B vs marzo 2025 143.137B = +34.1%.
-#  - CLAVE: las tarjetas escuchan fecha -> fct_ventas.filtro_fecha (el filter templado
-#    del que dependen las medidas _periodo), NO dim_fecha.fecha_date. El resto de los
-#    tiles (tendencias, tablas) siguen escuchando dim_fecha.fecha_date.
-#
-# DECISIONES (acordadas con el usuario):
-#  - Bloque "Retail 184B / Farmacia 7.63B": OMITIDO. El split es por Id Canal,
-#    columna calculada DAX que NO existe en BigQuery (verificado). Reproducir en ETL.
-#  - Tablas Resumen por Formato/Tienda: YoY por pivote de anio (pivot_index), periodo
-#    fijo marzo 2026 vs 2025; no siguen el filtro Fecha (necesitan ver ambos años).
+# KPIs con % de variacion interanual DINAMICO. El numero grande es el valor del
+# periodo (filtro Fecha); el % de comparacion es una MEASURE de la vista (*_yoy =
+# (actual - año ant)/año ant) que se muestra via single_value comparison_type:
+# change (flecha verde si sube, roja si baja). Margen % en puntos porcentuales (pp).
+# CLAVE: los KPI escuchan fecha -> fct_ventas.filtro_fecha (filter templado del que
+# dependen las medidas _periodo). Resto de tiles -> dim_fecha.fecha_date.
 # =============================================================================
 
 - dashboard: venta_home
@@ -74,12 +66,6 @@
     model: lakehouse
     explore: fct_ventas
     field: dim_articulo.marca_propia
-  # Negocio (Alimentacion/Belleza/Salud/Alimentacion Saludable): NO se incluye porque
-  # no existe como columna en BigQuery (verificado: ni dim, ni sector/grupo). Es un
-  # agrupador DAX del PBI; requiere que el negocio defina el mapeo departamento/categoria
-  # -> Negocio (en especial "Alimentacion Saludable", subconjunto curado).
-  # NOTA: la tarjeta de Remitos (explore fct_remitos) NO tiene join a Dim Origen, por eso
-  # NO escucha el filtro Canal (si lo hiciera, daria error de campo inexistente).
 
   elements:
   # ---------------- Barra de navegacion (botones a las demas paginas) ----------------
@@ -91,35 +77,20 @@
     width: 24
     height: 2
 
-  # ---------------- KPIs fila 1: Ventas / Tickets / Unidades (con % YoY dinamico) ----------------
-  # value = medida _periodo (rango Fecha actual); comparacion = % vs _periodo_aa
-  # (mismo periodo año anterior). El tile escucha fecha -> fct_ventas.filtro_fecha.
+  # ---------------- KPIs fila 1: Ventas / Tickets / Unidades (valor + % YoY) ----------------
   - title: "Ventas"
     name: h_kpi_ventas
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.venta_periodo, fct_ventas.venta_periodo_aa]
-    hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_ventas
-      label: "Ventas"
-      expression: "${fct_ventas.venta_periodo}"
-      value_format: '$#,##0.0,,,"B"'
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_ventas_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.venta_periodo_aa}"
-      value_format: '$#,##0.0,,,"B"'
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy]
     show_single_value_title: true
     single_value_title: "Ventas"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 0
@@ -130,27 +101,14 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_periodo_aa]
-    hidden_fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_tickets
-      label: "Tickets"
-      expression: "${fct_ventas.tickets_periodo}"
-      value_format: '#,##0.0,,"M"'
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_tickets_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.tickets_periodo_aa}"
-      value_format: '#,##0.0,,"M"'
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_yoy]
     show_single_value_title: true
     single_value_title: "Tickets"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 8
@@ -161,27 +119,14 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_periodo_aa]
-    hidden_fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_unidades
-      label: "Unidades"
-      expression: "${fct_ventas.unidades_periodo}"
-      value_format: '#,##0.0,,"M"'
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_unidades_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.unidades_periodo_aa}"
-      value_format: '#,##0.0,,"M"'
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
     show_single_value_title: true
     single_value_title: "Unidades"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
@@ -189,8 +134,6 @@
     height: 5
 
   # ---------------- Evoluciones por dia (lineas) ----------------
-  # Replica los sparkline/area que el PBI muestra detras de cada KPI principal.
-  # Escuchan el filtro Fecha por dim_fecha.fecha_date.
   - title: "Ventas por dia"
     name: h_trend_ventas
     model: lakehouse
@@ -228,33 +171,20 @@
     width: 8
     height: 6
 
-  # ---------------- KPIs fila 2: ratios + Remitos (con % YoY dinamico) ----------------
+  # ---------------- KPIs fila 2: ratios + Remitos (valor + % YoY) ----------------
   - title: "Ticket Promedio"
     name: h_kpi_tktprom
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.ticket_promedio_periodo, fct_ventas.ticket_promedio_periodo_aa]
-    hidden_fields: [fct_ventas.ticket_promedio_periodo, fct_ventas.ticket_promedio_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_tktprom
-      label: "Ticket Promedio"
-      expression: "${fct_ventas.ticket_promedio_periodo}"
-      value_format_name: usd_0
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_tktprom_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.ticket_promedio_periodo_aa}"
-      value_format_name: usd_0
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.ticket_promedio_periodo, fct_ventas.ticket_promedio_yoy]
     show_single_value_title: true
     single_value_title: "Ticket Promedio"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
@@ -265,27 +195,14 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.unidades_por_ticket_periodo, fct_ventas.unidades_por_ticket_periodo_aa]
-    hidden_fields: [fct_ventas.unidades_por_ticket_periodo, fct_ventas.unidades_por_ticket_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_uxt
-      label: "Unidades por Ticket"
-      expression: "${fct_ventas.unidades_por_ticket_periodo}"
-      value_format_name: decimal_2
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_uxt_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.unidades_por_ticket_periodo_aa}"
-      value_format_name: decimal_2
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.unidades_por_ticket_periodo, fct_ventas.unidades_por_ticket_yoy]
     show_single_value_title: true
     single_value_title: "Unidades por Ticket"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 5
@@ -296,27 +213,14 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.margen_pct_periodo, fct_ventas.margen_pct_periodo_aa]
-    hidden_fields: [fct_ventas.margen_pct_periodo, fct_ventas.margen_pct_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_margenpct
-      label: "Margen %"
-      expression: "${fct_ventas.margen_pct_periodo}"
-      value_format_name: percent_2
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_margenpct_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.margen_pct_periodo_aa}"
-      value_format_name: percent_2
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.margen_pct_periodo, fct_ventas.margen_pct_yoy]
     show_single_value_title: true
     single_value_title: "Margen %"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant (pp)"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 10
@@ -327,27 +231,14 @@
     model: lakehouse
     explore: fct_ventas
     type: single_value
-    fields: [fct_ventas.margen_periodo, fct_ventas.margen_periodo_aa]
-    hidden_fields: [fct_ventas.margen_periodo, fct_ventas.margen_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_margen
-      label: "Margen $"
-      expression: "${fct_ventas.margen_periodo}"
-      value_format: '$#,##0.0,,,"B"'
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_margen_aa
-      label: "vs Año Ant"
-      expression: "${fct_ventas.margen_periodo_aa}"
-      value_format: '$#,##0.0,,,"B"'
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_ventas.margen_periodo, fct_ventas.margen_yoy]
     show_single_value_title: true
     single_value_title: "Margen $"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 15
@@ -358,27 +249,14 @@
     model: lakehouse
     explore: fct_remitos
     type: single_value
-    fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
-    hidden_fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_periodo_aa]
-    dynamic_fields:
-    - table_calculation: kpi_remitos
-      label: "Remitos"
-      expression: "${fct_remitos.remitos_periodo}"
-      value_format: '#,##0.0,,"M"'
-      _kind_hint: measure
-      _type_hint: number
-    - table_calculation: kpi_remitos_aa
-      label: "vs Año Ant"
-      expression: "${fct_remitos.remitos_periodo_aa}"
-      value_format: '#,##0.0,,"M"'
-      _kind_hint: measure
-      _type_hint: number
+    fields: [fct_remitos.remitos_periodo, fct_remitos.remitos_yoy]
     show_single_value_title: true
     single_value_title: "Remitos"
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: true
+    comparison_label: "vs Año Ant"
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 20
@@ -386,9 +264,6 @@
     height: 5
 
   # ---------------- Tabla por Formato con variacion interanual ----------------
-  # Muestra el anio actual (2026) y su variacion % vs el anterior (2025) por pivote de
-  # anio + pivot_index, periodo fijo marzo 2026 vs 2025 (no sigue el filtro Fecha:
-  # necesita ver ambos años a la vez).
   - title: "Resumen por Formato (2026 vs Año Anterior)"
     name: h_formato
     model: lakehouse
@@ -505,7 +380,7 @@
   - name: h_gaps
     type: text
     title_text: "Pendientes (no migrados de BigQuery)"
-    body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). Los KPIs ya muestran % de variacion interanual dinamico (siguen el filtro Fecha). Las tablas Resumen por Formato/Tienda comparan marzo 2026 vs 2025 (periodo fijo, necesitan ver ambos años)."
+    body_text: "Bloque Retail/Farmacia por Id Canal: columna calculada en SSAS, no existe en BQ (reproducir en ETL). Los KPIs muestran % de variacion interanual dinamico (measure *_yoy, sigue el filtro Fecha). Margen %: variacion en puntos porcentuales. Las tablas Resumen comparan marzo 2026 vs 2025 (periodo fijo)."
     row: 38
     col: 0
     width: 24
