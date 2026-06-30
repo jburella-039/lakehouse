@@ -89,8 +89,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 0
@@ -107,8 +106,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 8
@@ -125,8 +123,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
@@ -183,8 +180,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
@@ -201,8 +197,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 5
@@ -219,8 +214,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant (pp)"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 10
@@ -237,8 +231,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 15
@@ -255,8 +248,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 20

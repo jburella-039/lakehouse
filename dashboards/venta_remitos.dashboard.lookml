@@ -65,8 +65,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 0
@@ -83,8 +82,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 8
@@ -101,8 +99,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 16
@@ -121,8 +118,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 0
@@ -139,8 +135,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 6
@@ -157,8 +152,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant (pp)"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 12
@@ -175,8 +169,7 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
-    show_comparison_label: true
-    comparison_label: "vs Año Ant"
+    show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 18

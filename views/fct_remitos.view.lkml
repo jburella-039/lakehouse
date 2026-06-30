@@ -363,7 +363,7 @@ view: fct_remitos {
   measure: margen_pct_yoy {
     type: number
     sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;
-    value_format: '+0.00" pp";-0.00" pp"'
+    value_format: '0.00" pp"'
     label: "Margen % Remitos Var (pp YoY)"
   }
 }
