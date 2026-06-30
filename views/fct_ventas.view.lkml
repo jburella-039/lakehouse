@@ -241,7 +241,7 @@ view: fct_ventas {
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
-    value_format: '$#,##0.0,,,"B"'
+    value_format: "$#,##0.0,,,\"B\""
     label: "Venta $ (periodo)"
   }
   measure: venta_periodo_aa {
@@ -256,7 +256,7 @@ view: fct_ventas {
     type: count_distinct
     sql: ${ticket_key} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
-    value_format: '#,##0.0,,"M"'
+    value_format: "#,##0.0,,\"M\""
     label: "Tickets (periodo)"
   }
   measure: tickets_periodo_aa {
@@ -270,7 +270,7 @@ view: fct_ventas {
     type: sum
     sql: ${TABLE}.cnt_cantidad ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
-    value_format: '#,##0.0,,"M"'
+    value_format: "#,##0.0,,\"M\""
     label: "Unidades (periodo)"
   }
   measure: unidades_periodo_aa {
@@ -300,7 +300,7 @@ view: fct_ventas {
   measure: margen_periodo {
     type: number
     sql: ${venta_periodo} - ${costo_periodo} ;;
-    value_format: '$#,##0.0,,,"B"'
+    value_format: "$#,##0.0,,,\"B\""
     label: "Margen $ (periodo)"
   }
   measure: margen_periodo_aa {
@@ -394,7 +394,7 @@ view: fct_ventas {
   measure: margen_pct_yoy {
     type: number
     sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;
-    value_format: '0.00" pp"'
+    value_format: "0.00\" pp\""
     label: "Margen % Var (pp YoY)"
   }
 

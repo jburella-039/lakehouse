@@ -213,7 +213,7 @@ view: fct_remitos {
     type: sum
     sql: ${TABLE}.FC_TKF_MONTOTOTAL ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
-    value_format: '$#,##0.0,,,"B"'
+    value_format: "$#,##0.0,,,\"B\""
     label: "Venta Remitos $ (periodo)"
   }
   measure: venta_periodo_aa {
@@ -228,7 +228,7 @@ view: fct_remitos {
     type: count_distinct
     sql: ${remito_key} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
-    value_format: '#,##0.0,,"M"'
+    value_format: "#,##0.0,,\"M\""
     label: "Remitos (periodo)"
   }
   measure: remitos_periodo_aa {
@@ -243,7 +243,7 @@ view: fct_remitos {
     type: sum
     sql: ${TABLE}.FC_TKF_CANTIDAD ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
-    value_format: '#,##0.0,,"M"'
+    value_format: "#,##0.0,,\"M\""
     label: "Unidades Remitos (periodo)"
   }
   measure: unidades_periodo_aa {
@@ -273,7 +273,7 @@ view: fct_remitos {
   measure: margen_periodo {
     type: number
     sql: ${venta_periodo} - ${costo_periodo} ;;
-    value_format: '$#,##0.0,,,"B"'
+    value_format: "$#,##0.0,,,\"B\""
     label: "Margen $ Remitos (periodo)"
   }
   measure: margen_periodo_aa {
@@ -363,7 +363,7 @@ view: fct_remitos {
   measure: margen_pct_yoy {
     type: number
     sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;
-    value_format: '0.00" pp"'
+    value_format: "0.00\" pp\""
     label: "Margen % Remitos Var (pp YoY)"
   }
 }
