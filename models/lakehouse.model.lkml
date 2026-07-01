@@ -18,54 +18,6 @@ datagroup: venta_integral_datagroup {
 
 persist_with: lakehouse_default_datagroup
 
-explore: abtd_cmp_comprobantes {}
-
-explore: bt_bon_bonificacionsistema {}
-
-explore: bt_cmp_ordencomprabonificada {}
-
-explore: bt_cmp_ordencomprabonificacion {}
-
-explore: bt_cmp_pedido {}
-
-explore: bt_adm_compfiscal {}
-
-explore: abt_informesrecepcion {}
-
-explore: bt_cmp_ordencompra {}
-
-explore: bt_ped_drogexterna {}
-
-explore: bt_stk_movimientos {}
-
-explore: bt_stk_movimientos_fotopeps {}
-
-explore: bt_stk_stockciclico {}
-
-explore: bt_stk_stockcero {}
-
-explore: bt_stk_movimientos_calc_peps_fraccionados {}
-
-explore: bt_stk_stocktransito {}
-
-explore: bt_stk_stock {}
-
-explore: bt_vta_enviosemc {}
-
-explore: bt_vta_granel {}
-
-explore: bt_vta_farmacia {}
-
-explore: bt_vta_ticketscufoferta {}
-
-explore: bt_vta_tickets {}
-
-explore: bt_vta_posvoucher {}
-
-explore: bt_vta_ticketsformapago {}
-
-explore: bt_vta_ticketsofertas {}
-
 # =============================================================================
 # explore: fct_ventas - Venta Integral (con joins snowflake)
 # =============================================================================
@@ -132,6 +84,12 @@ explore: fct_ventas {
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
+  }
+  # Provincia real (via id_provincia de la sucursal). NO es dim_region (bricks/zonas).
+  join: dim_provincia {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
   }
 
   # Obra Social / Coseguro.
@@ -215,6 +173,12 @@ explore: fct_remitos {
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
   }
+  # Provincia real (via id_provincia de la sucursal). NO es dim_region (bricks/zonas).
+  join: dim_provincia {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
+  }
 
   # Obra Social (tipo dispensa vive en el hecho).
   join: dim_obrasocial {
@@ -282,7 +246,11 @@ explore: fct_stock {
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
   }
+  # Provincia real (via id_provincia de la sucursal). NO es dim_region (bricks/zonas).
+  join: dim_provincia {
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
+  }
 }
-
-explore: dim_vta_ticketsformapagoxcuf {}
 
