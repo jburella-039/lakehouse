@@ -30,6 +30,18 @@
     model: lakehouse
     explore: fct_remitos
     field: dim_formato.formato
+  - name: provincia
+    title: "Provincia"
+    type: field_filter
+    model: lakehouse
+    explore: fct_remitos
+    field: dim_region.region
+  - name: sucursal
+    title: "Sucursal"
+    type: field_filter
+    model: lakehouse
+    explore: fct_remitos
+    field: dim_sucursal.sucursal
   - name: dispensa
     title: "Tipo Dispensa"
     type: field_filter
@@ -66,7 +78,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 0
     width: 8
@@ -83,7 +95,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 8
     width: 8
@@ -100,7 +112,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 2
     col: 16
     width: 8
@@ -119,7 +131,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 0
     width: 6
@@ -136,7 +148,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 6
     width: 6
@@ -153,7 +165,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 12
     width: 6
@@ -170,7 +182,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 7
     col: 18
     width: 6
@@ -184,7 +196,7 @@
     type: looker_area
     fields: [dim_fecha.fecha_date, fct_remitos.venta_remito]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 12
     col: 0
     width: 24
@@ -196,7 +208,7 @@
     type: looker_area
     fields: [dim_fecha.fecha_date, fct_remitos.remitos]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 20
     col: 0
     width: 12
@@ -208,7 +220,7 @@
     type: looker_area
     fields: [dim_fecha.fecha_date, fct_remitos.unidades_remito]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 20
     col: 12
     width: 12
@@ -223,7 +235,7 @@
     fields: [fct_remitos.tipo_dispensa, fct_remitos.venta_remito, fct_remitos.pct_venta_total, fct_remitos.remitos, fct_remitos.pct_remitos_total, fct_remitos.unidades_remito, fct_remitos.pct_unidades_total]
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 27
     col: 0
     width: 24
@@ -239,7 +251,7 @@
     sorts: [fct_remitos.venta_remito desc]
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_region.region, sucursal: dim_sucursal.sucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 36
     col: 0
     width: 24
