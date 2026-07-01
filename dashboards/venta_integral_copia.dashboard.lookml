@@ -119,6 +119,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
@@ -137,6 +139,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
@@ -155,6 +159,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
@@ -167,10 +173,11 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_line
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_fecha.fecha_date, fct_ventas.venta_neta]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 6
+    row: 3
     col: 0
     width: 8
     height: 6
@@ -180,10 +187,11 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_line
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_fecha.fecha_date, fct_ventas.tickets]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 6
+    row: 3
     col: 8
     width: 8
     height: 6
@@ -193,10 +201,11 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_line
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_fecha.fecha_date, fct_ventas.unidades]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 6
+    row: 3
     col: 16
     width: 8
     height: 6
@@ -212,12 +221,14 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 3
+    row: 9
     col: 0
     width: 5
-    height: 3
+    height: 5
   - title: "Unidades por Ticket"
     name: h_kpi_uxt
     tab_name: home
@@ -230,12 +241,14 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 3
+    row: 9
     col: 5
     width: 5
-    height: 3
+    height: 5
   - title: "Margen %"
     name: h_kpi_margenpct
     tab_name: home
@@ -248,12 +261,14 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 3
+    row: 9
     col: 10
     width: 5
-    height: 3
+    height: 5
   - title: "Margen $"
     name: h_kpi_margen
     tab_name: home
@@ -266,12 +281,14 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 3
+    row: 9
     col: 15
     width: 5
-    height: 3
+    height: 5
   - title: "Remitos"
     name: h_kpi_remitos
     tab_name: home
@@ -284,12 +301,14 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
-    row: 3
+    row: 9
     col: 20
     width: 4
-    height: 3
+    height: 5
   - title: "Resumen por Formato (2026 vs Año Anterior)"
     name: h_formato
     tab_name: home
@@ -341,7 +360,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 12
+    row: 14
     col: 0
     width: 24
     height: 10
@@ -397,7 +416,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 22
+    row: 24
     col: 0
     width: 24
     height: 10
@@ -425,6 +444,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_origenventa.canal, fct_ventas.tickets]
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.tickets desc]
@@ -458,6 +478,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_articulo.marca_propia, fct_ventas.unidades]
     pivots: [dim_articulo.marca_propia]
     sorts: [fct_ventas.unidades desc]
@@ -474,6 +495,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_column
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_departamento.departamento, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.pct_tickets_total desc]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -487,6 +509,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_categoria.categoria, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
     limit: 10
@@ -543,6 +566,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_origenventa.canal, fct_ventas.unidades]
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.unidades desc]
@@ -576,6 +600,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_articulo.marca_propia, fct_ventas.unidades]
     pivots: [dim_articulo.marca_propia]
     sorts: [fct_ventas.unidades desc]
@@ -592,6 +617,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_column
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_departamento.departamento, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.pct_unidades_total desc]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -605,6 +631,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_categoria.categoria, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
     limit: 10
@@ -652,6 +679,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_origenventa.canal, fct_ventas.venta_neta]
     pivots: [dim_origenventa.canal]
     sorts: [fct_ventas.venta_neta desc]
@@ -685,6 +713,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_articulo.marca_propia, fct_ventas.venta_neta]
     pivots: [dim_articulo.marca_propia]
     sorts: [fct_ventas.venta_neta desc]
@@ -701,6 +730,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_column
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.pct_venta_total desc]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -714,6 +744,7 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_bar
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_categoria.categoria, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
     limit: 10
@@ -753,6 +784,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
@@ -771,6 +804,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
@@ -789,6 +824,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
@@ -807,6 +844,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
@@ -825,6 +864,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
@@ -843,6 +884,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
@@ -861,6 +904,8 @@
     show_comparison: true
     comparison_type: change
     comparison_reverse_colors: false
+    custom_color_enabled: true
+    custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
@@ -873,6 +918,7 @@
     model: lakehouse
     explore: fct_remitos
     type: looker_area
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_fecha.fecha_date, fct_remitos.venta_remito]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
@@ -886,6 +932,7 @@
     model: lakehouse
     explore: fct_remitos
     type: looker_area
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_fecha.fecha_date, fct_remitos.remitos]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
@@ -899,6 +946,7 @@
     model: lakehouse
     explore: fct_remitos
     type: looker_area
+    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
     fields: [dim_fecha.fecha_date, fct_remitos.unidades_remito]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
