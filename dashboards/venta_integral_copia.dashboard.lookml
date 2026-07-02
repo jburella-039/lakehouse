@@ -1,6 +1,6 @@
 # =============================================================================
 # Dashboard: Venta Integral (UNIFICADO con tabs)
-# rev: 2026-07-02b (tablas sin barras de celda; encabezados y area por metrica)
+# rev: 2026-07-02c (cell visualization is_active:false explicito en las 10 tablas)
 #
 # Combina las 5 paginas (Home, Tickets, Unidades, Ventas en $, Remitos) en un solo
 # dashboard usando tabs nativos de LookML (parametro tabs + tab_name por elemento).
@@ -466,6 +466,7 @@
     type: looker_grid
     fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.tickets desc]
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 0
@@ -499,6 +500,7 @@
     fields: [dim_marca.marca, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
     limit: 15
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
@@ -565,6 +567,7 @@
     fields: [dim_articulo.producto, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
     limit: 20
+    series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 15
     col: 12
@@ -590,6 +593,7 @@
     type: looker_grid
     fields: [dim_formato.formato, fct_ventas.unidades, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.unidades desc]
+    series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 0
@@ -623,6 +627,7 @@
     fields: [dim_marca.marca, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
     limit: 15
+    series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
@@ -683,6 +688,7 @@
     fields: [dim_articulo.producto, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
     limit: 20
+    series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 15
     col: 8
@@ -708,6 +714,7 @@
     type: looker_grid
     fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.venta_neta desc]
+    series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 0
@@ -741,6 +748,7 @@
     fields: [dim_marca.marca, fct_ventas.venta_neta, fct_ventas.margen_pesos]
     sorts: [fct_ventas.venta_neta desc]
     limit: 15
+    series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 2
     col: 16
@@ -801,6 +809,7 @@
     fields: [dim_articulo.producto, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
     limit: 20
+    series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 15
     col: 8
@@ -1023,6 +1032,7 @@
     fields: [dim_articulo.producto, fct_remitos.venta_remito, fct_remitos.unidades_remito]
     sorts: [fct_remitos.venta_remito desc]
     limit: 20
+    series_cell_visualizations: { fct_remitos.venta_remito: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 36
     col: 0
