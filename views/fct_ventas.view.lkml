@@ -6,7 +6,7 @@
 # Alineado al MAPEO_SSAS_a_LookML v5 (fct real de BigQuery):
 #  - Venta neta s/IVA antes de desc = columna precalculada mto_totalsinivaantesdescuento
 #    (equivale a [Vta $ T SIva Ant Desc] del cubo).
-#  - Unidades = cnt_cantidad ; Costo = mto_costo ; Margen $ = neto - costo.
+#  - Unidades = cnt_unidades ; Costo = mto_costo ; Margen $ = neto - costo.
 #  - Ticket (resta stock): id_ventaunica viene NULL en la fct -> key interina por
 #    combinacion; COALESCE prioriza id_ventaunica cuando se puebla.
 #
@@ -126,7 +126,7 @@ view: fct_ventas {
   # [Vta # T Unid Vend] - ESVENTA=1
   measure: unidades {
     type: sum
-    sql: ${TABLE}.cnt_cantidad ;;
+    sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: decimal_0
     label: "Unidades Vendidas"
@@ -268,14 +268,14 @@ view: fct_ventas {
 
   measure: unidades_periodo {
     type: sum
-    sql: ${TABLE}.cnt_cantidad ;;
+    sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format: "#,##0.0,,\"M\""
     label: "Unidades (periodo)"
   }
   measure: unidades_periodo_aa {
     type: sum
-    sql: ${TABLE}.cnt_cantidad ;;
+    sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Unidades (periodo año ant.)"
