@@ -1,6 +1,6 @@
 # =============================================================================
 # Dashboard: Venta Integral (UNIFICADO con tabs)
-# rev: 2026-07-02c (cell visualization is_active:false explicito en las 10 tablas)
+# rev: 2026-07-02d (encabezado verde + estilo white en las 13 grillas del reporte)
 #
 # Combina las 5 paginas (Home, Tickets, Unidades, Ventas en $, Remitos) en un solo
 # dashboard usando tabs nativos de LookML (parametro tabs + tab_name por elemento).
@@ -464,6 +464,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.tickets desc]
     series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
@@ -497,6 +503,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_marca.marca, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
     limit: 15
@@ -591,6 +603,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.unidades, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.unidades desc]
     series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
@@ -624,6 +642,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_marca.marca, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
     limit: 15
@@ -685,6 +709,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_articulo.producto, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
     limit: 20
@@ -712,6 +742,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
@@ -745,6 +781,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_marca.marca, fct_ventas.venta_neta, fct_ventas.margen_pesos]
     sorts: [fct_ventas.venta_neta desc]
     limit: 15
@@ -806,6 +848,12 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_articulo.producto, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
     limit: 20
@@ -1015,6 +1063,12 @@
     model: lakehouse
     explore: fct_remitos
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [fct_remitos.tipo_dispensa, fct_remitos.venta_remito, fct_remitos.pct_venta_total, fct_remitos.remitos, fct_remitos.pct_remitos_total, fct_remitos.unidades_remito, fct_remitos.pct_unidades_total]
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
@@ -1029,6 +1083,12 @@
     model: lakehouse
     explore: fct_remitos
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_articulo.producto, fct_remitos.venta_remito, fct_remitos.unidades_remito]
     sorts: [fct_remitos.venta_remito desc]
     limit: 20
