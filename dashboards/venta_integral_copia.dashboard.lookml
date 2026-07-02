@@ -180,8 +180,8 @@
     tab_name: home
     model: lakehouse
     explore: fct_ventas
-    type: looker_line
-    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
+    type: looker_area
+    colors: ["#2E7D32"]
     fields: [dim_fecha.fecha_date, fct_ventas.venta_neta]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -194,8 +194,8 @@
     tab_name: home
     model: lakehouse
     explore: fct_ventas
-    type: looker_line
-    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
+    type: looker_area
+    colors: ["#F57C00"]
     fields: [dim_fecha.fecha_date, fct_ventas.tickets]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -208,8 +208,8 @@
     tab_name: home
     model: lakehouse
     explore: fct_ventas
-    type: looker_line
-    colors: ["#2E7D32", "#F57C00", "#66BB6A", "#FB8C00", "#1B5E20", "#E65100"]
+    type: looker_area
+    colors: ["#FBC02D"]
     fields: [dim_fecha.fecha_date, fct_ventas.unidades]
     sorts: [dim_fecha.fecha_date]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
