@@ -322,20 +322,18 @@
     col: 20
     width: 4
     height: 5
-  - name: h_formato_hdr
-    type: text
-    tab_name: home
-    body_text: "<div style='border-left:6px solid #F57C00;background:#F1F8E9;border-radius:6px;padding:6px 12px;'><span style='color:#2E7D32;font-size:15px;font-weight:700;'>Resumen por Formato</span><span style='color:#7CB342;font-size:12px;font-weight:600;margin-left:10px;'>Comparativo interanual 2026</span></div>"
-    row: 16
-    col: 0
-    width: 24
-    height: 1
   - title: "Resumen por Formato (2026 vs Año Anterior)"
     name: h_formato
     tab_name: home
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     pivots: [fct_ventas.dia_year]
     filters:
@@ -381,24 +379,22 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 17
+    row: 16
     col: 0
     width: 24
     height: 10
-  - name: h_tienda_hdr
-    type: text
-    tab_name: home
-    body_text: "<div style='border-left:6px solid #F57C00;background:#F1F8E9;border-radius:6px;padding:6px 12px;'><span style='color:#2E7D32;font-size:15px;font-weight:700;'>Resumen por Tienda</span><span style='color:#7CB342;font-size:12px;font-weight:600;margin-left:10px;'>Comparativo interanual 2026</span></div>"
-    row: 27
-    col: 0
-    width: 24
-    height: 1
   - title: "Resumen por Tienda (2026 vs Año Anterior)"
     name: h_tienda
     tab_name: home
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_sucursal.sucursal, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     pivots: [fct_ventas.dia_year]
     filters:
@@ -445,7 +441,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 28
+    row: 26
     col: 0
     width: 24
     height: 10
@@ -553,7 +549,7 @@
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 15
     col: 0
-    width: 8
+    width: 12
     height: 9
   - title: "Top Productos - Tickets"
     name: t_productos
@@ -561,23 +557,20 @@
     model: lakehouse
     explore: fct_ventas
     type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
     fields: [dim_articulo.producto, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
     limit: 20
     series_cell_visualizations: { fct_ventas.tickets: { is_active: true } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 15
-    col: 8
-    width: 8
-    height: 9
-  - name: t_negocio
-    type: text
-    tab_name: tickets
-    title_text: "Negocio (Salud / Belleza / Alimentacion): pendiente de definicion"
-    body_text: "No hay una columna de Negocio en BigQuery. Lo mas parecido es Sector, que NO es Salud/Belleza/Alimentacion. Para armar este grafico hace falta que el negocio defina como se agrupan los departamentos en Salud/Belleza/Alimentacion."
-    row: 15
-    col: 16
-    width: 8
+    col: 12
+    width: 12
     height: 9
 
   # =====================================================================
