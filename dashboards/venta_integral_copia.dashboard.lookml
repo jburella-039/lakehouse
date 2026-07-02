@@ -1,5 +1,6 @@
 # =============================================================================
 # Dashboard: Venta Integral (UNIFICADO con tabs)
+# rev: 2026-07-02b (tablas sin barras de celda; encabezados y area por metrica)
 #
 # Combina las 5 paginas (Home, Tickets, Unidades, Ventas en $, Remitos) en un solo
 # dashboard usando tabs nativos de LookML (parametro tabs + tab_name por elemento).
