@@ -1,7 +1,9 @@
 # =============================================================================
 # view: fct_ventas
-# Hecho de ventas (nivel linea de comprobante) - BSS Oracle
-# Fuente: lakehouse-dev-483619.bss_oracle.fct_ventas (~1.8 mil M filas)
+# Hecho de ventas (nivel linea de comprobante) - BSS Comercial
+# Fuente: lakehouse-dev-483619.bss_comercial.vw_fct_ventas
+# (columnas identicas a bss_oracle.fct_ventas; validado 1:1 marzo 2026:
+#  venta_neta, unidades, costo, tickets y filas coinciden exacto).
 #
 # Alineado al MAPEO_SSAS_a_LookML v5 (fct real de BigQuery):
 #  - Venta neta s/IVA antes de desc = columna precalculada mto_totalsinivaantesdescuento
@@ -17,7 +19,7 @@
 # =============================================================================
 
 view: fct_ventas {
-  sql_table_name: `lakehouse-dev-483619.bss_oracle.fct_ventas` ;;
+  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
 
   # ---------------------------------------------------------------------------
   # CLAVES

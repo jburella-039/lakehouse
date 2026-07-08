@@ -12,7 +12,7 @@ datagroup: lakehouse_default_datagroup {
 
 # Cache diario para Venta Integral aprovechando el particionado por fecha de la fct.
 datagroup: venta_integral_datagroup {
-  sql_trigger: SELECT MAX(DATE(fec_venta)) FROM `lakehouse-dev-483619.bss_oracle.fct_ventas` ;;
+  sql_trigger: SELECT MAX(DATE(fec_venta)) FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
   max_cache_age: "24 hours"
 }
 
@@ -117,11 +117,13 @@ explore: fct_remitos {
   persist_with: venta_integral_datagroup
 
   # Calendario: misma fuente unica de Fecha/Año (ver fct_ventas). Join por el dia
-  # del remito (ID_TIE_DIA). many_to_one al mismo grano -> no infla las medidas.
+  # del remito (fec_dia). many_to_one al mismo grano -> no infla las medidas.
+  # fec_dia en vw_fct_remitos ya es DATE, asi que se compara directo contra
+  # fecha_date (sin envolver en DATE(), que no acepta un argumento DATE).
   join: dim_fecha {
     type: left_outer
     relationship: many_to_one
-    sql_on: DATE(${fct_remitos.dia_raw}) = ${dim_fecha.fecha_date} ;;
+    sql_on: ${fct_remitos.dia_raw} = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_tipocomprobante {
