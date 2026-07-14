@@ -239,6 +239,17 @@ view: fct_ventas {
     sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
 
+  # Union del periodo seleccionado y su equivalente del año anterior. Se usa como
+  # filtro duro (=yes) en tablas/KPIs para ACOTAR el scan a esas dos ventanas; sin
+  # esto las medidas *_periodo agregan sobre toda la historia (count_distinct de
+  # tickets no termina). Usa filtro_fecha via listen, igual que en_periodo.
+  dimension: en_periodo_o_aa {
+    hidden: yes
+    type: yesno
+    sql: ({% condition filtro_fecha %} TIMESTAMP(DATE(${TABLE}.fec_dia)) {% endcondition %})
+      OR ({% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %}) ;;
+  }
+
   measure: venta_periodo {
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;

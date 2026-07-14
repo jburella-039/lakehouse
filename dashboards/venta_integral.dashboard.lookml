@@ -120,6 +120,8 @@
     explore: fct_ventas
     type: single_value
     fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy]
+    filters:
+      fct_ventas.en_periodo_o_aa: "yes"
     show_single_value_title: true
     single_value_title: "Ventas"
     show_comparison: true
@@ -140,6 +142,8 @@
     explore: fct_ventas
     type: single_value
     fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_yoy]
+    filters:
+      fct_ventas.en_periodo_o_aa: "yes"
     show_single_value_title: true
     single_value_title: "Tickets"
     show_comparison: true
@@ -160,6 +164,8 @@
     explore: fct_ventas
     type: single_value
     fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    filters:
+      fct_ventas.en_periodo_o_aa: "yes"
     show_single_value_title: true
     single_value_title: "Unidades"
     show_comparison: true
@@ -328,6 +334,8 @@
     header_font_color: "#FFFFFF"
     header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    filters:
+      fct_ventas.en_periodo_o_aa: "yes"
     sorts: [fct_ventas.venta_periodo desc]
     hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
     dynamic_fields:
@@ -385,6 +393,8 @@
     header_font_color: "#FFFFFF"
     header_text_alignment: left
     fields: [dim_sucursal.sucursal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    filters:
+      fct_ventas.en_periodo_o_aa: "yes"
     sorts: [fct_ventas.venta_periodo desc]
     limit: 50
     hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
