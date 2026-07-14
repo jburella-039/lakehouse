@@ -22,7 +22,7 @@ persist_with: lakehouse_default_datagroup
 # explore: fct_ventas - Venta Integral (con joins snowflake)
 # =============================================================================
 explore: fct_ventas {
-  label: "Venta Integral"
+  label: "Fact Ventas"
   description: "Ventas, tickets y unidades a nivel linea de comprobante."
   persist_with: venta_integral_datagroup
 
@@ -112,7 +112,7 @@ explore: fct_ventas {
 # Fuente BT_VTA_FARMACIA. Misma estrella que fct_ventas reutilizando las dims.
 # =============================================================================
 explore: fct_remitos {
-  label: "Venta Integral - Remitos"
+  label: "Fact Remitos"
   description: "Remitos de farmacia (obra social / dispensa): venta, unidades, margen."
   persist_with: venta_integral_datagroup
 
@@ -196,7 +196,7 @@ explore: fct_remitos {
 # Misma estrella que fct_ventas reutilizando las dims.
 # =============================================================================
 explore: fct_stock {
-  label: "Stock"
+  label: "Fact Stock"
   description: "Stock diario por sucursal y articulo. 'Ultimo dia' equivale a StockDia."
 
   join: dim_fecha {
