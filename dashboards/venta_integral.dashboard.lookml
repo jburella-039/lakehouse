@@ -120,8 +120,6 @@
     explore: fct_ventas
     type: single_value
     fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy]
-    filters:
-      fct_ventas.en_periodo_o_aa: "yes"
     show_single_value_title: true
     single_value_title: "Ventas"
     show_comparison: true
@@ -142,8 +140,6 @@
     explore: fct_ventas
     type: single_value
     fields: [fct_ventas.tickets_periodo, fct_ventas.tickets_yoy]
-    filters:
-      fct_ventas.en_periodo_o_aa: "yes"
     show_single_value_title: true
     single_value_title: "Tickets"
     show_comparison: true
@@ -164,8 +160,6 @@
     explore: fct_ventas
     type: single_value
     fields: [fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
-    filters:
-      fct_ventas.en_periodo_o_aa: "yes"
     show_single_value_title: true
     single_value_title: "Unidades"
     show_comparison: true
@@ -321,7 +315,7 @@
     col: 20
     width: 4
     height: 5
-  - title: "Resumen por Formato (Periodo Seleccionado vs Periodo Anterior)"
+  - title: "Resumen por Formato (2026 vs Año Anterior)"
     name: h_formato
     tab_name: home
     model: lakehouse
@@ -333,54 +327,56 @@
     header_background_color: "#2E7D32"
     header_font_color: "#FFFFFF"
     header_text_alignment: left
-    fields: [dim_formato.formato, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    fields: [dim_formato.formato, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
+    pivots: [fct_ventas.dia_year]
     filters:
-      fct_ventas.en_periodo_o_aa: "yes"
-    sorts: [fct_ventas.venta_periodo desc]
-    hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
+      fct_ventas.dia_month: "2025-03, 2026-03"
+    sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
+    hidden_fields: [fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     dynamic_fields:
     - table_calculation: ventas_cur
       label: "Ventas"
-      expression: "${fct_ventas.venta_periodo}"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: ventas_anio_ant
       label: "Ventas Año Ant"
-      expression: "${fct_ventas.venta_yoy}"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tickets_cur
       label: "Tickets"
-      expression: "${fct_ventas.tickets_periodo}"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tickets_anio_ant
       label: "Tickets Año Ant"
-      expression: "${fct_ventas.tickets_yoy}"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     - table_calculation: unidades_cur
       label: "Unidades"
-      expression: "${fct_ventas.unidades_periodo}"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: unidades_anio_ant
       label: "Unidades Año Ant"
-      expression: "${fct_ventas.unidades_yoy}"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 14
     col: 0
     width: 24
     height: 10
-  - title: "Resumen por Tienda (Periodo Seleccionado vs Periodo Anterior)"
+  - title: "Resumen por Tienda (2026 vs Año Anterior)"
     name: h_tienda
     tab_name: home
     model: lakehouse
@@ -392,50 +388,52 @@
     header_background_color: "#2E7D32"
     header_font_color: "#FFFFFF"
     header_text_alignment: left
-    fields: [dim_sucursal.sucursal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    fields: [dim_sucursal.sucursal, fct_ventas.dia_year, fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
+    pivots: [fct_ventas.dia_year]
     filters:
-      fct_ventas.en_periodo_o_aa: "yes"
-    sorts: [fct_ventas.venta_periodo desc]
+      fct_ventas.dia_date: "2025/03/01 to 2026/04/01"
+      fct_ventas.dia_month: "2025-03, 2026-03"
+    sorts: [fct_ventas.dia_year, fct_ventas.venta_neta desc]
     limit: 50
-    hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    hidden_fields: [fct_ventas.venta_neta, fct_ventas.tickets, fct_ventas.unidades]
     dynamic_fields:
     - table_calculation: tnd_ventas_cur
       label: "Ventas"
-      expression: "${fct_ventas.venta_periodo}"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)"
       value_format_name: usd_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_ventas_anio_ant
       label: "Ventas Año Ant"
-      expression: "${fct_ventas.venta_yoy}"
+      expression: "pivot_index(${fct_ventas.venta_neta}, 2)/pivot_index(${fct_ventas.venta_neta}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_tickets_cur
       label: "Tickets"
-      expression: "${fct_ventas.tickets_periodo}"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_tickets_anio_ant
       label: "Tickets Año Ant"
-      expression: "${fct_ventas.tickets_yoy}"
+      expression: "pivot_index(${fct_ventas.tickets}, 2)/pivot_index(${fct_ventas.tickets}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_unidades_cur
       label: "Unidades"
-      expression: "${fct_ventas.unidades_periodo}"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)"
       value_format_name: decimal_0
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_unidades_anio_ant
       label: "Unidades Año Ant"
-      expression: "${fct_ventas.unidades_yoy}"
+      expression: "pivot_index(${fct_ventas.unidades}, 2)/pivot_index(${fct_ventas.unidades}, 1)-1"
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 24
     col: 0
     width: 24
