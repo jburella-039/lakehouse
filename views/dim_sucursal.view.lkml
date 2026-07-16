@@ -7,12 +7,12 @@ view: dim_sucursal {
   dimension: sucursal { type: string sql: ${TABLE}.dsc_sucursal ;; label: "Sucursal" }
   dimension: sucursal_corta { type: string sql: ${TABLE}.dsc_sucursalcorta ;; label: "Sucursal (corta)" }
 
-  # Codigo + descripcion: "7 - Flores [Rivadavia 6728]". Usa id_sucursal (la clave
-  # real del hecho, siempre poblada) como codigo. Para el filtro Sucursal del tablero.
-  dimension: sucursal_cod_desc {
+  # Codigo + descripcion: "<cd_sucursal> - <descripcion>". Para el filtro Sucursal
+  # del tablero. Usa cd_sucursal (codigo de negocio).
+  dimension: dsc_codsucursal {
     type: string
-    sql: CONCAT(CAST(${id_sucursal} AS STRING), ' - ', ${TABLE}.dsc_sucursal) ;;
-    label: "Sucursal (cod + desc)"
+    sql: CONCAT(CAST(${cd_sucursal} AS STRING), ' - ', ${TABLE}.dsc_sucursal) ;;
+    label: "Cod - Sucursal"
   }
 
   dimension: id_formato   { hidden: yes type: number sql: ${TABLE}.id_formato ;; }

@@ -65,7 +65,7 @@
     type: field_filter
     model: lakehouse
     explore: fct_ventas
-    field: dim_sucursal.sucursal_cod_desc
+    field: dim_sucursal.dsc_codsucursal
   - name: departamento
     title: "Departamento"
     type: field_filter
@@ -130,7 +130,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
     width: 8
@@ -152,7 +152,7 @@
     custom_color_enabled: true
     custom_color: "#F57C00"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 8
     width: 8
@@ -174,7 +174,7 @@
     custom_color_enabled: true
     custom_color: "#FBC02D"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 16
     width: 8
@@ -188,7 +188,7 @@
     colors: ["#2E7D32"]
     fields: [dim_fecha.fecha_date, fct_ventas.venta_neta]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 3
     col: 0
     width: 8
@@ -202,7 +202,7 @@
     colors: ["#F57C00"]
     fields: [dim_fecha.fecha_date, fct_ventas.tickets]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 3
     col: 8
     width: 8
@@ -216,7 +216,7 @@
     colors: ["#FBC02D"]
     fields: [dim_fecha.fecha_date, fct_ventas.unidades]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 3
     col: 16
     width: 8
@@ -236,7 +236,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 0
     width: 5
@@ -256,7 +256,7 @@
     custom_color_enabled: true
     custom_color: "#FBC02D"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 5
     width: 5
@@ -276,7 +276,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 10
     width: 5
@@ -296,7 +296,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 15
     width: 5
@@ -316,7 +316,7 @@
     custom_color_enabled: true
     custom_color: "#F57C00"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 20
     width: 4
@@ -375,7 +375,7 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 14
     col: 0
     width: 24
@@ -434,7 +434,7 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 20
     col: 0
     width: 24
@@ -494,7 +494,7 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
-    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 26
     col: 0
     width: 24
@@ -518,7 +518,7 @@
     fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.tickets desc]
     series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
     width: 6
@@ -537,7 +537,7 @@
     show_value_labels: true
     filters:
       fct_ventas.tickets: ">=57000"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 6
     width: 10
@@ -558,7 +558,7 @@
     sorts: [fct_ventas.tickets desc]
     limit: 15
     series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 16
     width: 8
@@ -575,7 +575,7 @@
     sorts: [fct_ventas.unidades desc]
     stacking: percent
     show_value_labels: true
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 6
     width: 10
@@ -589,7 +589,7 @@
     colors: ["#F57C00"]
     fields: [dim_departamento.departamento, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.pct_tickets_total desc]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 8
     col: 6
     width: 10
@@ -604,7 +604,7 @@
     fields: [dim_categoria.categoria, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
     limit: 10
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
     width: 12
@@ -625,7 +625,7 @@
     sorts: [fct_ventas.tickets desc]
     limit: 20
     series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 12
     width: 12
@@ -649,7 +649,7 @@
     fields: [dim_formato.formato, fct_ventas.unidades, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.unidades desc]
     series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
     width: 6
@@ -668,7 +668,7 @@
     show_value_labels: true
     filters:
       fct_ventas.unidades: ">=227000"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 6
     width: 10
@@ -689,7 +689,7 @@
     sorts: [fct_ventas.unidades desc]
     limit: 15
     series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 16
     width: 8
@@ -706,7 +706,7 @@
     sorts: [fct_ventas.unidades desc]
     stacking: percent
     show_value_labels: true
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 6
     width: 10
@@ -720,7 +720,7 @@
     colors: ["#FBC02D"]
     fields: [dim_departamento.departamento, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.pct_unidades_total desc]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 8
     col: 6
     width: 10
@@ -735,7 +735,7 @@
     fields: [dim_categoria.categoria, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
     limit: 10
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
     width: 8
@@ -756,7 +756,7 @@
     sorts: [fct_ventas.unidades desc]
     limit: 20
     series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 8
     width: 8
@@ -780,7 +780,7 @@
     fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.venta_neta desc]
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
     width: 6
@@ -799,7 +799,7 @@
     show_value_labels: true
     filters:
       fct_ventas.venta_neta: ">=1920000000"
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 6
     width: 10
@@ -820,7 +820,7 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 16
     width: 8
@@ -837,7 +837,7 @@
     sorts: [fct_ventas.venta_neta desc]
     stacking: percent
     show_value_labels: true
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 5
     col: 6
     width: 10
@@ -851,7 +851,7 @@
     colors: ["#2E7D32"]
     fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.pct_venta_total desc]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 8
     col: 6
     width: 10
@@ -866,7 +866,7 @@
     fields: [dim_categoria.categoria, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
     limit: 10
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 0
     width: 8
@@ -887,7 +887,7 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 13
     col: 8
     width: 8
@@ -911,7 +911,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
     col: 0
     width: 8
@@ -931,7 +931,7 @@
     custom_color_enabled: true
     custom_color: "#F57C00"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
     col: 8
     width: 8
@@ -951,7 +951,7 @@
     custom_color_enabled: true
     custom_color: "#FBC02D"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
     col: 16
     width: 8
@@ -971,7 +971,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
     col: 0
     width: 6
@@ -991,7 +991,7 @@
     custom_color_enabled: true
     custom_color: "#FBC02D"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
     col: 6
     width: 6
@@ -1011,7 +1011,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
     col: 12
     width: 6
@@ -1031,7 +1031,7 @@
     custom_color_enabled: true
     custom_color: "#2E7D32"
     show_comparison_label: false
-    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 5
     col: 18
     width: 6
@@ -1045,7 +1045,7 @@
     colors: ["#2E7D32"]
     fields: [dim_fecha.fecha_date, fct_remitos.venta_remito]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 10
     col: 0
     width: 24
@@ -1059,7 +1059,7 @@
     colors: ["#F57C00"]
     fields: [dim_fecha.fecha_date, fct_remitos.remitos]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 18
     col: 0
     width: 12
@@ -1073,7 +1073,7 @@
     colors: ["#FBC02D"]
     fields: [dim_fecha.fecha_date, fct_remitos.unidades_remito]
     sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 18
     col: 12
     width: 12
@@ -1093,7 +1093,7 @@
     fields: [fct_remitos.tipo_dispensa, fct_remitos.venta_remito, fct_remitos.pct_venta_total, fct_remitos.remitos, fct_remitos.pct_remitos_total, fct_remitos.unidades_remito, fct_remitos.pct_unidades_total]
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 25
     col: 0
     width: 24
@@ -1114,7 +1114,7 @@
     sorts: [fct_remitos.venta_remito desc]
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: false } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 34
     col: 0
     width: 24
