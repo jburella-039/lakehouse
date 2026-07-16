@@ -1,47 +1,52 @@
 # =============================================================================
 # view: fct_stock
 # Hecho de stock diario (snapshot por sucursal + SKU + dia).
-# Fuente: lakehouse-dev-483619.bss_comercial.fct_stock (~22M filas, 365 dias).
+# Fuente: lakehouse-dev-483619.bss_comercial.vw_fct_stock (PRODUCCION COMPLETA,
+# ~392 sucursales, 2023..2026). Reemplaza a bss_comercial.fct_stock, que era
+# dev/parcial (solo ~2 sucursales) -> por eso los valores suben mucho (correccion).
+# La vista usa nombres CRUDOS Oracle; mapeo a lo que consume este view:
+#   ID_TIE_DIA->fec_dia (TIMESTAMP, antes DATETIME), ID_SUC_SUCURSAL->id_sucursal,
+#   ID_ART_CUF->cd_sku, ID_ART_HISDEPARTAMENTO->id_departamento,
+#   ID_ART_HISCATEGORIA->id_categoria, ID_ART_HISSUBCATEGORIA->id_subcategoria,
+#   ID_ART_HISMARCA->id_marca, ID_PRO_HISPROVEEDOR->id_proveedor,
+#   FC_STK_CANTIDADDISPONIBLE->cnt_disponible, FC_STK_COSTO->mto_costo,
+#   FC_STK_PRECIOPUBLICO->mto_preciopublico, FL_STK_PERTENECEASURTIDO->flg (INT64).
 # Grano: fec_dia + id_sucursal + cd_sku.
 #
-# "Stock del ultimo dia" (lo que devuelve la vista vw_bt_stk_stock_dia / StockDia)
-# se obtiene aca filtrando al ultimo fec_dia cargado: dimension es_ultimo_dia
-# (yesno) o el filtro Fecha del dashboard. No hace falta una vista aparte: Looker
-# resuelve StockDia sobre la propia fct. La vista diaria solo aporta frescura
-# extra (lee en vivo de stockcierre) cuando la carga de la fct viene atrasada.
-#
-# mto_costo / mto_preciopublico son UNITARIOS -> valorizado = cantidad * precio.
+# "Stock del ultimo dia" (StockDia): dimension es_ultimo_dia (yesno) filtra al
+# maximo fec_dia cargado. mto_costo / mto_preciopublico son UNITARIOS -> valorizado
+# = cantidad * precio.
 # =============================================================================
 
 view: fct_stock {
-  sql_table_name: `lakehouse-dev-483619.bss_comercial.fct_stock` ;;
+  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_stock` ;;
 
   dimension: pk {
     primary_key: yes
     hidden: yes
     type: string
-    sql: CONCAT(FORMAT_DATETIME('%Y%m%d', ${TABLE}.fec_dia),'-',
+    sql: CONCAT(FORMAT_TIMESTAMP('%Y%m%d', ${TABLE}.ID_TIE_DIA),'-',
                 ${id_sucursal},'-',${cd_sku}) ;;
   }
 
   # ---------------------------------------------------------------------------
   # DIMENSIONES - claves de join (wiradas en el explore)
   # ---------------------------------------------------------------------------
-  dimension: id_sucursal     { type: number sql: ${TABLE}.id_sucursal ;;     label: "Sucursal (ID)" }
-  dimension: cd_sku          { type: number sql: ${TABLE}.cd_sku ;;          label: "SKU (Articulo)" }
-  dimension: id_departamento { type: number sql: ${TABLE}.id_departamento ;; hidden: yes }
-  dimension: id_categoria    { type: number sql: ${TABLE}.id_categoria ;;    hidden: yes }
-  dimension: id_subcategoria { type: number sql: ${TABLE}.id_subcategoria ;; hidden: yes }
-  dimension: id_marca        { type: number sql: ${TABLE}.id_marca ;;        hidden: yes }
-  dimension: id_proveedor    { type: number sql: ${TABLE}.id_proveedor ;;    label: "Proveedor (ID)" }
+  dimension: id_sucursal     { type: number sql: ${TABLE}.ID_SUC_SUCURSAL ;;       label: "Sucursal (ID)" }
+  dimension: cd_sku          { type: number sql: ${TABLE}.ID_ART_CUF ;;            label: "SKU (Articulo)" }
+  dimension: id_departamento { type: number sql: ${TABLE}.ID_ART_HISDEPARTAMENTO ;; hidden: yes }
+  dimension: id_categoria    { type: number sql: ${TABLE}.ID_ART_HISCATEGORIA ;;   hidden: yes }
+  dimension: id_subcategoria { type: number sql: ${TABLE}.ID_ART_HISSUBCATEGORIA ;; hidden: yes }
+  dimension: id_marca        { type: number sql: ${TABLE}.ID_ART_HISMARCA ;;       hidden: yes }
+  dimension: id_proveedor    { type: number sql: ${TABLE}.ID_PRO_HISPROVEEDOR ;;   label: "Proveedor (ID)" }
 
   # ---------------------------------------------------------------------------
-  # TIEMPO (fec_dia es DATETIME)
+  # TIEMPO (ID_TIE_DIA es TIMESTAMP)
   # ---------------------------------------------------------------------------
   dimension_group: dia {
     type: time
     timeframes: [raw, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_dia ;;
+    sql: ${TABLE}.ID_TIE_DIA ;;
     label: "Fecha Stock"
   }
 
@@ -49,16 +54,16 @@ view: fct_stock {
   # Equivale a la vista StockDia sin materializar nada aparte.
   dimension: es_ultimo_dia {
     type: yesno
-    sql: DATE(${TABLE}.fec_dia) = (
-           SELECT MAX(DATE(fec_dia))
-           FROM `lakehouse-dev-483619.bss_comercial.fct_stock`
+    sql: DATE(${TABLE}.ID_TIE_DIA) = (
+           SELECT MAX(DATE(ID_TIE_DIA))
+           FROM `lakehouse-dev-483619.bss_comercial.vw_fct_stock`
          ) ;;
     label: "Es ultimo dia?"
   }
 
   dimension: pertenece_surtido {
     type: yesno
-    sql: ${TABLE}.flg_perteneceasurtido ;;
+    sql: ${TABLE}.FL_STK_PERTENECEASURTIDO = 1 ;;
     label: "Pertenece a Surtido?"
   }
 
@@ -67,19 +72,19 @@ view: fct_stock {
   # ---------------------------------------------------------------------------
   measure: unidades_disponibles {
     type: sum
-    sql: ${TABLE}.cnt_disponible ;;
+    sql: ${TABLE}.FC_STK_CANTIDADDISPONIBLE ;;
     value_format_name: decimal_0
     label: "Unidades en Stock"
   }
   measure: stock_valorizado_costo {
     type: sum
-    sql: ${TABLE}.cnt_disponible * ${TABLE}.mto_costo ;;
+    sql: ${TABLE}.FC_STK_CANTIDADDISPONIBLE * ${TABLE}.FC_STK_COSTO ;;
     value_format_name: usd_0
     label: "Stock Valorizado (costo)"
   }
   measure: stock_valorizado_pvp {
     type: sum
-    sql: ${TABLE}.cnt_disponible * ${TABLE}.mto_preciopublico ;;
+    sql: ${TABLE}.FC_STK_CANTIDADDISPONIBLE * ${TABLE}.FC_STK_PRECIOPUBLICO ;;
     value_format_name: usd_0
     label: "Stock Valorizado (PVP)"
   }
@@ -94,14 +99,14 @@ view: fct_stock {
   # ---------------------------------------------------------------------------
   measure: unidades_ultimo_dia {
     type: sum
-    sql: ${TABLE}.cnt_disponible ;;
+    sql: ${TABLE}.FC_STK_CANTIDADDISPONIBLE ;;
     filters: [es_ultimo_dia: "yes"]
     value_format_name: decimal_0
     label: "Unidades en Stock (ultimo dia)"
   }
   measure: stock_valorizado_costo_ultimo_dia {
     type: sum
-    sql: ${TABLE}.cnt_disponible * ${TABLE}.mto_costo ;;
+    sql: ${TABLE}.FC_STK_CANTIDADDISPONIBLE * ${TABLE}.FC_STK_COSTO ;;
     filters: [es_ultimo_dia: "yes"]
     value_format_name: usd_0
     label: "Stock Valorizado costo (ultimo dia)"
