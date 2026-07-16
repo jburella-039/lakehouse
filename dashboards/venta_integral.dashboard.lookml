@@ -379,7 +379,66 @@
     row: 14
     col: 0
     width: 24
-    height: 10
+    height: 6
+  - title: "Resumen por Canal (Periodo Seleccionado vs Periodo Anterior)"
+    name: h_canal
+    tab_name: home
+    model: lakehouse
+    explore: fct_ventas
+    type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
+    fields: [dim_origenventa.canal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    filters:
+      fct_ventas.en_periodo_o_aa: "yes"
+    sorts: [fct_ventas.venta_periodo desc]
+    hidden_fields: [fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    dynamic_fields:
+    - table_calculation: cnl_ventas_cur
+      label: "Ventas"
+      expression: "${fct_ventas.venta_periodo}"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: cnl_ventas_anio_ant
+      label: "Ventas Año Ant"
+      expression: "${fct_ventas.venta_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: cnl_tickets_cur
+      label: "Tickets"
+      expression: "${fct_ventas.tickets_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: cnl_tickets_anio_ant
+      label: "Tickets Año Ant"
+      expression: "${fct_ventas.tickets_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: cnl_unidades_cur
+      label: "Unidades"
+      expression: "${fct_ventas.unidades_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: cnl_unidades_anio_ant
+      label: "Unidades Año Ant"
+      expression: "${fct_ventas.unidades_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
+    row: 20
+    col: 0
+    width: 24
+    height: 6
   - title: "Resumen por Tienda (Periodo Seleccionado vs Periodo Anterior)"
     name: h_tienda
     tab_name: home
@@ -392,7 +451,7 @@
     header_background_color: "#2E7D32"
     header_font_color: "#FFFFFF"
     header_text_alignment: left
-    fields: [dim_sucursal.sucursal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
+    fields: [dim_sucursal.sucursal, dim_sucursal.cd_sucursal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
     filters:
       fct_ventas.en_periodo_o_aa: "yes"
     sorts: [fct_ventas.venta_periodo desc]
@@ -436,7 +495,7 @@
       _kind_hint: measure
       _type_hint: number
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.sucursal_cod_desc, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 24
+    row: 26
     col: 0
     width: 24
     height: 10

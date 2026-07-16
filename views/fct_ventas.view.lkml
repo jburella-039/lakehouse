@@ -121,7 +121,7 @@ view: fct_ventas {
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: usd_0
-    label: "Venta $ (s/IVA a/desc)"
+    label: "Ventas"
     drill_fields: [detalle*]
   }
 
@@ -131,7 +131,7 @@ view: fct_ventas {
     sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: decimal_0
-    label: "Unidades Vendidas"
+    label: "Unidades"
   }
 
   # [Vta # Cant Tickets (Resta Stock)] - RESTASTOCK=1 & ESVENTA=1
@@ -139,7 +139,7 @@ view: fct_ventas {
     type: count_distinct
     sql: ${ticket_key} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
-    label: "Tickets (Resta Stock)"
+    label: "Tickets"
   }
 
   measure: costo {
