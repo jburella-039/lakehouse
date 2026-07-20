@@ -7,13 +7,13 @@ include: "/dashboards/**/*.dashboard.lookml"
 
 datagroup: lakehouse_default_datagroup {
   # sql_trigger: SELECT MAX(id) FROM etl_log;;
-  max_cache_age: "1 hour"
+  max_cache_age: "24 hour"
 }
 
 # Cache diario para Venta Integral aprovechando el particionado por fecha de la fct.
 datagroup: venta_integral_datagroup {
-  sql_trigger: SELECT MAX(DATE(fec_venta)) FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
-  max_cache_age: "24 hours"
+  #sql_trigger: SELECT MAX(DATE(fec_venta)) FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
+  max_cache_age: "24 hour"
 }
 
 persist_with: lakehouse_default_datagroup
@@ -255,4 +255,3 @@ explore: fct_stock {
     sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
   }
 }
-
