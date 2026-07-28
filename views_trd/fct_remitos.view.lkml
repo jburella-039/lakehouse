@@ -1,109 +1,30 @@
 # =============================================================================
-# view: fct_remitos
-# Hecho de remitos de farmacia (obra social / dispensa) - BSS Comercial.
-# Fuente: lakehouse-dev-483619.bss_comercial.vw_fct_remitos (nombres logicos).
-# Reemplaza a bss_oracle.BT_VTA_FARMACIA (nombres fisicos crudos). Validado 1:1
-# en marzo 2026: venta, unidades, costo, remitos y filas coinciden exacto.
-# Equivale a la tabla "Remito" del cubo SSAS (pagina "Farmacia" del Power BI).
-#
-# Mapeo de columnas crudo -> vista comercial (las que consume este view):
-#  ID_SUC_SUCURSAL->id_sucursal, ID_SUC_CAJA->id_caja,
-#  ID_TKT_TIPOCOMPROBANTE->id_tipocomprobante, ID_TKT_NROCOMPROBANTE->cd_nrocomprobante,
-#  ID_ART_CUF->cd_sku, ID_OOS_OBRASOCIAL->id_obrasocial, ID_OOS_NROREMITO->id_nroremito,
-#  ID_ART_HISDEPARTAMENTO->id_departamento, ID_ART_HISCATEGORIA->id_categoria,
-#  ID_ART_HISSUBCATEGORIA->id_subcategoria, ID_ART_HISMARCA->id_marca,
-#  DS_VTA_DISPENSA->dsc_dispensa, DS_VTA_NOMBREMEDICO->dsc_nombremedico,
-#  ID_VTA_PSICOTROPICO->flg_psicotropico, ID_VTA_ESRECETADIGITAL->flg_esrecetadigital,
-#  ID_TIE_DIA->fec_dia (ahora DATE, antes TIMESTAMP), FC_TKF_MONTOTOTAL->mto_total,
-#  FC_TKF_CANTIDAD->cnt_unidades, FC_TKF_COSTOFARMACIA->mto_costofarmacia.
-# NOTA fec_dia es DATE: pk/remito_key usan FORMAT_DATE (no FORMAT_TIMESTAMP) y
-# en_periodo hace TIMESTAMP(fec_dia) directo (sin DATE(), que no acepta un DATE).
+# TRD view: fct_remitos  (capa semantica / metricas)
+# Extiende raw_fct_remitos y define TODAS las medidas de Remitos (venta, unidades,
+# remitos, margen) + dinamicas por periodo + YoY. Filtran ESVENTA=1 & RESTASTOCK=1.
+# NOTA fec_dia es DATE: en_periodo hace TIMESTAMP(fec_dia) directo (sin DATE()).
 # =============================================================================
 
+include: "/views_raw/raw_fct_remitos.view.lkml"
+
 view: fct_remitos {
-  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_remitos` ;;
+  extends: [raw_fct_remitos]
+  label: "Comercial - Remitos"
 
   # ---------------------------------------------------------------------------
-  # CLAVES
+  # DIMENSIONES expuestas al usuario (definidas en la capa raw)
   # ---------------------------------------------------------------------------
-  dimension: pk {
-    primary_key: yes
-    hidden: yes
-    type: string
-    sql: CONCAT(${id_sucursal},'-',${TABLE}.id_caja,'-',${id_tipocomprobante},'-',
-                ${TABLE}.cd_nrocomprobante,'-',${cd_sku},'-',
-                FORMAT_DATE('%Y%m%d', ${TABLE}.fec_dia)) ;;
-  }
-
-  # Key de remito: sucursal + dia + nro de remito (COUNTROWS SUMMARIZE del DAX).
-  dimension: remito_key {
-    hidden: yes
-    type: string
-    sql: CONCAT(${id_sucursal},'-',
-                FORMAT_DATE('%Y%m%d', ${TABLE}.fec_dia),'-',
-                CAST(${TABLE}.id_nroremito AS STRING)) ;;
-  }
-
-  # ---------------------------------------------------------------------------
-  # DIMENSIONES - claves de join (a wirear en el explore)
-  # ---------------------------------------------------------------------------
-  dimension: id_sucursal        { type: number sql: ${TABLE}.id_sucursal ;;        label: "Sucursal (ID)" }
-  dimension: id_tipocomprobante { type: number sql: ${TABLE}.id_tipocomprobante ;; hidden: yes }
-  dimension: cd_sku             { type: number sql: ${TABLE}.cd_sku ;;             label: "SKU (Articulo)" }
-  dimension: id_obrasocial      { type: number sql: ${TABLE}.id_obrasocial ;;      hidden: yes }
-
-  # Jerarquia de producto historica directa en el hecho.
-  dimension: id_departamento { type: number sql: ${TABLE}.id_departamento ;; hidden: yes }
-  dimension: id_categoria    { type: number sql: ${TABLE}.id_categoria ;;    hidden: yes }
-  dimension: id_subcategoria { type: number sql: ${TABLE}.id_subcategoria ;; hidden: yes }
-  dimension: id_marca        { type: number sql: ${TABLE}.id_marca ;;         hidden: yes }
-
-  # ---------------------------------------------------------------------------
-  # DIMENSIONES - dispensa / cobertura
-  # ---------------------------------------------------------------------------
-  # Tipo de dispensa (pivot de la pagina Farmacia): "Venta Libre", "Receta", etc.
-  dimension: tipo_dispensa {
-    type: string
-    sql: ${TABLE}.dsc_dispensa ;;
-    label: "Tipo Dispensa"
-  }
-
-  dimension: nombre_medico { type: string sql: ${TABLE}.dsc_nombremedico ;; label: "Medico" hidden: yes }
-
-  dimension: es_psicotropico {
-    type: yesno
-    sql: ${TABLE}.flg_psicotropico = 1 ;;
-    label: "Psicotropico?"
-  }
-
-  dimension: es_receta_digital {
-    type: yesno
-    sql: ${TABLE}.flg_esrecetadigital = 1 ;;
-    label: "Receta Digital?"
-  }
-
-  # ---------------------------------------------------------------------------
-  # TIEMPO
-  # ---------------------------------------------------------------------------
-  dimension_group: dia {
-    type: time
-    timeframes: [raw, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_dia ;;
-    label: "Fecha"
-  }
-
-  # Año como STRING para el filtro selector (dropdown). Ver nota en fct_ventas.
-  dimension: anio_sel {
-    type: string
-    sql: CAST(${dia_year} AS STRING) ;;
-    label: "Año"
-    suggestions: ["2026", "2025", "2024"]
-  }
+  dimension: id_sucursal       { hidden: no }
+  dimension: cd_sku            { hidden: no }
+  dimension: tipo_dispensa     { hidden: no }
+  dimension: es_psicotropico   { hidden: no }
+  dimension: es_receta_digital { hidden: no }
+  dimension_group: dia         { hidden: no }
+  dimension: anio_sel          { hidden: no }
 
   # ---------------------------------------------------------------------------
   # MEASURES - base
   # ---------------------------------------------------------------------------
-  # [Vta $ ... Remitos] - monto total; filtra ESVENTA=1 & RESTASTOCK=1.
   measure: venta_remito {
     type: sum
     sql: ${TABLE}.mto_total ;;
@@ -111,7 +32,6 @@ view: fct_remitos {
     value_format_name: usd_0
     label: "Venta Remitos $"
   }
-
   measure: unidades_remito {
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
@@ -119,7 +39,6 @@ view: fct_remitos {
     value_format_name: decimal_0
     label: "Unidades Remitos"
   }
-
   # [Vta # Cant Remitos (Resta Stock)] - distinct sucursal-dia-nroremito.
   measure: remitos {
     type: count_distinct
@@ -128,7 +47,6 @@ view: fct_remitos {
     value_format_name: decimal_0
     label: "Remitos"
   }
-
   measure: costo_remito {
     type: sum
     sql: ${TABLE}.mto_costofarmacia ;;
@@ -146,43 +64,34 @@ view: fct_remitos {
     value_format_name: usd_0
     label: "Margen $ Remitos"
   }
-
   measure: margen_pct {
     type: number
     sql: SAFE_DIVIDE(${venta_remito} - ${costo_remito}, NULLIF(${venta_remito},0)) ;;
     value_format_name: percent_2
     label: "Margen % Remitos"
   }
-
   measure: remito_promedio {
     type: number
     sql: SAFE_DIVIDE(${venta_remito}, NULLIF(${remitos},0)) ;;
     value_format_name: usd_0
     label: "Remito Promedio"
   }
-
   measure: unidades_por_remito {
     type: number
     sql: SAFE_DIVIDE(${unidades_remito}, NULLIF(${remitos},0)) ;;
     value_format_name: decimal_2
     label: "Unidades por Remito"
   }
-
-  # [% Vta $ T SIva Ant Desc Remitos]
   measure: pct_venta_total {
     type: percent_of_total
     sql: ${venta_remito} ;;
     label: "% Venta Remitos (participacion)"
   }
-
-  # [% Vta # Cant Remitos (Resta Stock)]
   measure: pct_remitos_total {
     type: percent_of_total
     sql: ${remitos} ;;
     label: "% Remitos (participacion)"
   }
-
-  # [% Vta # T Unid Vend Remitos]
   measure: pct_unidades_total {
     type: percent_of_total
     sql: ${unidades_remito} ;;
@@ -191,19 +100,13 @@ view: fct_remitos {
 
   # ---------------------------------------------------------------------------
   # MEASURES dinamicas por periodo (KPIs que responden al filtro Fecha)
-  # Mismo patron que fct_ventas: filtro_fecha via listen; "_aa" aplica el rango
-  # sobre el dia + 1 año (DATE_ADD) para el mismo periodo del año anterior.
   # ---------------------------------------------------------------------------
   filter: filtro_fecha {
     type: date
     label: "Fecha (periodo KPI)"
   }
 
-  # Patron documentado por Looker (timeframe vs timeframe): {% condition %} en una
-  # dimension yesno y las medidas se filtran por ella (no dentro del sql de la medida).
-  # filtro_fecha (filter type: date) genera literales TIMESTAMP; el lado izquierdo
-  # debe ser TIMESTAMP. fec_dia ya es DATE, asi que TIMESTAMP(fec_dia) da midnight UTC
-  # (no se envuelve en DATE(), que no acepta un DATE). Ver nota en fct_ventas.
+  # fec_dia ya es DATE -> TIMESTAMP(fec_dia) da midnight UTC (no se envuelve en DATE()).
   dimension: en_periodo {
     hidden: yes
     type: yesno
@@ -326,8 +229,7 @@ view: fct_remitos {
   }
 
   # ---------------------------------------------------------------------------
-  # MEASURES YoY (% de variacion vs mismo periodo del año anterior). Ver nota en
-  # fct_ventas. Se usan como campo de comparacion en las tarjetas KPI.
+  # MEASURES YoY (% de variacion vs mismo periodo del año anterior)
   # ---------------------------------------------------------------------------
   measure: venta_yoy {
     type: number

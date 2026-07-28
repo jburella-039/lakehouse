@@ -1,116 +1,40 @@
 # =============================================================================
-# view: fct_ventas
-# Hecho de ventas (nivel linea de comprobante) - BSS Comercial
-# Fuente: lakehouse-dev-483619.bss_comercial.vw_fct_ventas
-# (columnas identicas a bss_oracle.fct_ventas; validado 1:1 marzo 2026:
-#  venta_neta, unidades, costo, tickets y filas coinciden exacto).
-#
-# Alineado al MAPEO_SSAS_a_LookML v5 (fct real de BigQuery):
-#  - Venta neta s/IVA antes de desc = columna precalculada mto_totalsinivaantesdescuento
-#    (equivale a [Vta $ T SIva Ant Desc] del cubo).
+# TRD view: fct_ventas  (capa semantica / metricas)
+# Extiende raw_fct_ventas (dimensiones + claves) y define TODAS las medidas de
+# Ventas / Unidades / Tickets, incluyendo las dinamicas por periodo y las YoY.
+# Alineado al MAPEO_SSAS_a_LookML v5.
+#  - Venta neta s/IVA antes de desc = mto_totalsinivaantesdescuento.
 #  - Unidades = cnt_unidades ; Costo = mto_costo ; Margen $ = neto - costo.
-#  - Ticket (resta stock): id_ventaunica viene NULL en la fct -> key interina por
-#    combinacion; COALESCE prioriza id_ventaunica cuando se puebla.
-#
-# PENDIENTE (requiere joins de dimension, ver explore):
-#  - Filtros por flags ID_TKT_ESVENTA / ID_TKT_RESTASTOCK (viven en TipoComprobante).
-#    Las medidas base hoy NO los aplican; se agregan al wirear el join o al
-#    denormalizar es_venta/resta_stock en el hecho (recomendacion del mapeo).
+#  - Filtros por flags ESVENTA / RESTASTOCK via join a dim_tipocomprobante.
 # =============================================================================
 
+include: "/views_raw/raw_fct_ventas.view.lkml"
+
 view: fct_ventas {
-  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
+  extends: [raw_fct_ventas]
+  label: "Comercial - Ventas"
 
   # ---------------------------------------------------------------------------
-  # CLAVES
+  # DIMENSIONES expuestas al usuario (definidas en la capa raw)
   # ---------------------------------------------------------------------------
-  dimension: pk {
-    primary_key: yes
-    hidden: yes
-    type: string
-    sql: CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
-                ${cd_nrocomprobante},'-',${cd_sku}) ;;
-  }
-
-  # Key de ticket (resta stock). Prioriza id_ventaunica cuando exista.
-  dimension: ticket_key {
-    hidden: yes
-    type: string
-    sql: COALESCE(
-            CAST(${TABLE}.id_ventaunica AS STRING),
-            CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
-                   ${cd_nrocomprobante},'-',
-                   FORMAT_TIMESTAMP('%Y%m%d', ${TABLE}.fec_dia),'-',
-                   CAST(${TABLE}.id_nroapertura AS STRING))
-         ) ;;
-  }
-
-  # ---------------------------------------------------------------------------
-  # DIMENSIONES - claves de join (a wirear en el explore)
-  # ---------------------------------------------------------------------------
-  dimension: id_sucursal       { type: number sql: ${TABLE}.id_sucursal ;;       label: "Sucursal (ID)" }
-  dimension: id_caja           { type: number sql: ${TABLE}.id_caja ;;           label: "Caja" }
-  dimension: id_tipocomprobante{ type: number sql: ${TABLE}.id_tipocomprobante ;; label: "Tipo Comprobante (ID)" }
-  dimension: cd_nrocomprobante { type: number sql: ${TABLE}.cd_nrocomprobante ;;  label: "Nro Comprobante" }
-  dimension: id_nroapertura    { type: number sql: ${TABLE}.id_nroapertura ;;     hidden: yes }
-  dimension: cd_sku            { type: number sql: ${TABLE}.cd_sku ;;            label: "SKU (Articulo)" }
-  dimension: id_obrasocial     { type: number sql: ${TABLE}.id_obrasocial ;;     label: "Obra Social (ID)" }
-  dimension: id_proveedor      { type: number sql: ${TABLE}.id_proveedor ;;      label: "Proveedor (ID)" }
-  dimension: id_origenventa    { type: number sql: ${TABLE}.id_origenventa ;;    label: "Origen Venta / Canal (ID)" hidden: yes }
-
-  # Jerarquia de producto historica directa en la fct (alternativa al snowflake).
-  dimension: id_departamento   { type: number sql: ${TABLE}.id_departamento ;;   label: "Departamento (ID)" }
-  dimension: id_categoria      { type: number sql: ${TABLE}.id_categoria ;;      label: "Categoria (ID)" }
-  dimension: id_subcategoria   { type: number sql: ${TABLE}.id_subcategoria ;;   label: "Subcategoria (ID)" }
-  dimension: id_marca          { type: number sql: ${TABLE}.id_marca ;;          label: "Marca (ID)" }
-
-  # ---------------------------------------------------------------------------
-  # DIMENSIONES - cliente / cobertura
-  # ---------------------------------------------------------------------------
-  dimension: id_cliente { type: number sql: ${TABLE}.id_cliente ;; label: "Cliente (ID)" }
-
-  dimension: cliente_identificado {
-    type: yesno
-    sql: ${TABLE}.id_cliente <> -1 AND ${TABLE}.id_cliente IS NOT NULL ;;
-    label: "Cliente Identificado?"
-  }
-
-  dimension: tipo_cobertura {
-    type: string
-    sql: CASE WHEN ${TABLE}.id_obrasocial IS NULL OR ${TABLE}.id_obrasocial <= 0
-              THEN 'Particular' ELSE 'Obra Social / Coseguro' END ;;
-    label: "Tipo de Cobertura"
-  }
-
-  # ---------------------------------------------------------------------------
-  # TIEMPO
-  # ---------------------------------------------------------------------------
-  dimension_group: venta {
-    type: time
-    timeframes: [raw, time, hour_of_day, date, day_of_week, week, month, month_name, quarter, year]
-    sql: ${TABLE}.fec_venta ;;
-    label: "Fecha de Venta"
-  }
-
-  # fec_dia (dia contable) - usada para join a la dim Fecha y para el ticket_key.
-  dimension_group: dia {
-    type: time
-    timeframes: [raw, date, week, month, quarter, year]
-    sql: ${TABLE}.fec_dia ;;
-    label: "Fecha"
-  }
-
-  # Año como STRING para el filtro selector (dropdown). Un field_filter sobre el
-  # year numerico (dia_year) renderiza un input numerico sin lista; este campo de
-  # texto con suggestions fijas muestra el desplegable con los años.
-  dimension: anio_sel {
-    type: string
-    sql: CAST(${dia_year} AS STRING) ;;
-    label: "Año"
-    suggestions: ["2026", "2025", "2024"]
-  }
-
-  dimension: num_hora { type: number sql: ${TABLE}.num_hora ;; label: "Hora del Dia" }
+  dimension: id_sucursal        { hidden: no }
+  dimension: id_caja            { hidden: no }
+  dimension: id_tipocomprobante { hidden: no }
+  dimension: cd_nrocomprobante  { hidden: no }
+  dimension: cd_sku             { hidden: no }
+  dimension: id_obrasocial      { hidden: no }
+  dimension: id_proveedor       { hidden: no }
+  dimension: id_departamento    { hidden: no }
+  dimension: id_categoria       { hidden: no }
+  dimension: id_subcategoria    { hidden: no }
+  dimension: id_marca           { hidden: no }
+  dimension: id_cliente         { hidden: no }
+  dimension: cliente_identificado { hidden: no }
+  dimension: tipo_cobertura     { hidden: no }
+  dimension_group: venta        { hidden: no }
+  dimension_group: dia          { hidden: no }
+  dimension: anio_sel           { hidden: no }
+  dimension: num_hora           { hidden: no }
 
   # ---------------------------------------------------------------------------
   # MEASURES - base (Ventas / Unidades / Tickets)
@@ -153,31 +77,24 @@ view: fct_ventas {
   # ---------------------------------------------------------------------------
   # MEASURES - derivadas (margen y promedios)
   # ---------------------------------------------------------------------------
-  # [Margen T $ SIva Ant Desc]
   measure: margen_pesos {
     type: number
     sql: ${venta_neta} - ${costo} ;;
     value_format_name: usd_0
     label: "Margen $ (s/IVA a/desc)"
   }
-
-  # [Margen SIva Ant Desc] -> es %, no participacion
   measure: margen_pct {
     type: number
     sql: SAFE_DIVIDE(${venta_neta} - ${costo}, NULLIF(${venta_neta},0)) ;;
     value_format_name: percent_2
     label: "Margen %"
   }
-
-  # [Ticket Promedio]
   measure: ticket_promedio {
     type: number
     sql: SAFE_DIVIDE(${venta_neta}, NULLIF(${tickets},0)) ;;
     value_format_name: usd_0
     label: "Ticket Promedio"
   }
-
-  # [Unidades por Ticket]
   measure: unidades_por_ticket {
     type: number
     sql: SAFE_DIVIDE(${unidades}, NULLIF(${tickets},0)) ;;
@@ -185,19 +102,17 @@ view: fct_ventas {
     label: "Unidades por Ticket"
   }
 
-  # Participacion sobre el total del contexto (para los graficos de % del PBI).
+  # Participacion sobre el total del contexto.
   measure: pct_venta_total {
     type: percent_of_total
     sql: ${venta_neta} ;;
     label: "% Venta (participacion)"
   }
-
   measure: pct_tickets_total {
     type: percent_of_total
     sql: ${tickets} ;;
     label: "% Tickets (participacion)"
   }
-
   measure: pct_unidades_total {
     type: percent_of_total
     sql: ${unidades} ;;
@@ -206,28 +121,18 @@ view: fct_ventas {
 
   # ---------------------------------------------------------------------------
   # MEASURES dinamicas por periodo (KPIs que responden al filtro Fecha)
-  # El filtro Fecha del dashboard se mapea (listen) a filtro_fecha en las
-  # tarjetas KPI. La version "_aa" aplica el MISMO rango pero sobre la fecha + 1
-  # año (DATE_ADD), por lo que devuelve el mismo periodo del año anterior:
-  # comparacion interanual dinamica (validada en BigQuery: marzo 26 vs 25 = +34.1%).
-  # Estas medidas NO usan el filtro Fecha como filtro normal de la query (la
-  # tarjeta escucha fecha -> filtro_fecha), porque la "_aa" necesita ver las
-  # filas del año anterior, que un filtro normal sobre la fecha excluiria.
+  # El filtro Fecha del dashboard se mapea (listen) a filtro_fecha. La version
+  # "_aa" aplica el MISMO rango sobre la fecha + 1 año (DATE_ADD): comparacion
+  # interanual dinamica (validada en BigQuery: marzo 26 vs 25 = +34.1%).
   # ---------------------------------------------------------------------------
   filter: filtro_fecha {
     type: date
     label: "Fecha (periodo KPI)"
   }
 
-  # Patron documentado por Looker (timeframe vs timeframe analysis): el {% condition %}
-  # va en una dimension yesno y las medidas se filtran por ella. (Ponerlo dentro del
-  # sql de la medida daba Query error en BigQuery.) en_periodo = la fila cae en el rango
-  # Fecha; en_periodo_aa = el dia + 1 año cae en el rango -> mismo periodo año anterior.
-  # NOTA: filtro_fecha es un filter type: date que Looker trata como TIMESTAMP, por
-  # lo que {% condition %} genera literales TIMESTAMP. El lado izquierdo debe ser
-  # TIMESTAMP tambien (BigQuery no compara DATE >= TIMESTAMP). Se normaliza a la fecha
-  # (DATE) y se reconvierte a TIMESTAMP(midnight UTC), mismo bucketing que usan las
-  # tendencias/tablas (DATE(fec_dia)).
+  # Patron Looker (timeframe vs timeframe): {% condition %} en una dimension yesno
+  # y las medidas se filtran por ella. filtro_fecha (type: date) genera literales
+  # TIMESTAMP; el lado izquierdo se normaliza a TIMESTAMP(DATE(fec_dia)).
   dimension: en_periodo {
     hidden: yes
     type: yesno
@@ -238,11 +143,7 @@ view: fct_ventas {
     type: yesno
     sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
-
-  # Union del periodo seleccionado y su equivalente del año anterior. Se usa como
-  # filtro duro (=yes) en tablas/KPIs para ACOTAR el scan a esas dos ventanas; sin
-  # esto las medidas *_periodo agregan sobre toda la historia (count_distinct de
-  # tickets no termina). Usa filtro_fecha via listen, igual que en_periodo.
+  # Union del periodo y su equivalente del año anterior. Filtro duro para acotar el scan.
   dimension: en_periodo_o_aa {
     hidden: yes
     type: yesno
@@ -361,10 +262,7 @@ view: fct_ventas {
 
   # ---------------------------------------------------------------------------
   # MEASURES YoY (% de variacion vs mismo periodo del año anterior)
-  # Reutilizables desde el explore. Variacion relativa = (actual - año ant) / año ant
-  # sobre las medidas _periodo / _periodo_aa (que ya siguen el filtro Fecha via
-  # filtro_fecha). En las tarjetas KPI se usan como campo de comparacion (single_value
-  # comparison_type: change): muestran el % con flecha verde/roja segun el signo.
+  # Se usan como campo de comparacion en las tarjetas KPI (comparison_type: change).
   # Margen %: variacion en PUNTOS porcentuales (diferencia), no relativa.
   # ---------------------------------------------------------------------------
   measure: venta_yoy {
