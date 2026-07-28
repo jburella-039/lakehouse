@@ -3,7 +3,7 @@
 # Extiende raw_dim_horas. NO se joinea a los hechos (grano HH:MM:SS -> m:m).
 # =============================================================================
 
-include: "/views_raw/raw_dim_horas.view.lkml"
+include: "/views_raw/bss_referencial/raw_dim_horas.view.lkml"
 
 view: dim_horas {
   extends: [raw_dim_horas]

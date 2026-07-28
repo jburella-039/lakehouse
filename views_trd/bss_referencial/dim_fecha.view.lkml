@@ -4,7 +4,7 @@
 # UNICA fuente de fecha de los dashboards Venta Integral.
 # =============================================================================
 
-include: "/views_raw/raw_dim_fecha.view.lkml"
+include: "/views_raw/bss_referencial/raw_dim_fecha.view.lkml"
 
 view: dim_fecha {
   extends: [raw_dim_fecha]

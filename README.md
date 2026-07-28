@@ -16,16 +16,23 @@ Corebi: separacion clara entre la capa cruda (RAW) y la capa transformada (TRD).
 |   |-- fct_remitos.explore.lkml
 |   `-- fct_stock.explore.lkml
 |-- /views_raw/                    # capa CRUDA (mirror del origen BigQuery)
-|   |-- raw_fct_ventas.view.lkml
-|   |-- raw_dim_fecha.view.lkml
-|   `-- ... (17 vistas raw_*)
+|   |-- /bss_referencial/          #   raw_dim_fecha, raw_dim_horas
+|   |-- /bss_comercial/            #   raw_fct_ventas ... raw_dim_origenventa
+|   |-- /bss_sucursales/           #   raw_dim_sucursal ... raw_dim_region
+|   `-- /bss_salud/                #   raw_dim_obrasocial
 |-- /views_trd/                    # capa TRD (transformada / semantica / metricas)
-|   |-- fct_ventas.view.lkml
-|   |-- dim_fecha.view.lkml
-|   `-- ... (17 vistas TRD)
+|   |-- /bss_referencial/          #   dim_fecha, dim_horas
+|   |-- /bss_comercial/            #   fct_ventas ... dim_origenventa
+|   |-- /bss_sucursales/           #   dim_sucursal ... dim_region
+|   `-- /bss_salud/                #   dim_obrasocial
 `-- /dashboards/
     `-- venta_integral.dashboard.lookml
 ```
+
+Las vistas se agrupan en subcarpetas por **dataset BigQuery** (`bss_referencial`,
+`bss_comercial`, `bss_sucursales`, `bss_salud`), tanto en RAW como en TRD. El nombre
+de la vista NO lleva el area (esa se ve en el `label` / `view_label`); la subcarpeta
+es solo organizacion. El modelo incluye `"/views_trd/**/*.view.lkml"` (recursivo).
 
 ## Capas
 

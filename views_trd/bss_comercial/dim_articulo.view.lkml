@@ -4,7 +4,7 @@
 # claves de la jerarquia snowflake.
 # =============================================================================
 
-include: "/views_raw/raw_dim_articulo.view.lkml"
+include: "/views_raw/bss_comercial/raw_dim_articulo.view.lkml"
 
 view: dim_articulo {
   extends: [raw_dim_articulo]

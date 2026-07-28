@@ -5,7 +5,7 @@
 # cantidad * precio.
 # =============================================================================
 
-include: "/views_raw/raw_fct_stock.view.lkml"
+include: "/views_raw/bss_comercial/raw_fct_stock.view.lkml"
 
 view: fct_stock {
   extends: [raw_fct_stock]

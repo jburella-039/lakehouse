@@ -2,7 +2,7 @@
 # TRD view: dim_categoria  (capa semantica). Extiende raw_dim_categoria.
 # =============================================================================
 
-include: "/views_raw/raw_dim_categoria.view.lkml"
+include: "/views_raw/bss_comercial/raw_dim_categoria.view.lkml"
 
 view: dim_categoria {
   extends: [raw_dim_categoria]

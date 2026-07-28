@@ -3,7 +3,7 @@
 # Canal de venta y presencialidad.
 # =============================================================================
 
-include: "/views_raw/raw_dim_origenventa.view.lkml"
+include: "/views_raw/bss_comercial/raw_dim_origenventa.view.lkml"
 
 view: dim_origenventa {
   extends: [raw_dim_origenventa]

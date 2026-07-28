@@ -5,7 +5,7 @@
 # NOTA fec_dia es DATE: en_periodo hace TIMESTAMP(fec_dia) directo (sin DATE()).
 # =============================================================================
 
-include: "/views_raw/raw_fct_remitos.view.lkml"
+include: "/views_raw/bss_comercial/raw_fct_remitos.view.lkml"
 
 view: fct_remitos {
   extends: [raw_fct_remitos]

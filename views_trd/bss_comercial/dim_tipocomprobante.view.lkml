@@ -4,7 +4,7 @@
 # filtran las medidas base de los hechos.
 # =============================================================================
 
-include: "/views_raw/raw_dim_tipocomprobante.view.lkml"
+include: "/views_raw/bss_comercial/raw_dim_tipocomprobante.view.lkml"
 
 view: dim_tipocomprobante {
   extends: [raw_dim_tipocomprobante]

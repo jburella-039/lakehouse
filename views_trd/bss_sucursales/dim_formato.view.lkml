@@ -3,7 +3,7 @@
 # "Formato Bis": nombres del reporte (Farmacity, Get The Look, ...).
 # =============================================================================
 
-include: "/views_raw/raw_dim_formato.view.lkml"
+include: "/views_raw/bss_sucursales/raw_dim_formato.view.lkml"
 
 view: dim_formato {
   extends: [raw_dim_formato]

@@ -8,7 +8,7 @@
 #  - Filtros por flags ESVENTA / RESTASTOCK via join a dim_tipocomprobante.
 # =============================================================================
 
-include: "/views_raw/raw_fct_ventas.view.lkml"
+include: "/views_raw/bss_comercial/raw_fct_ventas.view.lkml"
 
 view: fct_ventas {
   extends: [raw_fct_ventas]

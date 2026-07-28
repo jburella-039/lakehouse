@@ -2,7 +2,7 @@
 # TRD view: dim_sucursal  (capa semantica). Extiende raw_dim_sucursal.
 # =============================================================================
 
-include: "/views_raw/raw_dim_sucursal.view.lkml"
+include: "/views_raw/bss_sucursales/raw_dim_sucursal.view.lkml"
 
 view: dim_sucursal {
   extends: [raw_dim_sucursal]
