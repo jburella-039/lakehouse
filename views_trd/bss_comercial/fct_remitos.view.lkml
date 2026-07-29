@@ -15,6 +15,7 @@ view: fct_remitos {
   # DIMENSIONES expuestas al usuario (definidas en la capa raw)
   # ---------------------------------------------------------------------------
   dimension: id_sucursal       { hidden: no }
+  dimension: hk_remito         { hidden: yes }
   dimension: cd_sku            { hidden: no }
   dimension: tipo_dispensa     { hidden: no }
   dimension: es_psicotropico   { hidden: no }
@@ -40,9 +41,10 @@ view: fct_remitos {
     label: "Unidades Remitos"
   }
   # [Vta # Cant Remitos (Resta Stock)] - distinct sucursal-dia-nroremito.
+  # COUNT(DISTINCT hk_remito): hash key INT64 precomputado (ver PDT + BigQuery).
   measure: remitos {
     type: count_distinct
-    sql: ${remito_key} ;;
+    sql: ${hk_remito} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
     value_format_name: decimal_0
     label: "Remitos"
@@ -135,14 +137,14 @@ view: fct_remitos {
 
   measure: remitos_periodo {
     type: count_distinct
-    sql: ${remito_key} ;;
+    sql: ${hk_remito} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
     value_format: "#,##0.0,,\"M\""
     label: "Remitos (periodo)"
   }
   measure: remitos_periodo_aa {
     type: count_distinct
-    sql: ${remito_key} ;;
+    sql: ${hk_remito} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Remitos (periodo año ant.)"

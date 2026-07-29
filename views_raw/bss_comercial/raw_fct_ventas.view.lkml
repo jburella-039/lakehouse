@@ -1,15 +1,40 @@
 # =============================================================================
-# RAW view: raw_fct_ventas
+# RAW view: raw_fct_ventas  (PDT persistido)
 # Capa CRUDA (dimensiones y claves; SIN medidas). Las metricas viven en la capa
-# STG (fct_ventas). Fuente: lakehouse-dev-483619.bss_comercial.vw_fct_ventas
-# (columnas identicas a bss_oracle.fct_ventas; validado 1:1 marzo 2026).
+# TRD (fct_ventas).
 #
-# Ticket (resta stock): id_ventaunica viene NULL en la fct -> key interina por
-# combinacion; COALESCE prioriza id_ventaunica cuando se puebla.
+# PERFORMANCE: en vez de leer la vista logica y armar el ticket_key (string
+# ancho) en cada consulta, la raw se materializa como PDT (derived_table
+# persistido por el datagroup diario). El PDT precomputa hk_vta_venta
+# (INT64 = FARM_FINGERPRINT de la clave de cabecera, equivalente a HK_VTA_VENTA
+# del ADW; mismo criterio que bss_comercial.vw_fct_ventas_hk en
+# bigquery/pk_ventas_unica.sql).
+#   - El PDT se particiona por fec_dia y se clusteriza por las claves de cabecera
+#     -> el dashboard poda particiones y agrupa mas barato.
+#   - Tickets se cuentan como COUNT(DISTINCT INT64) sobre hk_vta_venta (mucho mas
+#     barato que sobre el string). Requiere PDTs habilitados en la conexion.
+#   - No cambia las fuentes: hk se deriva; el dato base es identico. El SELECT lee
+#     de la vista base vw_fct_ventas (no depende de crear la vista _hk primero).
 # =============================================================================
 
 view: raw_fct_ventas {
-  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
+  derived_table: {
+    sql:
+      SELECT
+        f.*,
+        FARM_FINGERPRINT(CONCAT(
+          CAST(f.id_sucursal        AS STRING), '-',
+          CAST(f.id_caja            AS STRING), '-',
+          CAST(f.id_tipocomprobante AS STRING), '-',
+          CAST(f.cd_nrocomprobante  AS STRING), '-',
+          FORMAT_TIMESTAMP('%Y%m%d', f.fec_dia), '-',
+          CAST(f.id_nroapertura     AS STRING)
+        )) AS hk_vta_venta
+      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f ;;
+    datagroup_trigger: venta_integral_datagroup
+    partition_keys: ["fec_dia"]
+    cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
+  }
   fields_hidden_by_default: yes
 
   # ---------------------------------------------------------------------------
@@ -22,7 +47,15 @@ view: raw_fct_ventas {
                 ${cd_nrocomprobante},'-',${cd_sku}) ;;
   }
 
-  # Key de ticket (resta stock). Prioriza id_ventaunica cuando exista.
+  # Hash key de cabecera (INT64). Clave de ticket (resta stock) precomputada en
+  # BigQuery. Las medidas de Tickets hacen COUNT(DISTINCT hk_vta_venta).
+  dimension: hk_vta_venta {
+    type: number
+    sql: ${TABLE}.hk_vta_venta ;;
+  }
+
+  # Key de ticket legacy (string). Se conserva para drill/compatibilidad; las
+  # medidas ya no la usan (usan hk_vta_venta). Prioriza id_ventaunica si existe.
   dimension: ticket_key {
     type: string
     sql: COALESCE(

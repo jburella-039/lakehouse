@@ -62,6 +62,29 @@ es solo organizacion. El modelo incluye `"/views_trd/**/*.view.lkml"` (recursivo
 | Sucursales    | `bss_sucursales`       | dim_sucursal, dim_formato, dim_provincia, dim_region |
 | Salud         | `bss_salud`            | dim_obrasocial |
 
+## Performance: PK unica de Ventas + PDT
+
+Los conteos de Tickets / Remitos son `count_distinct`. Contarlos sobre un string
+ancho armado en cada consulta (sucursal-caja-tipocomp-nrocomp-dia-apertura) es
+caro. Para acelerarlos:
+
+- **Hash key (`hk_vta_venta` / `hk_remito`)**: `FARM_FINGERPRINT` de la clave de
+  cabecera -> un `INT64` determinista. Es el equivalente en BigQuery a la
+  `HK_VTA_VENTA` del ADW (SP `SP_VTA_TICKETS_CAB_IDS_LOAD`). `COUNT(DISTINCT INT64)`
+  es mucho mas barato que sobre string. Las medidas de conteo usan el hash.
+- **PDT persistido**: `raw_fct_ventas` y `raw_fct_remitos` son `derived_table`
+  persistidos por `venta_integral_datagroup` (rebuild diario), **particionados por
+  `fec_dia`** y **clusterizados** por las claves -> el dashboard poda particiones y
+  agrupa mas barato. El PDT precomputa el hash como columna fisica.
+- **BigQuery** (`bigquery/pk_ventas_unica.sql`): vistas `vw_fct_ventas_hk` /
+  `vw_fct_remitos_hk` (hash reutilizable por otros consumidores) y la tabla
+  `map_vta_tickets_cab_id` (grano cabecera, `es_venta=1`, con surrogate denso
+  `id_vta_venta`), refrescada por MERGE idempotente (resiste recargas).
+
+Requiere **PDTs habilitados** en la conexion (dataset temporal configurado). El
+LookML precomputa el hash leyendo de las vistas base, asi que se despliega sin
+depender de correr primero el SQL de BigQuery.
+
 ## Como agregar un campo (patron multicapa)
 
 1. En la vista **RAW**: agregar la `dimension` con su `type` + `sql: ${TABLE}.col`
