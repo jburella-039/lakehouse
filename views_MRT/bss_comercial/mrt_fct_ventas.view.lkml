@@ -1,6 +1,6 @@
 # =============================================================================
-# TRD view: fct_ventas  (capa semantica / metricas)
-# Extiende raw_fct_ventas (dimensiones + claves) y define TODAS las medidas de
+# MRT view: mrt_fct_ventas  (capa mart / semantica / metricas)
+# Extiende fnd_fct_ventas (dimensiones + claves) y define TODAS las medidas de
 # Ventas / Unidades / Tickets, incluyendo las dinamicas por periodo y las YoY.
 # Alineado al MAPEO_SSAS_a_LookML v5.
 #  - Venta neta s/IVA antes de desc = mto_totalsinivaantesdescuento.
@@ -8,10 +8,10 @@
 #  - Filtros por flags ESVENTA / RESTASTOCK via join a dim_tipocomprobante.
 # =============================================================================
 
-include: "/FND/bss_comercial/raw_fct_ventas.view.lkml"
+include: "/views_FND/bss_comercial/fnd_fct_ventas.view.lkml"
 
-view: fct_ventas {
-  extends: [raw_fct_ventas]
+view: mrt_fct_ventas {
+  extends: [fnd_fct_ventas]
   label: "Comercial - Ventas"
 
   # ---------------------------------------------------------------------------

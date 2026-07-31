@@ -2,15 +2,16 @@ connection: "lakehouse-dev-483619"
 
 # =============================================================================
 # Estructura de vistas:
-#   views/   -> vistas planas (una por entidad: dims + fct_remitos + fct_stock).
-#               Cada archivo tiene dimensiones y medidas juntas.
-#   FND/MRT/ -> SOLO fct_ventas conserva el patron de dos capas:
-#                 FND/ (fundacion: mirror + PDT con hash de cabecera)
-#                 MRT/ (mart: extiende FND, expone campos y define las medidas).
-#               FND entra de forma transitiva via el include de MRT/fct_ventas.
+#   views/       -> vistas planas (una por entidad: dims + fct_remitos + fct_stock).
+#                   Cada archivo tiene dimensiones y medidas juntas.
+#   views_FND/   -> SOLO fct_ventas: capa fundacion (fnd_fct_ventas = mirror + PDT
+#                   con hash de cabecera).
+#   views_MRT/   -> SOLO fct_ventas: capa mart (mrt_fct_ventas extiende fnd_fct_ventas,
+#                   expone campos y define las medidas). El explore fct_ventas usa
+#                   from: mrt_fct_ventas. views_FND entra transitiva via el include de MRT.
 # =============================================================================
 include: "/views/*.view.lkml"
-include: "/MRT/**/*.view.lkml"
+include: "/views_MRT/**/*.view.lkml"
 include: "/explores/*.explore.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"

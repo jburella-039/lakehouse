@@ -1,7 +1,7 @@
 # =============================================================================
-# RAW view: raw_fct_ventas  (PDT persistido)
+# FND view: fnd_fct_ventas  (capa fundacion / PDT persistido)
 # Capa CRUDA (dimensiones y claves; SIN medidas). Las metricas viven en la capa
-# TRD (fct_ventas).
+# MRT (mrt_fct_ventas).
 #
 # PERFORMANCE: en vez de leer la vista logica y armar el ticket_key (string
 # ancho) en cada consulta, la raw se materializa como PDT (derived_table
@@ -17,7 +17,7 @@
 #     de la vista base vw_fct_ventas (no depende de crear la vista _hk primero).
 # =============================================================================
 
-view: raw_fct_ventas {
+view: fnd_fct_ventas {
   derived_table: {
     sql:
       SELECT

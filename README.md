@@ -23,18 +23,20 @@ origen (con el PDT y el hash de cabecera) de la capa semantica con las medidas.
 |   |-- dim_fecha.view.lkml ... dim_obrasocial.view.lkml
 |   |-- fct_remitos.view.lkml       #   plano, con PDT + hash (hk_remito)
 |   `-- fct_stock.view.lkml
-|-- /FND/                          # capa fundacion (SOLO fct_ventas)
+|-- /views_FND/                    # capa fundacion (SOLO fct_ventas)
 |   `-- /bss_comercial/
-|       `-- raw_fct_ventas.view.lkml   # mirror + PDT + hash de cabecera
-|-- /MRT/                          # capa mart (SOLO fct_ventas)
+|       `-- fnd_fct_ventas.view.lkml   # mirror + PDT + hash de cabecera
+|-- /views_MRT/                    # capa mart (SOLO fct_ventas)
 |   `-- /bss_comercial/
-|       `-- fct_ventas.view.lkml       # extends FND, expone campos y medidas
+|       `-- mrt_fct_ventas.view.lkml   # extends fnd_fct_ventas, expone campos y medidas
 `-- /dashboards/
     `-- venta_integral.dashboard.lookml
 ```
 
-El modelo incluye `"/views/*.view.lkml"` + `"/MRT/**/*.view.lkml"`. La capa `FND`
-entra de forma transitiva via el `include` de `MRT/fct_ventas`.
+El modelo incluye `"/views/*.view.lkml"` + `"/views_MRT/**/*.view.lkml"`. La capa
+`views_FND` entra de forma transitiva via el `include` de `mrt_fct_ventas`. El
+explore se sigue llamando `fct_ventas` (usa `from: mrt_fct_ventas`), asi que el
+dashboard no cambia.
 
 ## Vistas planas (`views/*.view.lkml`)
 
@@ -44,15 +46,17 @@ entra de forma transitiva via el `include` de `MRT/fct_ventas`.
   particionado por `fec_dia`, clusterizado) y el hash `hk_remito` para el conteo.
 - `fct_stock` es plano y no esta en el dashboard (explore aparte).
 
-## fct_ventas en dos capas (FND / MRT)
+## fct_ventas en dos capas (views_FND / views_MRT)
 
-### FND - `FND/bss_comercial/raw_fct_ventas.view.lkml` (fundacion, interno)
+### FND - `views_FND/bss_comercial/fnd_fct_ventas.view.lkml` (fundacion, interno)
 - Mirror del origen + **PDT** persistido (particionado por `fec_dia`, clusterizado).
 - Precomputa `hk_vta_venta` (INT64 = hash de la clave de cabecera). **No define medidas.**
 
-### MRT - `MRT/bss_comercial/fct_ventas.view.lkml` (mart, expuesto)
-- `include` + `extends` de la FND (`raw_fct_ventas`).
+### MRT - `views_MRT/bss_comercial/mrt_fct_ventas.view.lkml` (mart, expuesto)
+- `include` + `extends` de la FND (`fnd_fct_ventas`).
 - Expone los campos y **define TODAS las medidas** (base, por periodo y YoY).
+- El explore `fct_ventas` la consume via `from: mrt_fct_ventas` (mantiene el nombre
+  `fct_ventas.*` que usa el dashboard).
 
 ### Explores (`explores/*.explore.lkml`)
 - Definen los JOINs de la estrella. Cada `join` fija `view_label` con el area
@@ -77,7 +81,7 @@ caro. Para acelerarlos:
   cabecera -> un `INT64` determinista. Es el equivalente en BigQuery a la
   `HK_VTA_VENTA` del ADW (SP `SP_VTA_TICKETS_CAB_IDS_LOAD`). `COUNT(DISTINCT INT64)`
   es mucho mas barato que sobre string. Las medidas de conteo usan el hash.
-- **PDT persistido**: `fct_ventas` (en FND) y `fct_remitos` (en views/) son
+- **PDT persistido**: `fnd_fct_ventas` (en views_FND) y `fct_remitos` (en views/) son
   `derived_table` persistidos por `venta_integral_datagroup` (rebuild diario),
   **particionados por `fec_dia`** y **clusterizados** por las claves. El PDT
   precomputa el hash como columna fisica.
@@ -94,5 +98,5 @@ leyendo de las vistas base, asi que se despliega sin depender del SQL de BigQuer
 
 - Nombres de vistas/campos en ASCII. La `ñ` solo en `label` (texto visible).
 - El dashboard referencia los nombres de vista finales (`fct_ventas`, `fct_remitos`,
-  `dim_*`). La capa FND de fct_ventas lleva prefijo `raw_`.
+  `dim_*`). Las capas de fct_ventas llevan prefijo `fnd_` (fundacion) y `mrt_` (mart).
 - No se cambian las fuentes: la organizacion es solo de carpetas.
