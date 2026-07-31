@@ -1,17 +1,16 @@
 connection: "lakehouse-dev-483619"
 
 # =============================================================================
-# Sistema multicapa Looker (Corebi):
-#   views_raw/<bss_area>/  -> capa CRUDA (mirror del origen BigQuery, fields_hidden_by_default)
-#   views_trd/<bss_area>/  -> capa TRD   (transformada/semantica: metricas expuestas al usuario)
-#   explores/              -> logica de JOINs (consume solo vistas TRD)
-# Subcarpetas por dataset BigQuery: bss_referencial, bss_comercial, bss_sucursales, bss_salud.
-#
-# El modelo incluye SOLO la capa TRD y los explores: garantiza que los Explores se
-# armen unicamente con vistas expuestas. Las vistas RAW entran de forma transitiva
-# via el include de cada vista TRD (include: "/views_raw/<bss_area>/raw_x.view.lkml").
+# Estructura de vistas:
+#   views/   -> vistas planas (una por entidad: dims + fct_remitos + fct_stock).
+#               Cada archivo tiene dimensiones y medidas juntas.
+#   FND/MRT/ -> SOLO fct_ventas conserva el patron de dos capas:
+#                 FND/ (fundacion: mirror + PDT con hash de cabecera)
+#                 MRT/ (mart: extiende FND, expone campos y define las medidas).
+#               FND entra de forma transitiva via el include de MRT/fct_ventas.
 # =============================================================================
-include: "/views_trd/**/*.view.lkml"
+include: "/views/*.view.lkml"
+include: "/MRT/**/*.view.lkml"
 include: "/explores/*.explore.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"

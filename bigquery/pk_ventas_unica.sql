@@ -123,7 +123,7 @@ USING (
     FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f
     JOIN `lakehouse-dev-483619.bss_comercial.dim_tipocomprobante` AS tc
       ON tc.id_tipocomprobante = f.id_tipocomprobante
-     AND tc.flg_esventa = 1            -- solo comprobantes de venta (mail)
+     AND tc.flg_esventa                -- solo comprobantes de venta (mail); flg_* son BOOL
     GROUP BY 1,2,3,4,5,6,7             -- una fila por cabecera
   ),
   nuevas AS (

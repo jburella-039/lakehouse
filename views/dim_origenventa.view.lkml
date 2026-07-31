@@ -1,15 +1,11 @@
-# =============================================================================
-# RAW view: raw_dim_origenventa
-# Capa CRUDA. Fuente: lakehouse-dev-483619.bss_comercial.dim_origenventa
+# dim_origenventa - bss_comercial.dim_origenventa. Clave: id_origenventa.
 # Canal de venta (PDV, Farmacity Online, MERCADOFULL, Simplicity Online, Pedidos
 # Ya, Rappi, Glovo, WhatsApp, Mercado Libre Flex, ...) y flag de presencialidad.
-# =============================================================================
-
-view: raw_dim_origenventa {
+# Confirmado con datos en BigQuery (mar-2026: PDV 96%, Farmacity Online 2.1%, ...).
+view: dim_origenventa {
   sql_table_name: `lakehouse-dev-483619.bss_comercial.dim_origenventa` ;;
-  fields_hidden_by_default: yes
 
-  dimension: id_origenventa { primary_key: yes type: number sql: ${TABLE}.id_origenventa ;; }
+  dimension: id_origenventa { primary_key: yes hidden: yes type: number sql: ${TABLE}.id_origenventa ;; }
 
   dimension: canal { type: string sql: ${TABLE}.dsc_origenventa ;; label: "Canal" }
 
