@@ -3,6 +3,9 @@
 # Misma estrella que fct_ventas reutilizando las dims STG. fec_dia es DATE.
 # =============================================================================
 explore: fct_remitos {
+  # En esta instancia el explore en archivo separado necesita from explicito para
+  # enlazar con su vista base (aunque el nombre coincida con la vista fct_remitos).
+  from: fct_remitos
   label: "Venta Integral - Remitos"
   description: "Remitos de farmacia (obra social / dispensa): venta, unidades, margen."
   persist_with: venta_integral_datagroup

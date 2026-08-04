@@ -4,6 +4,8 @@
 # Misma estrella que fct_ventas reutilizando las dims STG.
 # =============================================================================
 explore: fct_stock {
+  # from explicito (misma razon que fct_remitos): enlaza el explore con su vista base.
+  from: fct_stock
   label: "Venta Integral - Stock"
   description: "Stock diario por sucursal y articulo. 'Ultimo dia' equivale a StockDia."
 
