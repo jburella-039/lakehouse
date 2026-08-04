@@ -8,10 +8,11 @@ connection: "lakehouse-dev-483619"
 #                   con hash de cabecera).
 #   views_MRT/   -> SOLO fct_ventas: capa mart (mrt_fct_ventas extiende fnd_fct_ventas,
 #                   expone campos y define las medidas). El explore fct_ventas usa
-#                   from: mrt_fct_ventas. views_FND entra transitiva via el include de MRT.
+#                   from: mrt_fct_ventas.
+# Se incluyen TODAS las vistas del proyecto con un unico glob recursivo (robusto,
+# no depende de la carpeta): /**/*.view.lkml.
 # =============================================================================
-include: "/views/*.view.lkml"
-include: "/views_MRT/**/*.view.lkml"
+include: "/**/*.view.lkml"
 include: "/explores/*.explore.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"
