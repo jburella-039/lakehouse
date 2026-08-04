@@ -9,7 +9,7 @@ connection: "lakehouse-dev-483619"
 # Include unico anclado a la carpeta (patron probado): /views/**/*.view.lkml.
 # =============================================================================
 include: "/views/**/*.view.lkml"
-include: "/explores/*.explore.lkml"
+include: "/explores/**/*.explore.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"
 
