@@ -12,7 +12,9 @@ connection: "lakehouse-dev-483619"
 # Se incluyen TODAS las vistas del proyecto con un unico glob recursivo (robusto,
 # no depende de la carpeta): /**/*.view.lkml.
 # =============================================================================
-include: "/**/*.view.lkml"
+include: "/views/**/*.view.lkml"
+include: "/views_FND/**/*.view.lkml"
+include: "/views_MRT/**/*.view.lkml"
 include: "/explores/*.explore.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"
