@@ -4,6 +4,10 @@
 # Referencial / Sucursales / Salud) para el usuario que arma reportes.
 # =============================================================================
 explore: fct_ventas {
+  # El explore se sigue llamando fct_ventas (el dashboard referencia fct_ventas.*);
+  # la vista base es mrt_fct_ventas (capa MRT). Con from, los campos se referencian
+  # por el nombre del explore, asi el dashboard no cambia.
+  from: mrt_fct_ventas
   label: "Venta Integral - Ventas"
   description: "Ventas, tickets y unidades a nivel linea de comprobante."
   persist_with: venta_integral_datagroup
