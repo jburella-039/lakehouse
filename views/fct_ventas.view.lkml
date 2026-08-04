@@ -1,5 +1,5 @@
 # =============================================================================
-# MRT view: mrt_fct_ventas  (capa mart / semantica / metricas)
+# view: fct_ventas  (capa mart / semantica / metricas)
 # Extiende fnd_fct_ventas (dimensiones + claves) y define TODAS las medidas de
 # Ventas / Unidades / Tickets, incluyendo las dinamicas por periodo y las YoY.
 # Alineado al MAPEO_SSAS_a_LookML v5.
@@ -8,9 +8,9 @@
 #  - Filtros por flags ESVENTA / RESTASTOCK via join a dim_tipocomprobante.
 # =============================================================================
 
-include: "/views_FND/bss_comercial/fnd_fct_ventas.view.lkml"
+include: "/views/fnd_fct_ventas.view.lkml"
 
-view: mrt_fct_ventas {
+view: fct_ventas {
   extends: [fnd_fct_ventas]
   label: "Comercial - Ventas"
 
