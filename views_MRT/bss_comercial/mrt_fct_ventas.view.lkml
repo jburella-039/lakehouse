@@ -14,6 +14,18 @@ view: mrt_fct_ventas {
   extends: [fnd_fct_ventas]
   label: "Comercial - Ventas"
 
+  # La capa FND usa fields_hidden_by_default: yes (oculta las claves crudas). Al
+  # extender, esa propiedad se hereda y ocultaria TAMBIEN las medidas de abajo.
+  # Se anula aca: en la MRT los campos son visibles por defecto y solo se ocultan
+  # de forma explicita los campos internos de la FND (pk, ticket_key, etc.).
+  fields_hidden_by_default: no
+
+  # Campos crudos de la FND que NO se exponen al usuario final.
+  dimension: pk           { hidden: yes }
+  dimension: ticket_key   { hidden: yes }
+  dimension: id_nroapertura { hidden: yes }
+  dimension: id_origenventa { hidden: yes }
+
   # ---------------------------------------------------------------------------
   # DIMENSIONES expuestas al usuario (definidas en la capa raw)
   # ---------------------------------------------------------------------------
