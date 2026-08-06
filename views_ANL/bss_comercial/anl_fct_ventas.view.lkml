@@ -1,58 +1,110 @@
 # =============================================================================
-# MRT view: mrt_fct_ventas  (capa mart / semantica / metricas)
-# Extiende fnd_fct_ventas (dimensiones + claves) y define TODAS las medidas de
-# Ventas / Unidades / Tickets, incluyendo las dinamicas por periodo y las YoY.
-# Alineado al MAPEO_SSAS_a_LookML v5.
-#  - Venta neta s/IVA antes de desc = mto_totalsinivaantesdescuento.
-#  - Unidades = cnt_unidades ; Costo = mto_costo ; Margen $ = neto - costo.
-#  - Filtros por flags ESVENTA / RESTASTOCK via join a dim_tipocomprobante.
+# ANL view: anl_fct_ventas  (capa ANALISIS / semantica)
+# Extiende la capa BASE cruda (bas_fct_ventas) y agrega TODO lo analitico:
+#  - PDT persistido (materializacion + particion + cluster) para performance.
+#  - PK de analisis, campos calculados y periodos.
+#  - Labels legibles en dimensiones y metricas (SIN sectores tipo Comercial /
+#    Referencial / Salud).
+#  - TODAS las medidas (Ventas / Unidades / Tickets, por periodo y YoY).
+# El explore la consume via `from: anl_fct_ventas` (se sigue llamando fct_ventas).
 # =============================================================================
 
-include: "/views_FND/bss_comercial/fnd_fct_ventas.view.lkml"
+include: "/views_BAS/bss_comercial/bas_fct_ventas.view.lkml"
 
-view: mrt_fct_ventas {
-  extends: [fnd_fct_ventas]
-  label: "Comercial - Ventas"
+view: anl_fct_ventas {
+  extends: [bas_fct_ventas]
+  label: "Ventas"
 
-  # La capa FND usa fields_hidden_by_default: yes (oculta las claves crudas). Al
-  # extender, esa propiedad se hereda y ocultaria TAMBIEN las medidas de abajo.
-  # Se anula aca: en la MRT los campos son visibles por defecto y solo se ocultan
-  # de forma explicita los campos internos de la FND (pk, ticket_key, etc.).
-  fields_hidden_by_default: no
+  # PDT (performance): materializa la vista, particionada por fec_dia y clusterizada
+  # por las claves. Sobreescribe el sql_table_name heredado de BAS (que queda crudo).
+  # Passthrough (SELECT f.*): id_venta ya viene en la vista, NO se calcula hash.
+  # Requiere PDTs habilitados en la conexion (scratch looker_scratch southamerica-east1).
+  derived_table: {
+    sql:
+      SELECT f.*
+      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f ;;
+    datagroup_trigger: venta_integral_datagroup
+    partition_keys: ["fec_dia"]
+    cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
+  }
 
-  # Campos crudos de la FND que NO se exponen al usuario final.
-  dimension: pk           { hidden: yes }
-  dimension: ticket_key   { hidden: yes }
+  # ---------------------------------------------------------------------------
+  # CLAVES
+  # ---------------------------------------------------------------------------
+  # PK de linea (grano de renglon) para agregacion simetrica del explore.
+  dimension: pk {
+    primary_key: yes
+    hidden: yes
+    type: string
+    sql: CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
+                ${cd_nrocomprobante},'-',${cd_sku}) ;;
+  }
+
+  # id_venta = clave de ticket NATIVA de BigQuery (validada 1:1 vs el hash anterior).
+  # La medida Tickets hace COUNT(DISTINCT id_venta). Interna (no se expone).
+  dimension: id_venta { hidden: yes }
+
+  # Key de ticket legacy (string) para drill/compatibilidad. Es id_venta casteado.
+  dimension: ticket_key {
+    hidden: yes
+    type: string
+    sql: CAST(${id_venta} AS STRING) ;;
+  }
+
+  # ---------------------------------------------------------------------------
+  # DIMENSIONES expuestas (labels legibles, sin sectores)
+  # ---------------------------------------------------------------------------
+  dimension: id_sucursal        { label: "Sucursal (ID)" }
+  dimension: id_caja            { label: "Caja" }
+  dimension: id_tipocomprobante { label: "Tipo Comprobante (ID)" }
+  dimension: cd_nrocomprobante  { label: "Nro Comprobante" }
+  dimension: cd_sku             { label: "SKU (Articulo)" }
+  dimension: id_obrasocial      { label: "Obra Social (ID)" }
+  dimension: id_proveedor       { label: "Proveedor (ID)" }
+  dimension: id_departamento    { label: "Departamento (ID)" }
+  dimension: id_categoria       { label: "Categoria (ID)" }
+  dimension: id_subcategoria    { label: "Subcategoria (ID)" }
+  dimension: id_marca           { label: "Marca (ID)" }
+  dimension: id_cliente         { label: "Cliente (ID)" }
+  dimension: num_hora           { label: "Hora del Dia" }
+
+  # Claves internas ocultas.
   dimension: id_nroapertura { hidden: yes }
   dimension: id_origenventa { hidden: yes }
 
   # ---------------------------------------------------------------------------
-  # DIMENSIONES expuestas al usuario (definidas en la capa raw)
+  # DIMENSIONES calculadas (analiticas)
   # ---------------------------------------------------------------------------
-  dimension: id_sucursal        { hidden: no }
-  dimension: id_caja            { hidden: no }
-  dimension: id_tipocomprobante { hidden: no }
-  dimension: cd_nrocomprobante  { hidden: no }
-  dimension: cd_sku             { hidden: no }
-  dimension: id_venta           { hidden: yes }
-  dimension: id_obrasocial      { hidden: no }
-  dimension: id_proveedor       { hidden: no }
-  dimension: id_departamento    { hidden: no }
-  dimension: id_categoria       { hidden: no }
-  dimension: id_subcategoria    { hidden: no }
-  dimension: id_marca           { hidden: no }
-  dimension: id_cliente         { hidden: no }
-  dimension: cliente_identificado { hidden: no }
-  dimension: tipo_cobertura     { hidden: no }
-  dimension_group: venta        { hidden: no }
-  dimension_group: dia          { hidden: no }
-  dimension: anio_sel           { hidden: no }
-  dimension: num_hora           { hidden: no }
+  dimension: cliente_identificado {
+    type: yesno
+    sql: ${TABLE}.id_cliente <> -1 AND ${TABLE}.id_cliente IS NOT NULL ;;
+    label: "Cliente Identificado?"
+  }
+
+  dimension: tipo_cobertura {
+    type: string
+    sql: CASE WHEN ${TABLE}.id_obrasocial IS NULL OR ${TABLE}.id_obrasocial <= 0
+              THEN 'Particular' ELSE 'Obra Social / Coseguro' END ;;
+    label: "Tipo de Cobertura"
+  }
+
+  # ---------------------------------------------------------------------------
+  # TIEMPO (labels legibles sobre los dimension_group crudos de BAS)
+  # ---------------------------------------------------------------------------
+  dimension_group: venta { label: "Fecha de Venta" }
+  dimension_group: dia   { label: "Fecha" }
+
+  # Año como STRING para el filtro selector (dropdown).
+  dimension: anio_sel {
+    type: string
+    sql: CAST(${dia_year} AS STRING) ;;
+    label: "Año"
+    suggestions: ["2026", "2025", "2024"]
+  }
 
   # ---------------------------------------------------------------------------
   # MEASURES - base (Ventas / Unidades / Tickets)
   # ---------------------------------------------------------------------------
-  # [Vta $ T SIva Ant Desc] - filtra ESVENTA=1 via join a dim_tipocomprobante
   measure: venta_neta {
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
@@ -62,7 +114,6 @@ view: mrt_fct_ventas {
     drill_fields: [detalle*]
   }
 
-  # [Vta # T Unid Vend] - ESVENTA=1
   measure: unidades {
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
@@ -71,9 +122,7 @@ view: mrt_fct_ventas {
     label: "Unidades"
   }
 
-  # [Vta # Cant Tickets (Resta Stock)] - RESTASTOCK=1 & ESVENTA=1
-  # COUNT(DISTINCT id_venta): clave de ticket NATIVA de BigQuery (ya no se calcula
-  # el hash en Looker). Validada 1:1 contra el hash anterior sobre la vista.
+  # COUNT(DISTINCT id_venta): clave de ticket NATIVA de BigQuery.
   measure: tickets {
     type: count_distinct
     sql: ${id_venta} ;;
@@ -136,18 +185,12 @@ view: mrt_fct_ventas {
 
   # ---------------------------------------------------------------------------
   # MEASURES dinamicas por periodo (KPIs que responden al filtro Fecha)
-  # El filtro Fecha del dashboard se mapea (listen) a filtro_fecha. La version
-  # "_aa" aplica el MISMO rango sobre la fecha + 1 año (DATE_ADD): comparacion
-  # interanual dinamica (validada en BigQuery: marzo 26 vs 25 = +34.1%).
   # ---------------------------------------------------------------------------
   filter: filtro_fecha {
     type: date
     label: "Fecha (periodo KPI)"
   }
 
-  # Patron Looker (timeframe vs timeframe): {% condition %} en una dimension yesno
-  # y las medidas se filtran por ella. filtro_fecha (type: date) genera literales
-  # TIMESTAMP; el lado izquierdo se normaliza a TIMESTAMP(DATE(fec_dia)).
   dimension: en_periodo {
     hidden: yes
     type: yesno
@@ -158,7 +201,6 @@ view: mrt_fct_ventas {
     type: yesno
     sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
-  # Union del periodo y su equivalente del año anterior. Filtro duro para acotar el scan.
   dimension: en_periodo_o_aa {
     hidden: yes
     type: yesno
@@ -277,8 +319,6 @@ view: mrt_fct_ventas {
 
   # ---------------------------------------------------------------------------
   # MEASURES YoY (% de variacion vs mismo periodo del año anterior)
-  # Se usan como campo de comparacion en las tarjetas KPI (comparison_type: change).
-  # Margen %: variacion en PUNTOS porcentuales (diferencia), no relativa.
   # ---------------------------------------------------------------------------
   measure: venta_yoy {
     type: number
@@ -316,7 +356,6 @@ view: mrt_fct_ventas {
     value_format_name: percent_1
     label: "Margen $ Var % (YoY)"
   }
-  # Margen %: diferencia en puntos porcentuales (x100 para mostrar "pp").
   measure: margen_pct_yoy {
     type: number
     sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;

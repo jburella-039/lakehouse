@@ -3,18 +3,18 @@ connection: "lakehouse-dev-483619"
 # =============================================================================
 # Estructura de vistas:
 #   views/       -> vistas planas (una por entidad: dims + fct_remitos + fct_stock).
-#   views_FND/   -> SOLO fct_ventas: capa fundacion (fnd_fct_ventas = mirror + PDT
-#                   con hash de cabecera).
-#   views_MRT/   -> SOLO fct_ventas: capa mart (mrt_fct_ventas extiende fnd_fct_ventas,
-#                   expone campos y define las medidas).
+#   views_BAS/   -> SOLO fct_ventas: capa BASE cruda (bas_fct_ventas = espejo 1:1 de
+#                   vw_fct_ventas, sin labels ni campos calculados).
+#   views_ANL/   -> SOLO fct_ventas: capa ANALISIS (anl_fct_ventas extiende
+#                   bas_fct_ventas, agrega PDT, labels y define las medidas).
 #
 # Los explores viven INLINE en este model (no en /explores/*.explore.lkml). Es la
 # topologia que valida en esta instancia: con los explores en archivos separados,
 # las vistas no se resolvian y todo daba "could not find view".
 # =============================================================================
 include: "/views/**/*.view.lkml"
-include: "/views_FND/**/*.view.lkml"
-include: "/views_MRT/**/*.view.lkml"
+include: "/views_BAS/**/*.view.lkml"
+include: "/views_ANL/**/*.view.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"
 
@@ -32,95 +32,83 @@ persist_with: lakehouse_default_datagroup
 
 
 # =============================================================================
-# explore: fct_ventas - Venta Integral (estrella snowflake sobre la capa MRT)
-# Vista base mrt_fct_ventas (capa MRT con medidas + PDT/hash via fnd_fct_ventas).
-# El explore se llama fct_ventas (el dashboard referencia fct_ventas.*).
+# explore: fct_ventas - Venta Integral (estrella snowflake sobre la capa ANL)
+# Vista base anl_fct_ventas (capa ANALISIS: medidas + labels + PDT; extiende la
+# capa BASE cruda bas_fct_ventas). El explore se llama fct_ventas (el dashboard
+# referencia fct_ventas.*).
 # =============================================================================
 explore: fct_ventas {
-  from: mrt_fct_ventas
+  from: anl_fct_ventas
   label: "Venta Integral - Ventas"
   description: "Ventas, tickets y unidades a nivel linea de comprobante."
   persist_with: venta_integral_datagroup
 
   join: dim_fecha {
-    view_label: "Referencial - Fecha"
     type: left_outer
     relationship: many_to_one
     sql_on: DATE(${fct_ventas.dia_raw}) = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_tipocomprobante {
-    view_label: "Comercial - Tipo Comprobante"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_tipocomprobante} = ${dim_tipocomprobante.id_tipocomprobante} ;;
   }
 
   join: dim_articulo {
-    view_label: "Comercial - Articulo"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.cd_sku} = ${dim_articulo.cd_sku} ;;
   }
   join: dim_marca {
-    view_label: "Comercial - Marca"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_marca} = ${dim_marca.id_marca} ;;
   }
   join: dim_categoria {
-    view_label: "Comercial - Categoria"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_categoria} = ${dim_categoria.id_categoria} ;;
   }
   join: dim_subcategoria {
-    view_label: "Comercial - Subcategoria"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_subcategoria} = ${dim_subcategoria.id_subcategoria} ;;
   }
   join: dim_departamento {
-    view_label: "Comercial - Departamento"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_departamento} = ${dim_departamento.id_departamento} ;;
   }
 
   join: dim_sucursal {
-    view_label: "Sucursales - Sucursal"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_sucursal} = ${dim_sucursal.id_sucursal} ;;
   }
   join: dim_formato {
-    view_label: "Sucursales - Formato"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
   }
   join: dim_region {
-    view_label: "Sucursales - Region"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
   }
   join: dim_provincia {
-    view_label: "Sucursales - Provincia"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
   }
 
   join: dim_obrasocial {
-    view_label: "Salud - Obra Social"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_obrasocial} = ${dim_obrasocial.id_obrasocial} ;;
   }
 
   join: dim_origenventa {
-    view_label: "Comercial - Origen de Venta"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_origenventa} = ${dim_origenventa.id_origenventa} ;;

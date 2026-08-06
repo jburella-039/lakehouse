@@ -23,19 +23,19 @@ origen (con el PDT y el hash de cabecera) de la capa semantica con las medidas.
 |   |-- dim_fecha.view.lkml ... dim_obrasocial.view.lkml
 |   |-- fct_remitos.view.lkml       #   plano, con PDT + hash (hk_remito)
 |   `-- fct_stock.view.lkml
-|-- /views_FND/                    # capa fundacion (SOLO fct_ventas)
+|-- /views_BAS/                    # capa BASE cruda (SOLO fct_ventas)
 |   `-- /bss_comercial/
-|       `-- fnd_fct_ventas.view.lkml   # mirror + PDT + hash de cabecera
-|-- /views_MRT/                    # capa mart (SOLO fct_ventas)
+|       `-- bas_fct_ventas.view.lkml   # espejo 1:1 de vw_fct_ventas, sin labels ni medidas
+|-- /views_ANL/                    # capa ANALISIS (SOLO fct_ventas)
 |   `-- /bss_comercial/
-|       `-- mrt_fct_ventas.view.lkml   # extends fnd_fct_ventas, expone campos y medidas
+|       `-- anl_fct_ventas.view.lkml   # extends bas_fct_ventas, agrega PDT, labels y medidas
 `-- /dashboards/
     `-- venta_integral.dashboard.lookml
 ```
 
-El modelo incluye `"/views/*.view.lkml"` + `"/views_MRT/**/*.view.lkml"`. La capa
-`views_FND` entra de forma transitiva via el `include` de `mrt_fct_ventas`. El
-explore se sigue llamando `fct_ventas` (usa `from: mrt_fct_ventas`), asi que el
+El modelo incluye `"/views/*.view.lkml"` + `"/views_ANL/**/*.view.lkml"`. La capa
+`views_BAS` entra de forma transitiva via el `include` de `anl_fct_ventas`. El
+explore se sigue llamando `fct_ventas` (usa `from: anl_fct_ventas`), asi que el
 dashboard no cambia.
 
 ## Vistas planas (`views/*.view.lkml`)
@@ -46,16 +46,19 @@ dashboard no cambia.
   particionado por `fec_dia`, clusterizado) y el hash `hk_remito` para el conteo.
 - `fct_stock` es plano y no esta en el dashboard (explore aparte).
 
-## fct_ventas en dos capas (views_FND / views_MRT)
+## fct_ventas en dos capas (views_BAS / views_ANL)
 
-### FND - `views_FND/bss_comercial/fnd_fct_ventas.view.lkml` (fundacion, interno)
-- Mirror del origen + **PDT** persistido (particionado por `fec_dia`, clusterizado).
-- Expone `id_venta` (INT64, clave de ticket NATIVA de la vista `vw_fct_ventas`). **No define medidas.**
+### BAS - `views_BAS/bss_comercial/bas_fct_ventas.view.lkml` (base cruda, interna)
+- Espejo 1:1 de `bss_comercial.vw_fct_ventas` via `sql_table_name`. **SIN labels, SIN
+  campos calculados, SIN medidas, SIN sectores, SIN PDT.** Solo las columnas del origen.
 
-### MRT - `views_MRT/bss_comercial/mrt_fct_ventas.view.lkml` (mart, expuesto)
-- `include` + `extends` de la FND (`fnd_fct_ventas`).
-- Expone los campos y **define TODAS las medidas** (base, por periodo y YoY).
-- El explore `fct_ventas` la consume via `from: mrt_fct_ventas` (mantiene el nombre
+### ANL - `views_ANL/bss_comercial/anl_fct_ventas.view.lkml` (analisis, expuesto)
+- `include` + `extends` de la BASE (`bas_fct_ventas`).
+- Se queda con el **PDT** (`derived_table` particionado por `fec_dia`, clusterizado):
+  sobreescribe el `sql_table_name` crudo de BAS. Passthrough (`SELECT f.*`), sin hash.
+- Agrega **labels legibles** (sin sectores tipo Comercial/Referencial/Salud), los
+  campos calculados (pk, cobertura, periodos) y **define TODAS las medidas**.
+- El explore `fct_ventas` la consume via `from: anl_fct_ventas` (mantiene el nombre
   `fct_ventas.*` que usa el dashboard).
 
 ### Explores (`explores/*.explore.lkml`)
@@ -86,7 +89,7 @@ caro. Para acelerarlos:
 - **Remitos - hash key (`hk_remito`)**: sigue usando `FARM_FINGERPRINT` de
   sucursal + dia + nro remito (la vista de remitos no tiene una PK nativa de remito;
   `id_venta` alli es la venta, otro grano).
-- **PDT persistido**: `fnd_fct_ventas` (en views_FND) y `fct_remitos` (en views/) son
+- **PDT persistido**: `anl_fct_ventas` (en views_ANL) y `fct_remitos` (en views/) son
   `derived_table` persistidos por `venta_integral_datagroup` (rebuild diario),
   **particionados por `fec_dia`** y **clusterizados** por las claves.
 - **BigQuery** (`bigquery/pk_ventas_unica.sql`): vistas `vw_fct_ventas_hk` /
