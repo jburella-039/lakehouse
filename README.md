@@ -24,10 +24,10 @@ origen (con el PDT y el hash de cabecera) de la capa semantica con las medidas.
 |   |-- fct_remitos.view.lkml       #   plano, con PDT + hash (hk_remito)
 |   `-- fct_stock.view.lkml
 |-- /views_BAS/                    # capa BASE cruda (SOLO fct_ventas)
-|   `-- /bss_comercial/
+|   `-- /bas_bss_comercial/
 |       `-- bas_fct_ventas.view.lkml   # espejo 1:1 de vw_fct_ventas, sin labels ni medidas
 |-- /views_ANL/                    # capa ANALISIS (SOLO fct_ventas)
-|   `-- /bss_comercial/
+|   `-- /anl_bss_comercial/
 |       `-- anl_fct_ventas.view.lkml   # extends bas_fct_ventas, agrega PDT, labels y medidas
 `-- /dashboards/
     `-- venta_integral.dashboard.lookml
@@ -48,11 +48,13 @@ dashboard no cambia.
 
 ## fct_ventas en dos capas (views_BAS / views_ANL)
 
-### BAS - `views_BAS/bss_comercial/bas_fct_ventas.view.lkml` (base cruda, interna)
-- Espejo 1:1 de `bss_comercial.vw_fct_ventas` via `sql_table_name`. **SIN labels, SIN
-  campos calculados, SIN medidas, SIN sectores, SIN PDT.** Solo las columnas del origen.
+### BAS - `views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml` (base cruda, interna)
+- Espejo 1:1 de `bss_comercial.vw_fct_ventas` via `sql_table_name`, generado como lo
+  arma el IDE de Looker desde la vista (todas las columnas, sin comentarios). **SIN
+  labels, SIN campos calculados, SIN sectores, SIN PDT.** El grano de fecha son los
+  dimension_group `fec_dia` y `fec_venta` (nombre crudo del origen).
 
-### ANL - `views_ANL/bss_comercial/anl_fct_ventas.view.lkml` (analisis, expuesto)
+### ANL - `views_ANL/anl_bss_comercial/anl_fct_ventas.view.lkml` (analisis, expuesto)
 - `include` + `extends` de la BASE (`bas_fct_ventas`).
 - Se queda con el **PDT** (`derived_table` particionado por `fec_dia`, clusterizado):
   sobreescribe el `sql_table_name` crudo de BAS. Passthrough (`SELECT f.*`), sin hash.

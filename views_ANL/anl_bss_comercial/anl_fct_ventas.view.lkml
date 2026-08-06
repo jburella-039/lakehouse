@@ -1,24 +1,9 @@
-# =============================================================================
-# ANL view: anl_fct_ventas  (capa ANALISIS / semantica)
-# Extiende la capa BASE cruda (bas_fct_ventas) y agrega TODO lo analitico:
-#  - PDT persistido (materializacion + particion + cluster) para performance.
-#  - PK de analisis, campos calculados y periodos.
-#  - Labels legibles en dimensiones y metricas (SIN sectores tipo Comercial /
-#    Referencial / Salud).
-#  - TODAS las medidas (Ventas / Unidades / Tickets, por periodo y YoY).
-# El explore la consume via `from: anl_fct_ventas` (se sigue llamando fct_ventas).
-# =============================================================================
-
-include: "/views_BAS/bss_comercial/bas_fct_ventas.view.lkml"
+include: "/views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml"
 
 view: anl_fct_ventas {
   extends: [bas_fct_ventas]
   label: "Ventas"
 
-  # PDT (performance): materializa la vista, particionada por fec_dia y clusterizada
-  # por las claves. Sobreescribe el sql_table_name heredado de BAS (que queda crudo).
-  # Passthrough (SELECT f.*): id_venta ya viene en la vista, NO se calcula hash.
-  # Requiere PDTs habilitados en la conexion (scratch looker_scratch southamerica-east1).
   derived_table: {
     sql:
       SELECT f.*
@@ -28,10 +13,6 @@ view: anl_fct_ventas {
     cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
   }
 
-  # ---------------------------------------------------------------------------
-  # CLAVES
-  # ---------------------------------------------------------------------------
-  # PK de linea (grano de renglon) para agregacion simetrica del explore.
   dimension: pk {
     primary_key: yes
     hidden: yes
@@ -40,20 +21,18 @@ view: anl_fct_ventas {
                 ${cd_nrocomprobante},'-',${cd_sku}) ;;
   }
 
-  # id_venta = clave de ticket NATIVA de BigQuery (validada 1:1 vs el hash anterior).
-  # La medida Tickets hace COUNT(DISTINCT id_venta). Interna (no se expone).
-  dimension: id_venta { hidden: yes }
+  dimension: id_venta {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.id_venta ;;
+  }
 
-  # Key de ticket legacy (string) para drill/compatibilidad. Es id_venta casteado.
   dimension: ticket_key {
     hidden: yes
     type: string
     sql: CAST(${id_venta} AS STRING) ;;
   }
 
-  # ---------------------------------------------------------------------------
-  # DIMENSIONES expuestas (labels legibles, sin sectores)
-  # ---------------------------------------------------------------------------
   dimension: id_sucursal        { label: "Sucursal (ID)" }
   dimension: id_caja            { label: "Caja" }
   dimension: id_tipocomprobante { label: "Tipo Comprobante (ID)" }
@@ -68,13 +47,79 @@ view: anl_fct_ventas {
   dimension: id_cliente         { label: "Cliente (ID)" }
   dimension: num_hora           { label: "Hora del Dia" }
 
-  # Claves internas ocultas.
   dimension: id_nroapertura { hidden: yes }
   dimension: id_origenventa { hidden: yes }
 
-  # ---------------------------------------------------------------------------
-  # DIMENSIONES calculadas (analiticas)
-  # ---------------------------------------------------------------------------
+  dimension: cd_cliente                    { hidden: yes }
+  dimension: cd_documento                  { hidden: yes }
+  dimension: cd_documentofiscal            { hidden: yes }
+  dimension: cd_nrocomprobantefiscal       { hidden: yes }
+  dimension: cd_nrocomprobanterelacionado  { hidden: yes }
+  dimension: cd_nroremito                  { hidden: yes }
+  dimension: cd_padrecoseguro              { hidden: yes }
+  dimension: cd_padreobrasocial            { hidden: yes }
+  dimension: cd_tipodocumentofiscal        { hidden: yes }
+  dimension: cnt_bonificacion              { hidden: yes }
+  dimension: cnt_cupondescuento            { hidden: yes }
+  dimension: cnt_farmacia                  { hidden: yes }
+  dimension: cnt_promociondescuento        { hidden: yes }
+  dimension: cnt_unidades                  { hidden: yes }
+  dimension: dsc_domicilioentrega          { hidden: yes }
+  dimension: eml_comprobantefiscal         { hidden: yes }
+  dimension: fec_aniomes                   { hidden: yes }
+  dimension: fec_carga                     { hidden: yes }
+  dimension: fec_diarelacionado            { hidden: yes }
+  dimension: flg_clientecalculado          { hidden: yes }
+  dimension: flg_serviciosalud             { hidden: yes }
+  dimension: id_cajarelacionado            { hidden: yes }
+  dimension: id_coseguro                   { hidden: yes }
+  dimension: id_cupondescuento             { hidden: yes }
+  dimension: id_empleadodescuento          { hidden: yes }
+  dimension: id_legajoautorizador          { hidden: yes }
+  dimension: id_legajocajero               { hidden: yes }
+  dimension: id_legajocolaborador          { hidden: yes }
+  dimension: id_motivonc                   { hidden: yes }
+  dimension: id_nroaperturarelacionado     { hidden: yes }
+  dimension: id_nroorden                   { hidden: yes }
+  dimension: id_nropedido                  { hidden: yes }
+  dimension: id_pdvfiscal                  { hidden: yes }
+  dimension: id_programacomercial          { hidden: yes }
+  dimension: id_sucursalpet                { hidden: yes }
+  dimension: id_tipocomprobanterelacionado { hidden: yes }
+  dimension: id_tipoiva                    { hidden: yes }
+  dimension: id_tipooperacioncomercial     { hidden: yes }
+  dimension: id_ventaunica                 { hidden: yes }
+  dimension: mto_bonificacion              { hidden: yes }
+  dimension: mto_cantidadgranel            { hidden: yes }
+  dimension: mto_coseguro                  { hidden: yes }
+  dimension: mto_costo                     { hidden: yes }
+  dimension: mto_cupondescuento            { hidden: yes }
+  dimension: mto_cupondescuentosiniva      { hidden: yes }
+  dimension: mto_farmacia                  { hidden: yes }
+  dimension: mto_iva                       { hidden: yes }
+  dimension: mto_montofarmaciatickitems    { hidden: yes }
+  dimension: mto_obrasocial                { hidden: yes }
+  dimension: mto_percepcioniva             { hidden: yes }
+  dimension: mto_preciostotalsiniva        { hidden: yes }
+  dimension: mto_preciounitariopublico     { hidden: yes }
+  dimension: mto_promociondescuento        { hidden: yes }
+  dimension: mto_rentabilidadsku           { hidden: yes }
+  dimension: mto_total                     { hidden: yes }
+  dimension: mto_totalempleadodescuento    { hidden: yes }
+  dimension: mto_totalempleadodescuentociva{ hidden: yes }
+  dimension: mto_totalsinivaantesdescuento { hidden: yes }
+  dimension: pct_cupondescuento            { hidden: yes }
+  dimension: pct_iva                       { hidden: yes }
+  dimension: pct_percepcioniva             { hidden: yes }
+  dimension: pct_promociondescuento        { hidden: yes }
+  dimension: pct_recargofinanciero         { hidden: yes }
+
+  dimension_group: fec_emisionfiscal       { hidden: yes }
+  dimension_group: fec_escaneo             { hidden: yes }
+  dimension_group: fec_pedido              { hidden: yes }
+
+  measure: count { hidden: yes }
+
   dimension: cliente_identificado {
     type: yesno
     sql: ${TABLE}.id_cliente <> -1 AND ${TABLE}.id_cliente IS NOT NULL ;;
@@ -88,23 +133,16 @@ view: anl_fct_ventas {
     label: "Tipo de Cobertura"
   }
 
-  # ---------------------------------------------------------------------------
-  # TIEMPO (labels legibles sobre los dimension_group crudos de BAS)
-  # ---------------------------------------------------------------------------
-  dimension_group: venta { label: "Fecha de Venta" }
-  dimension_group: dia   { label: "Fecha" }
+  dimension_group: fec_venta { label: "Fecha de Venta" }
+  dimension_group: fec_dia   { label: "Fecha" }
 
-  # Año como STRING para el filtro selector (dropdown).
   dimension: anio_sel {
     type: string
-    sql: CAST(${dia_year} AS STRING) ;;
+    sql: CAST(${fec_dia_year} AS STRING) ;;
     label: "Año"
     suggestions: ["2026", "2025", "2024"]
   }
 
-  # ---------------------------------------------------------------------------
-  # MEASURES - base (Ventas / Unidades / Tickets)
-  # ---------------------------------------------------------------------------
   measure: venta_neta {
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
@@ -122,7 +160,6 @@ view: anl_fct_ventas {
     label: "Unidades"
   }
 
-  # COUNT(DISTINCT id_venta): clave de ticket NATIVA de BigQuery.
   measure: tickets {
     type: count_distinct
     sql: ${id_venta} ;;
@@ -138,9 +175,6 @@ view: anl_fct_ventas {
     label: "Costo $"
   }
 
-  # ---------------------------------------------------------------------------
-  # MEASURES - derivadas (margen y promedios)
-  # ---------------------------------------------------------------------------
   measure: margen_pesos {
     type: number
     sql: ${venta_neta} - ${costo} ;;
@@ -166,7 +200,6 @@ view: anl_fct_ventas {
     label: "Unidades por Ticket"
   }
 
-  # Participacion sobre el total del contexto.
   measure: pct_venta_total {
     type: percent_of_total
     sql: ${venta_neta} ;;
@@ -183,9 +216,6 @@ view: anl_fct_ventas {
     label: "% Unidades (participacion)"
   }
 
-  # ---------------------------------------------------------------------------
-  # MEASURES dinamicas por periodo (KPIs que responden al filtro Fecha)
-  # ---------------------------------------------------------------------------
   filter: filtro_fecha {
     type: date
     label: "Fecha (periodo KPI)"
@@ -267,7 +297,6 @@ view: anl_fct_ventas {
     label: "Costo $ (periodo año ant.)"
   }
 
-  # Derivadas del periodo (margen y ratios), actual y año anterior.
   measure: margen_periodo {
     type: number
     sql: ${venta_periodo} - ${costo_periodo} ;;
@@ -317,9 +346,6 @@ view: anl_fct_ventas {
     label: "Unidades por Ticket (periodo año ant.)"
   }
 
-  # ---------------------------------------------------------------------------
-  # MEASURES YoY (% de variacion vs mismo periodo del año anterior)
-  # ---------------------------------------------------------------------------
   measure: venta_yoy {
     type: number
     sql: SAFE_DIVIDE(${venta_periodo} - ${venta_periodo_aa}, NULLIF(${venta_periodo_aa}, 0)) ;;
@@ -364,7 +390,7 @@ view: anl_fct_ventas {
   }
 
   set: detalle {
-    fields: [venta_date, id_sucursal, cd_nrocomprobante, cd_sku,
+    fields: [fec_venta_date, id_sucursal, cd_nrocomprobante, cd_sku,
              id_categoria, id_marca, tipo_cobertura, unidades, venta_neta, margen_pesos]
   }
 }

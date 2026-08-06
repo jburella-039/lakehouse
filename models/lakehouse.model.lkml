@@ -46,7 +46,7 @@ explore: fct_ventas {
   join: dim_fecha {
     type: left_outer
     relationship: many_to_one
-    sql_on: DATE(${fct_ventas.dia_raw}) = ${dim_fecha.fecha_date} ;;
+    sql_on: DATE(${fct_ventas.fec_dia_raw}) = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_tipocomprobante {
