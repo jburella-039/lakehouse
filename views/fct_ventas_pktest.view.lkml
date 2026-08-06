@@ -52,8 +52,13 @@ view: fct_ventas_pktest {
     sql: ${TABLE}.id_tipocomprobante ;;
   }
 
+  # fec_dia es DATE en la tabla base -> datatype: date para que Looker genere
+  # literales DATE en el filtro (si no, arma TIMESTAMP y BigQuery falla:
+  # "No matching signature for operator >= for argument types: DATE, TIMESTAMP").
   dimension_group: dia {
     type: time
+    datatype: date
+    convert_tz: no
     timeframes: [raw, date, week, month, quarter, year]
     sql: ${TABLE}.fec_dia ;;
     label: "Fecha"
