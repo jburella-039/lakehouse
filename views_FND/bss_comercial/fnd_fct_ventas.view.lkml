@@ -3,33 +3,22 @@
 # Capa CRUDA (dimensiones y claves; SIN medidas). Las metricas viven en la capa
 # MRT (mrt_fct_ventas).
 #
-# PERFORMANCE: en vez de leer la vista logica y armar el ticket_key (string
-# ancho) en cada consulta, la raw se materializa como PDT (derived_table
-# persistido por el datagroup diario). El PDT precomputa hk_vta_venta
-# (INT64 = FARM_FINGERPRINT de la clave de cabecera, equivalente a HK_VTA_VENTA
-# del ADW; mismo criterio que bss_comercial.vw_fct_ventas_hk en
-# bigquery/pk_ventas_unica.sql).
-#   - El PDT se particiona por fec_dia y se clusteriza por las claves de cabecera
-#     -> el dashboard poda particiones y agrupa mas barato.
-#   - Tickets se cuentan como COUNT(DISTINCT INT64) sobre hk_vta_venta (mucho mas
-#     barato que sobre el string). Requiere PDTs habilitados en la conexion.
-#   - No cambia las fuentes: hk se deriva; el dato base es identico. El SELECT lee
-#     de la vista base vw_fct_ventas (no depende de crear la vista _hk primero).
+# CLAVE DE TICKET: se toma id_venta NATIVA de la vista vw_fct_ventas (INT64). Ya
+# NO se calcula la PK en Looker. Antes se derivaba hk_vta_venta con
+# FARM_FINGERPRINT de 6 campos de cabecera; se validó biyección 1:1 exacta entre
+# id_venta y ese hash sobre la vista (0 NULLs en 693M filas, 2023-2026) y se
+# reemplazó. Tickets = COUNT(DISTINCT id_venta): menos bytes y menos CPU que el
+# hash (id_venta escanea 1 columna vs 6 y no computa nada).
+#   - El PDT (derived_table persistido por el datagroup diario) se mantiene solo
+#     por el particionado por fec_dia y el clustering por las claves de cabecera,
+#     que podan particiones y abaratan el group by. El SELECT es un passthrough de
+#     la vista (SELECT f.*); id_venta ya viene incluida.
 # =============================================================================
 
 view: fnd_fct_ventas {
   derived_table: {
     sql:
-      SELECT
-        f.*,
-        FARM_FINGERPRINT(CONCAT(
-          CAST(f.id_sucursal        AS STRING), '-',
-          CAST(f.id_caja            AS STRING), '-',
-          CAST(f.id_tipocomprobante AS STRING), '-',
-          CAST(f.cd_nrocomprobante  AS STRING), '-',
-          FORMAT_TIMESTAMP('%Y%m%d', f.fec_dia), '-',
-          CAST(f.id_nroapertura     AS STRING)
-        )) AS hk_vta_venta
+      SELECT f.*
       FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f ;;
     datagroup_trigger: venta_integral_datagroup
     partition_keys: ["fec_dia"]
@@ -47,24 +36,23 @@ view: fnd_fct_ventas {
                 ${cd_nrocomprobante},'-',${cd_sku}) ;;
   }
 
-  # Hash key de cabecera (INT64). Clave de ticket (resta stock) precomputada en
-  # BigQuery. Las medidas de Tickets hacen COUNT(DISTINCT hk_vta_venta).
-  dimension: hk_vta_venta {
+  # Clave de ticket NATIVA de BigQuery (INT64). Reemplaza al hash que antes se
+  # calculaba en Looker (FARM_FINGERPRINT de 6 campos). Ya NO se genera la PK en
+  # Looker: se toma id_venta directo de la vista vw_fct_ventas. Validado 1:1 sobre
+  # la vista (marzo 2026 y todo el historico 2023-2026): COUNT(DISTINCT id_venta) =
+  # COUNT(DISTINCT hash6) = biyeccion exacta, 0 NULLs en 693M filas. Las medidas de
+  # Tickets hacen COUNT(DISTINCT id_venta).
+  dimension: id_venta {
     type: number
-    sql: ${TABLE}.hk_vta_venta ;;
+    sql: ${TABLE}.id_venta ;;
   }
 
   # Key de ticket legacy (string). Se conserva para drill/compatibilidad; las
-  # medidas ya no la usan (usan hk_vta_venta). Prioriza id_ventaunica si existe.
+  # medidas ya no la usan (usan id_venta). Ahora es el id_venta nativo casteado a
+  # string (id_ventaunica quedaba 100% NULL en la vista, no servia).
   dimension: ticket_key {
     type: string
-    sql: COALESCE(
-            CAST(${TABLE}.id_ventaunica AS STRING),
-            CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
-                   ${cd_nrocomprobante},'-',
-                   FORMAT_TIMESTAMP('%Y%m%d', ${TABLE}.fec_dia),'-',
-                   CAST(${TABLE}.id_nroapertura AS STRING))
-         ) ;;
+    sql: CAST(${TABLE}.id_venta AS STRING) ;;
   }
 
   # ---------------------------------------------------------------------------

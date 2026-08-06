@@ -34,7 +34,7 @@ view: mrt_fct_ventas {
   dimension: id_tipocomprobante { hidden: no }
   dimension: cd_nrocomprobante  { hidden: no }
   dimension: cd_sku             { hidden: no }
-  dimension: hk_vta_venta       { hidden: yes }
+  dimension: id_venta           { hidden: yes }
   dimension: id_obrasocial      { hidden: no }
   dimension: id_proveedor       { hidden: no }
   dimension: id_departamento    { hidden: no }
@@ -72,10 +72,11 @@ view: mrt_fct_ventas {
   }
 
   # [Vta # Cant Tickets (Resta Stock)] - RESTASTOCK=1 & ESVENTA=1
-  # COUNT(DISTINCT hk_vta_venta): hash key INT64 precomputado (ver PDT + BigQuery).
+  # COUNT(DISTINCT id_venta): clave de ticket NATIVA de BigQuery (ya no se calcula
+  # el hash en Looker). Validada 1:1 contra el hash anterior sobre la vista.
   measure: tickets {
     type: count_distinct
-    sql: ${hk_vta_venta} ;;
+    sql: ${id_venta} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
     label: "Tickets"
   }
@@ -182,14 +183,14 @@ view: mrt_fct_ventas {
 
   measure: tickets_periodo {
     type: count_distinct
-    sql: ${hk_vta_venta} ;;
+    sql: ${id_venta} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format: "#,##0.0,,\"M\""
     label: "Tickets (periodo)"
   }
   measure: tickets_periodo_aa {
     type: count_distinct
-    sql: ${hk_vta_venta} ;;
+    sql: ${id_venta} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     label: "Tickets (periodo año ant.)"
   }

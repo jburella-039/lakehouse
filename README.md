@@ -50,7 +50,7 @@ dashboard no cambia.
 
 ### FND - `views_FND/bss_comercial/fnd_fct_ventas.view.lkml` (fundacion, interno)
 - Mirror del origen + **PDT** persistido (particionado por `fec_dia`, clusterizado).
-- Precomputa `hk_vta_venta` (INT64 = hash de la clave de cabecera). **No define medidas.**
+- Expone `id_venta` (INT64, clave de ticket NATIVA de la vista `vw_fct_ventas`). **No define medidas.**
 
 ### MRT - `views_MRT/bss_comercial/mrt_fct_ventas.view.lkml` (mart, expuesto)
 - `include` + `extends` de la FND (`fnd_fct_ventas`).
@@ -77,14 +77,18 @@ Los conteos de Tickets / Remitos son `count_distinct`. Contarlos sobre un string
 ancho armado en cada consulta (sucursal-caja-tipocomp-nrocomp-dia-apertura) es
 caro. Para acelerarlos:
 
-- **Hash key (`hk_vta_venta` / `hk_remito`)**: `FARM_FINGERPRINT` de la clave de
-  cabecera -> un `INT64` determinista. Es el equivalente en BigQuery a la
-  `HK_VTA_VENTA` del ADW (SP `SP_VTA_TICKETS_CAB_IDS_LOAD`). `COUNT(DISTINCT INT64)`
-  es mucho mas barato que sobre string. Las medidas de conteo usan el hash.
+- **Ventas - clave nativa (`id_venta`)**: la vista `vw_fct_ventas` ya expone
+  `id_venta` (INT64), la clave de ticket del origen. La medida Tickets hace
+  `COUNT(DISTINCT id_venta)`. Antes se calculaba en Looker un hash
+  (`FARM_FINGERPRINT` de 6 campos de cabecera); se validó biyección 1:1 exacta
+  entre `id_venta` y ese hash sobre la vista (0 NULLs en 693M filas, 2023-2026) y
+  se reemplazó: menos bytes y menos CPU (escanea 1 columna vs 6, sin computar hash).
+- **Remitos - hash key (`hk_remito`)**: sigue usando `FARM_FINGERPRINT` de
+  sucursal + dia + nro remito (la vista de remitos no tiene una PK nativa de remito;
+  `id_venta` alli es la venta, otro grano).
 - **PDT persistido**: `fnd_fct_ventas` (en views_FND) y `fct_remitos` (en views/) son
   `derived_table` persistidos por `venta_integral_datagroup` (rebuild diario),
-  **particionados por `fec_dia`** y **clusterizados** por las claves. El PDT
-  precomputa el hash como columna fisica.
+  **particionados por `fec_dia`** y **clusterizados** por las claves.
 - **BigQuery** (`bigquery/pk_ventas_unica.sql`): vistas `vw_fct_ventas_hk` /
   `vw_fct_remitos_hk` (hash reutilizable por otros consumidores) y la tabla
   `map_vta_tickets_cab_id` (grano cabecera, `es_venta`, con surrogate denso
