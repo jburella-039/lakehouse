@@ -1,5 +1,5 @@
 # =============================================================================
-# FND view: fnd_fct_ventas  (capa fundacion / PDT persistido)
+# FND view: fnd_fct_ventas  (capa fundacion)
 # Capa CRUDA (dimensiones y claves; SIN medidas). Las metricas viven en la capa
 # MRT (mrt_fct_ventas).
 #
@@ -9,21 +9,16 @@
 # id_venta y ese hash sobre la vista (0 NULLs en 693M filas, 2023-2026) y se
 # reemplazó. Tickets = COUNT(DISTINCT id_venta): menos bytes y menos CPU que el
 # hash (id_venta escanea 1 columna vs 6 y no computa nada).
-#   - El PDT (derived_table persistido por el datagroup diario) se mantiene solo
-#     por el particionado por fec_dia y el clustering por las claves de cabecera,
-#     que podan particiones y abaratan el group by. El SELECT es un passthrough de
-#     la vista (SELECT f.*); id_venta ya viene incluida.
+#
+# SIN PDT: se lee vw_fct_ventas directo (sql_table_name). El derived_table/PDT solo
+# existia para precomputar el hash; eliminado el hash, materializar ~693M filas por
+# dia no aportaba (la vista ya limita a 3 años y la base bss_oracle.fct_ventas ya
+# esta particionada por fec_dia). fec_dia sigue siendo TIMESTAMP en la vista, asi
+# que nada aguas abajo cambia (dimension_group dia, join a dim_fecha, en_periodo).
 # =============================================================================
 
 view: fnd_fct_ventas {
-  derived_table: {
-    sql:
-      SELECT f.*
-      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f ;;
-    datagroup_trigger: venta_integral_datagroup
-    partition_keys: ["fec_dia"]
-    cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
-  }
+  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
   fields_hidden_by_default: yes
 
   # ---------------------------------------------------------------------------
