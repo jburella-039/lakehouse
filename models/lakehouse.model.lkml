@@ -129,6 +129,26 @@ explore: fct_ventas {
 
 
 # =============================================================================
+# explore: fct_ventas_pktest - PRUEBA PK (NO productivo)
+# Compara la PK nativa id_venta (BigQuery/Alex) contra el hash actual sobre la
+# misma metrica de Tickets. Solo se une dim_tipocomprobante (para es_venta /
+# resta_stock). Ver dashboards/pk_test.dashboard.lookml.
+# =============================================================================
+explore: fct_ventas_pktest {
+  label: "PRUEBA - PK Ventas (id_venta vs hash)"
+  description: "Validacion: id_venta nativo de BigQuery vs hash calculado en Looker."
+  hidden: yes
+
+  join: dim_tipocomprobante {
+    view_label: "Comercial - Tipo Comprobante"
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas_pktest.id_tipocomprobante} = ${dim_tipocomprobante.id_tipocomprobante} ;;
+  }
+}
+
+
+# =============================================================================
 # explore: fct_remitos - Venta Integral / Remitos (Farmacia, obra social)
 # Misma estrella que fct_ventas reutilizando las dims. fec_dia es DATE.
 # =============================================================================
