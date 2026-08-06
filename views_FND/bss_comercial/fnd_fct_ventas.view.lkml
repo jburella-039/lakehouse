@@ -10,15 +10,24 @@
 # reemplazó. Tickets = COUNT(DISTINCT id_venta): menos bytes y menos CPU que el
 # hash (id_venta escanea 1 columna vs 6 y no computa nada).
 #
-# SIN PDT: se lee vw_fct_ventas directo (sql_table_name). El derived_table/PDT solo
-# existia para precomputar el hash; eliminado el hash, materializar ~693M filas por
-# dia no aportaba (la vista ya limita a 3 años y la base bss_oracle.fct_ventas ya
-# esta particionada por fec_dia). fec_dia sigue siendo TIMESTAMP en la vista, asi
-# que nada aguas abajo cambia (dimension_group dia, join a dim_fecha, en_periodo).
+# PDT (performance): se materializa la vista como derived_table persistido por el
+# datagroup diario, particionado por fec_dia y clusterizado por las claves de
+# cabecera. Mejora los group-by y el filtrado del dashboard vs leer la vista en
+# vivo sobre bss_oracle.fct_ventas. El SELECT es un passthrough (SELECT f.*):
+# id_venta ya viene en la vista, NO se calcula ningun hash. Requiere PDTs
+# habilitados en la conexion (dataset scratch looker_scratch en southamerica-east1).
+# fec_dia es TIMESTAMP en la vista -> el PDT queda igual y nada aguas abajo cambia.
 # =============================================================================
 
 view: fnd_fct_ventas {
-  sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` ;;
+  derived_table: {
+    sql:
+      SELECT f.*
+      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f ;;
+    datagroup_trigger: venta_integral_datagroup
+    partition_keys: ["fec_dia"]
+    cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
+  }
   fields_hidden_by_default: yes
 
   # ---------------------------------------------------------------------------
