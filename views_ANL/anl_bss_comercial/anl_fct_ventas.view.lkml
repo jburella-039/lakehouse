@@ -15,20 +15,17 @@ view: anl_fct_ventas {
 
   dimension: pk {
     primary_key: yes
-    hidden: yes
     type: string
     sql: CONCAT(${id_sucursal},'-',${id_caja},'-',${id_tipocomprobante},'-',
                 ${cd_nrocomprobante},'-',${cd_sku}) ;;
   }
 
   dimension: id_venta {
-    hidden: yes
     type: number
     sql: ${TABLE}.id_venta ;;
   }
 
   dimension: ticket_key {
-    hidden: yes
     type: string
     sql: CAST(${id_venta} AS STRING) ;;
   }
@@ -149,17 +146,14 @@ view: anl_fct_ventas {
   }
 
   dimension: en_periodo {
-    hidden: yes
     type: yesno
     sql: {% condition filtro_fecha %} TIMESTAMP(DATE(${TABLE}.fec_dia)) {% endcondition %} ;;
   }
   dimension: en_periodo_aa {
-    hidden: yes
     type: yesno
     sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
   dimension: en_periodo_o_aa {
-    hidden: yes
     type: yesno
     sql: ({% condition filtro_fecha %} TIMESTAMP(DATE(${TABLE}.fec_dia)) {% endcondition %})
       OR ({% condition filtro_fecha %} TIMESTAMP(DATE_ADD(DATE(${TABLE}.fec_dia), INTERVAL 1 YEAR)) {% endcondition %}) ;;
