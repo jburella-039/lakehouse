@@ -30,37 +30,40 @@ view: anl_fct_ventas {
     sql: CAST(${id_venta} AS STRING) ;;
   }
 
-  dimension: id_sucursal        { label: "Sucursal (ID)" }
-  dimension: id_caja            { label: "Caja" }
-  dimension: id_tipocomprobante { label: "Tipo Comprobante (ID)" }
-  dimension: cd_nrocomprobante  { label: "Nro Comprobante" }
-  dimension: cd_sku             { label: "SKU (Articulo)" }
-  dimension: id_obrasocial      { label: "Obra Social (ID)" }
-  dimension: id_proveedor       { label: "Proveedor (ID)" }
-  dimension: id_departamento    { label: "Departamento (ID)" }
-  dimension: id_categoria       { label: "Categoria (ID)" }
-  dimension: id_subcategoria    { label: "Subcategoria (ID)" }
-  dimension: id_marca           { label: "Marca (ID)" }
-  dimension: id_cliente         { label: "Cliente (ID)" }
-  dimension: num_hora           { label: "Hora del Dia" }
+  dimension: id_sucursal        { hidden: no  label: "Sucursal (ID)" }
+  dimension: id_caja            { hidden: no  label: "Caja" }
+  dimension: id_tipocomprobante { hidden: no  label: "Tipo Comprobante (ID)" }
+  dimension: cd_nrocomprobante  { hidden: no  label: "Nro Comprobante" }
+  dimension: cd_sku             { hidden: no  label: "SKU (Articulo)" }
+  dimension: id_obrasocial      { hidden: no  label: "Obra Social (ID)" }
+  dimension: id_proveedor       { hidden: no  label: "Proveedor (ID)" }
+  dimension: id_departamento    { hidden: no  label: "Departamento (ID)" }
+  dimension: id_categoria       { hidden: no  label: "Categoria (ID)" }
+  dimension: id_subcategoria    { hidden: no  label: "Subcategoria (ID)" }
+  dimension: id_marca           { hidden: no  label: "Marca (ID)" }
+  dimension: id_cliente         { hidden: no  label: "Cliente (ID)" }
+  dimension: num_hora           { hidden: no  label: "Hora del Dia" }
 
   dimension: cliente_identificado {
+    hidden: no
     type: yesno
     sql: ${TABLE}.id_cliente <> -1 AND ${TABLE}.id_cliente IS NOT NULL ;;
     label: "Cliente Identificado?"
   }
 
   dimension: tipo_cobertura {
+    hidden: no
     type: string
     sql: CASE WHEN ${TABLE}.id_obrasocial IS NULL OR ${TABLE}.id_obrasocial <= 0
               THEN 'Particular' ELSE 'Obra Social / Coseguro' END ;;
     label: "Tipo de Cobertura"
   }
 
-  dimension_group: fec_venta { label: "Fecha de Venta" }
-  dimension_group: fec_dia   { label: "Fecha" }
+  dimension_group: fec_venta { hidden: no  label: "Fecha de Venta" }
+  dimension_group: fec_dia   { hidden: no  label: "Fecha" }
 
   dimension: anio_sel {
+    hidden: no
     type: string
     sql: CAST(${fec_dia_year} AS STRING) ;;
     label: "Año"
@@ -68,6 +71,7 @@ view: anl_fct_ventas {
   }
 
   measure: venta_neta {
+    hidden: no
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
@@ -77,6 +81,7 @@ view: anl_fct_ventas {
   }
 
   measure: unidades {
+    hidden: no
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
@@ -85,6 +90,7 @@ view: anl_fct_ventas {
   }
 
   measure: tickets {
+    hidden: no
     type: count_distinct
     sql: ${id_venta} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes"]
@@ -92,6 +98,7 @@ view: anl_fct_ventas {
   }
 
   measure: costo {
+    hidden: no
     type: sum
     sql: ${TABLE}.mto_costo ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
@@ -100,24 +107,28 @@ view: anl_fct_ventas {
   }
 
   measure: margen_pesos {
+    hidden: no
     type: number
     sql: ${venta_neta} - ${costo} ;;
     value_format_name: usd_0
     label: "Margen $ (s/IVA a/desc)"
   }
   measure: margen_pct {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_neta} - ${costo}, NULLIF(${venta_neta},0)) ;;
     value_format_name: percent_2
     label: "Margen %"
   }
   measure: ticket_promedio {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_neta}, NULLIF(${tickets},0)) ;;
     value_format_name: usd_0
     label: "Ticket Promedio"
   }
   measure: unidades_por_ticket {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${unidades}, NULLIF(${tickets},0)) ;;
     value_format_name: decimal_2
@@ -125,22 +136,26 @@ view: anl_fct_ventas {
   }
 
   measure: pct_venta_total {
+    hidden: no
     type: percent_of_total
     sql: ${venta_neta} ;;
     label: "% Venta (participacion)"
   }
   measure: pct_tickets_total {
+    hidden: no
     type: percent_of_total
     sql: ${tickets} ;;
     label: "% Tickets (participacion)"
   }
   measure: pct_unidades_total {
+    hidden: no
     type: percent_of_total
     sql: ${unidades} ;;
     label: "% Unidades (participacion)"
   }
 
   filter: filtro_fecha {
+    hidden: no
     type: date
     label: "Fecha (periodo KPI)"
   }
@@ -160,6 +175,7 @@ view: anl_fct_ventas {
   }
 
   measure: venta_periodo {
+    hidden: no
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
@@ -167,6 +183,7 @@ view: anl_fct_ventas {
     label: "Venta $ (periodo)"
   }
   measure: venta_periodo_aa {
+    hidden: no
     type: sum
     sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
@@ -175,6 +192,7 @@ view: anl_fct_ventas {
   }
 
   measure: tickets_periodo {
+    hidden: no
     type: count_distinct
     sql: ${id_venta} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
@@ -182,6 +200,7 @@ view: anl_fct_ventas {
     label: "Tickets (periodo)"
   }
   measure: tickets_periodo_aa {
+    hidden: no
     type: count_distinct
     sql: ${id_venta} ;;
     filters: [dim_tipocomprobante.resta_stock: "yes", dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
@@ -189,6 +208,7 @@ view: anl_fct_ventas {
   }
 
   measure: unidades_periodo {
+    hidden: no
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
@@ -196,6 +216,7 @@ view: anl_fct_ventas {
     label: "Unidades (periodo)"
   }
   measure: unidades_periodo_aa {
+    hidden: no
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
@@ -204,6 +225,7 @@ view: anl_fct_ventas {
   }
 
   measure: costo_periodo {
+    hidden: no
     type: sum
     sql: ${TABLE}.mto_costo ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
@@ -211,6 +233,7 @@ view: anl_fct_ventas {
     label: "Costo $ (periodo)"
   }
   measure: costo_periodo_aa {
+    hidden: no
     type: sum
     sql: ${TABLE}.mto_costo ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
@@ -219,48 +242,56 @@ view: anl_fct_ventas {
   }
 
   measure: margen_periodo {
+    hidden: no
     type: number
     sql: ${venta_periodo} - ${costo_periodo} ;;
     value_format: "$#,##0.0,,,\"B\""
     label: "Margen $ (periodo)"
   }
   measure: margen_periodo_aa {
+    hidden: no
     type: number
     sql: ${venta_periodo_aa} - ${costo_periodo_aa} ;;
     value_format_name: usd_0
     label: "Margen $ (periodo año ant.)"
   }
   measure: margen_pct_periodo {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_periodo} - ${costo_periodo}, NULLIF(${venta_periodo},0)) ;;
     value_format_name: percent_2
     label: "Margen % (periodo)"
   }
   measure: margen_pct_periodo_aa {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_periodo_aa} - ${costo_periodo_aa}, NULLIF(${venta_periodo_aa},0)) ;;
     value_format_name: percent_2
     label: "Margen % (periodo año ant.)"
   }
   measure: ticket_promedio_periodo {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_periodo}, NULLIF(${tickets_periodo},0)) ;;
     value_format_name: usd_0
     label: "Ticket Promedio (periodo)"
   }
   measure: ticket_promedio_periodo_aa {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_periodo_aa}, NULLIF(${tickets_periodo_aa},0)) ;;
     value_format_name: usd_0
     label: "Ticket Promedio (periodo año ant.)"
   }
   measure: unidades_por_ticket_periodo {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${unidades_periodo}, NULLIF(${tickets_periodo},0)) ;;
     value_format_name: decimal_2
     label: "Unidades por Ticket (periodo)"
   }
   measure: unidades_por_ticket_periodo_aa {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${unidades_periodo_aa}, NULLIF(${tickets_periodo_aa},0)) ;;
     value_format_name: decimal_2
@@ -268,42 +299,49 @@ view: anl_fct_ventas {
   }
 
   measure: venta_yoy {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${venta_periodo} - ${venta_periodo_aa}, NULLIF(${venta_periodo_aa}, 0)) ;;
     value_format_name: percent_1
     label: "Ventas Var % (YoY)"
   }
   measure: tickets_yoy {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${tickets_periodo} - ${tickets_periodo_aa}, NULLIF(${tickets_periodo_aa}, 0)) ;;
     value_format_name: percent_1
     label: "Tickets Var % (YoY)"
   }
   measure: unidades_yoy {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${unidades_periodo} - ${unidades_periodo_aa}, NULLIF(${unidades_periodo_aa}, 0)) ;;
     value_format_name: percent_1
     label: "Unidades Var % (YoY)"
   }
   measure: ticket_promedio_yoy {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${ticket_promedio_periodo} - ${ticket_promedio_periodo_aa}, NULLIF(${ticket_promedio_periodo_aa}, 0)) ;;
     value_format_name: percent_1
     label: "Ticket Promedio Var % (YoY)"
   }
   measure: unidades_por_ticket_yoy {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${unidades_por_ticket_periodo} - ${unidades_por_ticket_periodo_aa}, NULLIF(${unidades_por_ticket_periodo_aa}, 0)) ;;
     value_format_name: percent_1
     label: "Unidades por Ticket Var % (YoY)"
   }
   measure: margen_yoy {
+    hidden: no
     type: number
     sql: SAFE_DIVIDE(${margen_periodo} - ${margen_periodo_aa}, NULLIF(${margen_periodo_aa}, 0)) ;;
     value_format_name: percent_1
     label: "Margen $ Var % (YoY)"
   }
   measure: margen_pct_yoy {
+    hidden: no
     type: number
     sql: (${margen_pct_periodo} - ${margen_pct_periodo_aa}) * 100 ;;
     value_format: "0.00\" pp\""

@@ -92,13 +92,11 @@ view: bas_fct_ventas {
     sql: ${TABLE}.fec_diarelacionado ;;
   }
   dimension_group: fec_emisionfiscal {
-
     type: time
     timeframes: [raw, time, date, week, month, quarter, year]
     sql: ${TABLE}.fec_emisionfiscal ;;
   }
   dimension_group: fec_escaneo {
-
     type: time
     timeframes: [raw, time, date, week, month, quarter, year]
     sql: ${TABLE}.fec_escaneo ;;
@@ -142,7 +140,6 @@ view: bas_fct_ventas {
     sql: ${TABLE}.id_coseguro ;;
   }
   dimension: id_cupondescuento {
-
     type: number
     sql: ${TABLE}.id_cupondescuento ;;
   }
