@@ -1,27 +1,12 @@
-# =============================================================================
-# view: dim_fecha
-# Dimension calendario (1 fila por dia, 2015-2050). Fuente:
-# lakehouse-dev-483619.bss_referencial.dim_fecha
-#
-# Se usa como UNICA fuente de fecha de los dashboards Venta Integral. El filtro
-# "Fecha" y "Año" apuntan aca (campos DATE puros, sin convert_tz) en vez del
-# TIMESTAMP crudo del hecho (fec_dia / ID_TIE_DIA), que arrastraba corrimientos
-# por timezone. Join al hecho por DATE(fec_dia) = fec_fecha (validado lossless).
-# =============================================================================
+include: "/views_BAS/bas_bss_referencial/bas_dim_fecha.view.lkml"
 
-view: dim_fecha {
-  sql_table_name: `lakehouse-dev-483619.bss_referencial.dim_fecha` ;;
+view: anl_dim_fecha {
+  extends: [bas_dim_fecha]
 
-  # Clave surrogada YYYYMMDD (no se muestra; el join real es por fec_fecha DATE).
-  dimension: fec_fechaid {
-    primary_key: yes
-    hidden: yes
-    type: number
-    sql: ${TABLE}.fec_fechaid ;;
-  }
+  dimension: fec_fechaid { primary_key: yes  hidden: yes }
 
-  # Fecha (DATE puro). convert_tz: no -> no corre la fecha por timezone.
   dimension_group: fecha {
+    hidden: no
     type: time
     datatype: date
     convert_tz: no
@@ -30,17 +15,15 @@ view: dim_fecha {
     label: "Fecha"
   }
 
-  # Año numerico (para agregaciones / pivotes).
   dimension: anio {
+    hidden: no
     type: number
     sql: ${TABLE}.num_anio ;;
     label: "Año"
   }
 
-  # Año como STRING para el filtro selector (dropdown de lista). Un field_filter
-  # sobre un numero renderiza un input numerico sin lista; este de texto con
-  # suggestions fijas muestra el desplegable con los años.
   dimension: anio_sel {
+    hidden: no
     type: string
     sql: CAST(${TABLE}.num_anio AS STRING) ;;
     label: "Año"
@@ -48,55 +31,63 @@ view: dim_fecha {
   }
 
   dimension: mes_num {
+    hidden: no
     type: number
     sql: ${TABLE}.num_mes ;;
     label: "Mes (num)"
   }
 
   dimension: mes_nombre {
+    hidden: no
     type: string
     sql: ${TABLE}.dsc_mes ;;
     label: "Mes"
   }
 
-  # "2026-03" (mismo formato que el timeframe month de Looker).
   dimension: aniomes {
+    hidden: no
     type: string
     sql: ${TABLE}.fec_aniomes ;;
     label: "Año-Mes"
   }
 
   dimension: trimestre {
+    hidden: no
     type: string
     sql: ${TABLE}.dsc_trimestre ;;
     label: "Trimestre"
   }
 
   dimension: dia_semana {
+    hidden: no
     type: string
     sql: ${TABLE}.dsc_diasemana ;;
     label: "Dia de Semana"
   }
 
   dimension: es_finde {
+    hidden: no
     type: yesno
     sql: ${TABLE}.flg_findesemana ;;
     label: "Fin de Semana?"
   }
 
   dimension: es_dia_habil {
+    hidden: no
     type: yesno
     sql: ${TABLE}.flg_esdiahabil ;;
     label: "Dia Habil?"
   }
 
   dimension: es_mes_actual {
+    hidden: no
     type: yesno
     sql: ${TABLE}.flg_mesactual ;;
     label: "Mes Actual?"
   }
 
   dimension: es_anio_actual {
+    hidden: no
     type: yesno
     sql: ${TABLE}.flg_anioactual ;;
     label: "Año Actual?"

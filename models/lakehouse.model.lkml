@@ -1,12 +1,18 @@
 connection: "lakehouse-dev-483619"
 
 # =============================================================================
-# Estructura de vistas:
-#   views/       -> vistas planas (una por entidad: dims + fct_remitos + fct_stock).
-#   views_BAS/   -> SOLO fct_ventas: capa BASE cruda (bas_fct_ventas = espejo 1:1 de
-#                   vw_fct_ventas, sin labels ni campos calculados).
-#   views_ANL/   -> SOLO fct_ventas: capa ANALISIS (anl_fct_ventas extiende
-#                   bas_fct_ventas, agrega PDT, labels y define las medidas).
+# Estructura de vistas (TODAS las entidades en dos capas BAS/ANL):
+#   views_BAS/   -> capa BASE cruda: bas_<entidad> = espejo 1:1 del origen BigQuery
+#                   con fields_hidden_by_default: yes (sin labels ni calculados).
+#   views_ANL/   -> capa ANALISIS: anl_<entidad> extiende bas_<entidad>, expone lo
+#                   curado con hidden: no + labels, calculados, PDT y medidas.
+#   views/       -> solo queda fct_ventas_pktest (vista de prueba, no productiva).
+#   Subcarpetas por dataset: bas_/anl_ + bss_comercial | bss_referencial |
+#   bss_sucursales | bss_salud.
+#
+# Los explores (fct_ventas / fct_remitos / fct_stock) usan la capa ANL via
+# `from: anl_<fct>`; cada join usa `from: anl_<dim>` (el nombre del join y las refs
+# NO cambian, asi el dashboard sigue igual).
 #
 # Los explores viven INLINE en este model (no en /explores/*.explore.lkml). Es la
 # topologia que valida en esta instancia: con los explores en archivos separados,
@@ -44,71 +50,84 @@ explore: fct_ventas {
   persist_with: venta_integral_datagroup
 
   join: dim_fecha {
+    from: anl_dim_fecha
     type: left_outer
     relationship: many_to_one
     sql_on: DATE(${fct_ventas.fec_dia_raw}) = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_tipocomprobante {
+    from: anl_dim_tipocomprobante
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_tipocomprobante} = ${dim_tipocomprobante.id_tipocomprobante} ;;
   }
 
   join: dim_articulo {
+    from: anl_dim_articulo
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.cd_sku} = ${dim_articulo.cd_sku} ;;
   }
   join: dim_marca {
+    from: anl_dim_marca
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_marca} = ${dim_marca.id_marca} ;;
   }
   join: dim_categoria {
+    from: anl_dim_categoria
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_categoria} = ${dim_categoria.id_categoria} ;;
   }
   join: dim_subcategoria {
+    from: anl_dim_subcategoria
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_subcategoria} = ${dim_subcategoria.id_subcategoria} ;;
   }
   join: dim_departamento {
+    from: anl_dim_departamento
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_departamento} = ${dim_departamento.id_departamento} ;;
   }
 
   join: dim_sucursal {
+    from: anl_dim_sucursal
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_sucursal} = ${dim_sucursal.id_sucursal} ;;
   }
   join: dim_formato {
+    from: anl_dim_formato
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
   }
   join: dim_region {
+    from: anl_dim_region
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
   }
   join: dim_provincia {
+    from: anl_dim_provincia
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
   }
 
   join: dim_obrasocial {
+    from: anl_dim_obrasocial
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_obrasocial} = ${dim_obrasocial.id_obrasocial} ;;
   }
 
   join: dim_origenventa {
+    from: anl_dim_origenventa
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_ventas.id_origenventa} = ${dim_origenventa.id_origenventa} ;;
@@ -128,6 +147,7 @@ explore: fct_ventas_pktest {
   hidden: yes
 
   join: dim_tipocomprobante {
+    from: anl_dim_tipocomprobante
     view_label: "Comercial - Tipo Comprobante"
     type: left_outer
     relationship: many_to_one
@@ -147,6 +167,7 @@ explore: fct_remitos {
   persist_with: venta_integral_datagroup
 
   join: dim_fecha {
+    from: anl_dim_fecha
     view_label: "Referencial - Fecha"
     type: left_outer
     relationship: many_to_one
@@ -154,6 +175,7 @@ explore: fct_remitos {
   }
 
   join: dim_tipocomprobante {
+    from: anl_dim_tipocomprobante
     view_label: "Comercial - Tipo Comprobante"
     type: left_outer
     relationship: many_to_one
@@ -161,30 +183,35 @@ explore: fct_remitos {
   }
 
   join: dim_articulo {
+    from: anl_dim_articulo
     view_label: "Comercial - Articulo"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_remitos.cd_sku} = ${dim_articulo.cd_sku} ;;
   }
   join: dim_marca {
+    from: anl_dim_marca
     view_label: "Comercial - Marca"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_remitos.id_marca} = ${dim_marca.id_marca} ;;
   }
   join: dim_categoria {
+    from: anl_dim_categoria
     view_label: "Comercial - Categoria"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_remitos.id_categoria} = ${dim_categoria.id_categoria} ;;
   }
   join: dim_subcategoria {
+    from: anl_dim_subcategoria
     view_label: "Comercial - Subcategoria"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_remitos.id_subcategoria} = ${dim_subcategoria.id_subcategoria} ;;
   }
   join: dim_departamento {
+    from: anl_dim_departamento
     view_label: "Comercial - Departamento"
     type: left_outer
     relationship: many_to_one
@@ -192,24 +219,28 @@ explore: fct_remitos {
   }
 
   join: dim_sucursal {
+    from: anl_dim_sucursal
     view_label: "Sucursales - Sucursal"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_remitos.id_sucursal} = ${dim_sucursal.id_sucursal} ;;
   }
   join: dim_formato {
+    from: anl_dim_formato
     view_label: "Sucursales - Formato"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
   }
   join: dim_region {
+    from: anl_dim_region
     view_label: "Sucursales - Region"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
   }
   join: dim_provincia {
+    from: anl_dim_provincia
     view_label: "Sucursales - Provincia"
     type: left_outer
     relationship: many_to_one
@@ -217,6 +248,7 @@ explore: fct_remitos {
   }
 
   join: dim_obrasocial {
+    from: anl_dim_obrasocial
     view_label: "Salud - Obra Social"
     type: left_outer
     relationship: many_to_one
@@ -234,6 +266,7 @@ explore: fct_stock {
   description: "Stock diario por sucursal y articulo. 'Ultimo dia' equivale a StockDia."
 
   join: dim_fecha {
+    from: anl_dim_fecha
     view_label: "Referencial - Fecha"
     type: left_outer
     relationship: many_to_one
@@ -241,30 +274,35 @@ explore: fct_stock {
   }
 
   join: dim_articulo {
+    from: anl_dim_articulo
     view_label: "Comercial - Articulo"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_stock.cd_sku} = ${dim_articulo.cd_sku} ;;
   }
   join: dim_marca {
+    from: anl_dim_marca
     view_label: "Comercial - Marca"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_marca} = ${dim_marca.id_marca} ;;
   }
   join: dim_categoria {
+    from: anl_dim_categoria
     view_label: "Comercial - Categoria"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_categoria} = ${dim_categoria.id_categoria} ;;
   }
   join: dim_subcategoria {
+    from: anl_dim_subcategoria
     view_label: "Comercial - Subcategoria"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_articulo.id_subcategoria} = ${dim_subcategoria.id_subcategoria} ;;
   }
   join: dim_departamento {
+    from: anl_dim_departamento
     view_label: "Comercial - Departamento"
     type: left_outer
     relationship: many_to_one
@@ -272,24 +310,28 @@ explore: fct_stock {
   }
 
   join: dim_sucursal {
+    from: anl_dim_sucursal
     view_label: "Sucursales - Sucursal"
     type: left_outer
     relationship: many_to_one
     sql_on: ${fct_stock.id_sucursal} = ${dim_sucursal.id_sucursal} ;;
   }
   join: dim_formato {
+    from: anl_dim_formato
     view_label: "Sucursales - Formato"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
   }
   join: dim_region {
+    from: anl_dim_region
     view_label: "Sucursales - Region"
     type: left_outer
     relationship: many_to_one
     sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
   }
   join: dim_provincia {
+    from: anl_dim_provincia
     view_label: "Sucursales - Provincia"
     type: left_outer
     relationship: many_to_one

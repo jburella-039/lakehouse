@@ -3,11 +3,11 @@
 Modelo LookML sobre BigQuery (`lakehouse-dev-483619`) que reproduce el reporte
 Power BI "Venta Integral" (Farmacity).
 
-La mayoria de las vistas son **planas** (una por entidad, con dimensiones y
-medidas juntas). Los hechos **`fct_ventas`** y **`fct_remitos`** son la excepcion:
-usan un patron de **dos capas** (BAS = base cruda / ANL = analisis) para separar el
-espejo del origen (crudo, con `fields_hidden_by_default: yes`) de la capa semantica
-con el PDT, los labels y las medidas.
+**Todas** las entidades (hechos y dimensiones) usan un patron de **dos capas**
+(BAS = base cruda / ANL = analisis): la capa BAS es el espejo 1:1 del origen
+BigQuery con `fields_hidden_by_default: yes`, y la capa ANL la extiende para exponer
+lo curado con `hidden: no` + labels, campos calculados, PDT (en los hechos) y
+medidas. Lo unico plano que queda es `fct_ventas_pktest` (vista de prueba).
 
 ## Estructura del repositorio
 
@@ -16,37 +16,36 @@ con el PDT, los labels y las medidas.
 |-- README.md                     # este archivo (estandares y convenciones)
 |-- /models/
 |   `-- lakehouse.model.lkml       # conexion + includes + datagroups
-|-- /explores/                     # logica de JOINs de la estrella
-|   |-- fct_ventas.explore.lkml
-|   |-- fct_remitos.explore.lkml
-|   `-- fct_stock.explore.lkml
-|-- /views/                        # vistas PLANAS (dims + fct_stock)
-|   |-- dim_fecha.view.lkml ... dim_obrasocial.view.lkml
-|   `-- fct_stock.view.lkml
-|-- /views_BAS/                    # capa BASE cruda (fct_ventas + fct_remitos)
-|   `-- /bas_bss_comercial/
-|       |-- bas_fct_ventas.view.lkml   # espejo crudo de vw_fct_ventas, fields_hidden_by_default
-|       `-- bas_fct_remitos.view.lkml  # espejo crudo de vw_fct_remitos, fields_hidden_by_default
-|-- /views_ANL/                    # capa ANALISIS (fct_ventas + fct_remitos)
-|   `-- /anl_bss_comercial/
-|       |-- anl_fct_ventas.view.lkml   # extends bas_fct_ventas, agrega PDT, labels y medidas
-|       `-- anl_fct_remitos.view.lkml  # extends bas_fct_remitos, PDT + hk_remito, labels y medidas
+|-- /views/                        # solo fct_ventas_pktest (prueba, no productiva)
+|   `-- fct_ventas_pktest.view.lkml
+|-- /views_BAS/                    # capa BASE cruda (todas las entidades)
+|   |-- /bas_bss_comercial/        # bas_fct_ventas, bas_fct_remitos, bas_fct_stock,
+|   |                              #   bas_dim_articulo, bas_dim_tipocomprobante, ...
+|   |-- /bas_bss_referencial/      # bas_dim_fecha, bas_dim_horas
+|   |-- /bas_bss_sucursales/       # bas_dim_sucursal, bas_dim_formato, ...
+|   `-- /bas_bss_salud/            # bas_dim_obrasocial
+|-- /views_ANL/                    # capa ANALISIS (todas las entidades, mismo arbol)
+|   |-- /anl_bss_comercial/        # anl_fct_ventas, anl_fct_remitos, anl_fct_stock, anl_dim_*
+|   |-- /anl_bss_referencial/
+|   |-- /anl_bss_sucursales/
+|   `-- /anl_bss_salud/
 `-- /dashboards/
     `-- venta_integral.dashboard.lookml
 ```
 
-El modelo incluye `"/views/*.view.lkml"` + `"/views_ANL/**/*.view.lkml"`. La capa
-`views_BAS` entra de forma transitiva via el `include` de `anl_fct_ventas`. El
-explore se sigue llamando `fct_ventas` (usa `from: anl_fct_ventas`), asi que el
-dashboard no cambia.
+El modelo incluye `"/views/**"` + `"/views_BAS/**"` + `"/views_ANL/**"`. Los explores
+(`fct_ventas` / `fct_remitos` / `fct_stock`) usan la capa ANL via `from: anl_<fct>`;
+cada `join` usa `from: anl_<dim>`. El nombre del join y las referencias (`dim_*.campo`)
+NO cambian, asi que el dashboard no cambia.
 
-## Vistas planas (`views/*.view.lkml`)
+## Dos capas BAS/ANL (todas las entidades)
 
-- Una vista por entidad: dimensiones, claves y medidas en el mismo archivo.
-- Apuntan a su `sql_table_name` en los datasets `bss_*` (no cambian las fuentes).
-- `fct_stock` es plano y no esta en el dashboard (explore aparte).
-
-## fct_ventas y fct_remitos en dos capas (views_BAS / views_ANL)
+Patron: `bas_<entidad>` (espejo crudo, `fields_hidden_by_default: yes`) +
+`anl_<entidad>` (`include` + `extends: [bas_<entidad>]`, expone lo curado con
+`hidden: no` + labels y calculados; los hechos agregan el PDT y las medidas). Las
+dimensiones renombran el campo de negocio (ej: `categoria` desde `dsc_categoria`) y
+lo definen fresco en ANL; los join keys quedan ocultos y se heredan de BAS (siguen
+resolviendo en los `sql_on` aunque esten `hidden`).
 
 ### BAS - `views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml` (base cruda, interna)
 - Espejo 1:1 de `bss_comercial.vw_fct_ventas` via `sql_table_name`, generado como lo
