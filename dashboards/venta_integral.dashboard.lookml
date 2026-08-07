@@ -42,7 +42,7 @@
   - name: fecha
     title: "Fecha"
     type: field_filter
-    default_value: "this year to today"
+    default_value: "this year to second"
     model: lakehouse
     explore: fct_ventas
     field: dim_fecha.fecha_date
