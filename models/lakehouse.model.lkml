@@ -262,6 +262,7 @@ explore: fct_remitos {
 # "Ultimo dia" (es_ultimo_dia / *_ultimo_dia) = lo que resuelve StockDia.
 # =============================================================================
 explore: fct_stock {
+  from: anl_fct_stock
   label: "Venta Integral - Stock"
   description: "Stock diario por sucursal y articulo. 'Ultimo dia' equivale a StockDia."
 

@@ -13,7 +13,12 @@ view: anl_fct_remitos {
           FORMAT_DATE('%Y%m%d', r.fec_dia), '-',
           CAST(r.id_nroremito AS STRING)
         )) AS hk_remito
-      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_remitos` AS r ;;
+      -- Propia + Controlada (excluye Franquicia): scope del reporte PBI
+      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_remitos` AS r
+      JOIN `lakehouse-dev-483619.bss_sucursales.dim_sucursal` AS s
+        ON r.id_sucursal = s.id_sucursal
+      WHERE s.id_tiporelacion IN (1, 3)
+      ;;
     datagroup_trigger: venta_integral_datagroup
     partition_keys: ["fec_dia"]
     cluster_keys: ["id_sucursal", "id_tipocomprobante"]
