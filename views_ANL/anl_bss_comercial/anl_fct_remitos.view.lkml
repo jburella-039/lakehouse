@@ -12,11 +12,20 @@ view: anl_fct_remitos {
           CAST(r.id_sucursal  AS STRING), '-',
           FORMAT_DATE('%Y%m%d', r.fec_dia), '-',
           CAST(r.id_nroremito AS STRING)
-        )) AS hk_remito
+        )) AS hk_remito,
+        -- Venta neta estilo PBI: saca IVA y resta descuentos (empleado, forma pago, cupon, total desc empleado)
+        (r.mto_total
+          - IFNULL(r.mto_descuentoempleado,0)
+          - IFNULL(r.mto_descuentofp,0)
+          - IFNULL(r.mto_cupondescuento,0)
+          - IFNULL(r.mto_totaldescuentoempleado,0)
+        ) / IF(IFNULL(iva.pct_iva,0) = 0, 1, 1 + iva.pct_iva/100) AS mto_total_neto
       -- Propia + Controlada (excluye Franquicia): scope del reporte PBI
       FROM `lakehouse-dev-483619.bss_comercial.vw_fct_remitos` AS r
       JOIN `lakehouse-dev-483619.bss_sucursales.dim_sucursal` AS s
         ON r.id_sucursal = s.id_sucursal
+      LEFT JOIN `lakehouse-dev-483619.bss_finanzas.dim_tipoiva` AS iva
+        ON r.id_tipoiva = iva.id_tipoiva
       WHERE s.id_tiporelacion IN (1, 3)
       ;;
     datagroup_trigger: venta_integral_datagroup
@@ -90,19 +99,39 @@ view: anl_fct_remitos {
   measure: venta_remito {
     hidden: no
     type: sum
+    sql: ${TABLE}.mto_total_neto ;;
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    value_format_name: usd_0
+    label: "Venta Remitos $"
+  }
+
+  # Control: venta bruta (mto_total con IVA, es_venta + resta_stock). Definicion previa a la paridad PBI.
+  measure: venta_remito_bruto {
+    hidden: yes
+    type: sum
     sql: ${TABLE}.mto_total ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
     value_format_name: usd_0
-    label: "Venta Remitos $"
+    label: "Venta Remitos $ (bruto control)"
   }
 
   measure: unidades_remito {
     hidden: no
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: decimal_0
     label: "Unidades Remitos"
+  }
+
+  # Control: unidades con es_venta + resta_stock. Definicion previa a la paridad PBI.
+  measure: unidades_remito_bruto {
+    hidden: yes
+    type: sum
+    sql: ${TABLE}.cnt_unidades ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    value_format_name: decimal_0
+    label: "Unidades Remitos (control)"
   }
 
   measure: remitos {
@@ -118,9 +147,19 @@ view: anl_fct_remitos {
     hidden: no
     type: sum
     sql: ${TABLE}.mto_costofarmacia ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: usd_0
     label: "Costo Farmacia $"
+  }
+
+  # Control: costo con es_venta + resta_stock. Definicion previa a la paridad PBI.
+  measure: costo_remito_bruto {
+    hidden: yes
+    type: sum
+    sql: ${TABLE}.mto_costofarmacia ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
+    value_format_name: usd_0
+    label: "Costo Farmacia $ (control)"
   }
 
   measure: margen_pesos {
@@ -196,16 +235,16 @@ view: anl_fct_remitos {
   measure: venta_periodo {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_total ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
+    sql: ${TABLE}.mto_total_neto ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format: "$#,##0.0,,,\"B\""
     label: "Venta Remitos $ (periodo)"
   }
   measure: venta_periodo_aa {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_total ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
+    sql: ${TABLE}.mto_total_neto ;;
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Venta Remitos $ (periodo año ant.)"
   }
@@ -231,7 +270,7 @@ view: anl_fct_remitos {
     hidden: no
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format: "#,##0.0,,\"M\""
     label: "Unidades Remitos (periodo)"
   }
@@ -239,7 +278,7 @@ view: anl_fct_remitos {
     hidden: no
     type: sum
     sql: ${TABLE}.cnt_unidades ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Unidades Remitos (periodo año ant.)"
   }
@@ -248,7 +287,7 @@ view: anl_fct_remitos {
     hidden: no
     type: sum
     sql: ${TABLE}.mto_costofarmacia ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format_name: usd_0
     label: "Costo Farmacia $ (periodo)"
   }
@@ -256,7 +295,7 @@ view: anl_fct_remitos {
     hidden: no
     type: sum
     sql: ${TABLE}.mto_costofarmacia ;;
-    filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
+    filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Costo Farmacia $ (periodo año ant.)"
   }
