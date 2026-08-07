@@ -141,6 +141,7 @@ explore: fct_ventas_pktest {
 # Misma estrella que fct_ventas reutilizando las dims. fec_dia es DATE.
 # =============================================================================
 explore: fct_remitos {
+  from: anl_fct_remitos
   label: "Venta Integral - Remitos"
   description: "Remitos de farmacia (obra social / dispensa): venta, unidades, margen."
   persist_with: venta_integral_datagroup
@@ -149,7 +150,7 @@ explore: fct_remitos {
     view_label: "Referencial - Fecha"
     type: left_outer
     relationship: many_to_one
-    sql_on: ${fct_remitos.dia_raw} = ${dim_fecha.fecha_date} ;;
+    sql_on: ${fct_remitos.fec_dia_raw} = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_tipocomprobante {

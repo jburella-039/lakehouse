@@ -4,9 +4,10 @@ Modelo LookML sobre BigQuery (`lakehouse-dev-483619`) que reproduce el reporte
 Power BI "Venta Integral" (Farmacity).
 
 La mayoria de las vistas son **planas** (una por entidad, con dimensiones y
-medidas juntas). El hecho principal **`fct_ventas`** es la excepcion: conserva un
-patron de **dos capas** (FND = fundacion / MRT = mart) para separar el mirror del
-origen (con el PDT y el hash de cabecera) de la capa semantica con las medidas.
+medidas juntas). Los hechos **`fct_ventas`** y **`fct_remitos`** son la excepcion:
+usan un patron de **dos capas** (BAS = base cruda / ANL = analisis) para separar el
+espejo del origen (crudo, con `fields_hidden_by_default: yes`) de la capa semantica
+con el PDT, los labels y las medidas.
 
 ## Estructura del repositorio
 
@@ -19,16 +20,17 @@ origen (con el PDT y el hash de cabecera) de la capa semantica con las medidas.
 |   |-- fct_ventas.explore.lkml
 |   |-- fct_remitos.explore.lkml
 |   `-- fct_stock.explore.lkml
-|-- /views/                        # vistas PLANAS (dims + fct_remitos + fct_stock)
+|-- /views/                        # vistas PLANAS (dims + fct_stock)
 |   |-- dim_fecha.view.lkml ... dim_obrasocial.view.lkml
-|   |-- fct_remitos.view.lkml       #   plano, con PDT + hash (hk_remito)
 |   `-- fct_stock.view.lkml
-|-- /views_BAS/                    # capa BASE cruda (SOLO fct_ventas)
+|-- /views_BAS/                    # capa BASE cruda (fct_ventas + fct_remitos)
 |   `-- /bas_bss_comercial/
-|       `-- bas_fct_ventas.view.lkml   # espejo 1:1 de vw_fct_ventas, sin labels ni medidas
-|-- /views_ANL/                    # capa ANALISIS (SOLO fct_ventas)
+|       |-- bas_fct_ventas.view.lkml   # espejo crudo de vw_fct_ventas, fields_hidden_by_default
+|       `-- bas_fct_remitos.view.lkml  # espejo crudo de vw_fct_remitos, fields_hidden_by_default
+|-- /views_ANL/                    # capa ANALISIS (fct_ventas + fct_remitos)
 |   `-- /anl_bss_comercial/
-|       `-- anl_fct_ventas.view.lkml   # extends bas_fct_ventas, agrega PDT, labels y medidas
+|       |-- anl_fct_ventas.view.lkml   # extends bas_fct_ventas, agrega PDT, labels y medidas
+|       `-- anl_fct_remitos.view.lkml  # extends bas_fct_remitos, PDT + hk_remito, labels y medidas
 `-- /dashboards/
     `-- venta_integral.dashboard.lookml
 ```
@@ -42,11 +44,9 @@ dashboard no cambia.
 
 - Una vista por entidad: dimensiones, claves y medidas en el mismo archivo.
 - Apuntan a su `sql_table_name` en los datasets `bss_*` (no cambian las fuentes).
-- `fct_remitos` es plano pero mantiene el **PDT** (`derived_table` persistido,
-  particionado por `fec_dia`, clusterizado) y el hash `hk_remito` para el conteo.
 - `fct_stock` es plano y no esta en el dashboard (explore aparte).
 
-## fct_ventas en dos capas (views_BAS / views_ANL)
+## fct_ventas y fct_remitos en dos capas (views_BAS / views_ANL)
 
 ### BAS - `views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml` (base cruda, interna)
 - Espejo 1:1 de `bss_comercial.vw_fct_ventas` via `sql_table_name`, generado como lo
@@ -62,6 +62,15 @@ dashboard no cambia.
   campos calculados (pk, cobertura, periodos) y **define TODAS las medidas**.
 - El explore `fct_ventas` la consume via `from: anl_fct_ventas` (mantiene el nombre
   `fct_ventas.*` que usa el dashboard).
+
+### fct_remitos - mismo patron
+- BAS `bas_fct_remitos` = espejo crudo de `vw_fct_remitos` (`fields_hidden_by_default`).
+- ANL `anl_fct_remitos` `extends` la base; su **PDT** hace `SELECT r.*` y precomputa
+  `hk_remito` (`FARM_FINGERPRINT` de sucursal + dia + nro remito), particionado por
+  `fec_dia` y clusterizado por `id_sucursal` + `id_tipocomprobante`. Agrega labels,
+  las calculadas (tipo_dispensa, es_psicotropico, es_receta_digital) y las medidas.
+- El explore `fct_remitos` la consume via `from: anl_fct_remitos`. El grano de fecha
+  es el dimension_group `fec_dia` (antes se llamaba `dia`).
 
 ### Explores (`explores/*.explore.lkml`)
 - Definen los JOINs de la estrella. Cada `join` fija `view_label` con el area
@@ -91,7 +100,7 @@ caro. Para acelerarlos:
 - **Remitos - hash key (`hk_remito`)**: sigue usando `FARM_FINGERPRINT` de
   sucursal + dia + nro remito (la vista de remitos no tiene una PK nativa de remito;
   `id_venta` alli es la venta, otro grano).
-- **PDT persistido**: `anl_fct_ventas` (en views_ANL) y `fct_remitos` (en views/) son
+- **PDT persistido**: `anl_fct_ventas` y `anl_fct_remitos` (ambos en views_ANL) son
   `derived_table` persistidos por `venta_integral_datagroup` (rebuild diario),
   **particionados por `fec_dia`** y **clusterizados** por las claves.
 - **BigQuery** (`bigquery/pk_ventas_unica.sql`): vistas `vw_fct_ventas_hk` /
