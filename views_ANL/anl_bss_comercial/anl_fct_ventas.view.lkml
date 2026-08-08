@@ -6,7 +6,11 @@ view: anl_fct_ventas {
 
   derived_table: {
     sql:
-      SELECT f.*
+      SELECT f.*,
+        -- Venta $ estilo PBI [Vta $ T SIva Ant Desc]: precio sin IVA + cupon (siniva) + desc empleado
+        (f.mto_preciostotalsiniva
+          + IFNULL(f.mto_cupondescuentosiniva,0)
+          + IFNULL(f.mto_totalempleadodescuento,0)) AS mto_venta_pbi
       -- Scope reporte PBI: Ventas Propia (tipo_op=0, excluye terceros/otros ingresos/recargos)
       -- + Controlada o Propia (relacion IN 1,3, excluye franquicia)
       FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f
@@ -80,11 +84,21 @@ view: anl_fct_ventas {
   measure: venta_neta {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    sql: ${TABLE}.mto_venta_pbi ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: usd_0
     label: "Ventas"
     drill_fields: [detalle*]
+  }
+
+  # Control: venta con la columna cruda mto_totalsinivaantesdescuento (definicion previa, no cuadra con PBI)
+  measure: venta_neta_col_old {
+    hidden: yes
+    type: sum
+    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    filters: [dim_tipocomprobante.es_venta: "yes"]
+    value_format_name: usd_0
+    label: "Ventas (columna cruda control)"
   }
 
   measure: unidades {
@@ -184,7 +198,7 @@ view: anl_fct_ventas {
   measure: venta_periodo {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    sql: ${TABLE}.mto_venta_pbi ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format: "$#,##0.0,,,\"B\""
     label: "Venta $ (periodo)"
@@ -192,7 +206,7 @@ view: anl_fct_ventas {
   measure: venta_periodo_aa {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    sql: ${TABLE}.mto_venta_pbi ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Venta $ (periodo año ant.)"
