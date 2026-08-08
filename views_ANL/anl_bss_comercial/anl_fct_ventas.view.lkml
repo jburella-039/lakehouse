@@ -7,7 +7,14 @@ view: anl_fct_ventas {
   derived_table: {
     sql:
       SELECT f.*
-      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f ;;
+      -- Scope reporte PBI: Ventas Propia (tipo_op=0, excluye terceros/otros ingresos/recargos)
+      -- + Controlada o Propia (relacion IN 1,3, excluye franquicia)
+      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f
+      JOIN `lakehouse-dev-483619.bss_sucursales.dim_sucursal` AS s
+        ON f.id_sucursal = s.id_sucursal
+      WHERE f.id_tipooperacioncomercial = 0
+        AND s.id_tiporelacion IN (1, 3)
+      ;;
     datagroup_trigger: venta_integral_datagroup
     partition_keys: ["fec_dia"]
     cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
