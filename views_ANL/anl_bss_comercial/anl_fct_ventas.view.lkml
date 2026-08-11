@@ -41,7 +41,7 @@ view: anl_fct_ventas {
     sql: CAST(${id_venta} AS STRING) ;;
   }
 
-  dimension: id_sucursal        { hidden: no  label: "Sucursal (ID)" }
+  dimension: id_sucursal        { hidden: no  label: "Id Sucursal" }
   dimension: id_caja            { hidden: no  label: "Caja" }
   dimension: id_tipocomprobante { hidden: no  label: "Tipo Comprobante (ID)" }
   dimension: cd_nrocomprobante  { hidden: no  label: "Nro Comprobante" }
