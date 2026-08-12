@@ -8,11 +8,6 @@ view: anl_fct_remitos {
     sql:
       SELECT
         r.*,
-        FARM_FINGERPRINT(CONCAT(
-          CAST(r.id_sucursal  AS STRING), '-',
-          FORMAT_DATE('%Y%m%d', r.fec_dia), '-',
-          CAST(r.id_nroremito AS STRING)
-        )) AS hk_remito,
         -- Venta neta estilo PBI: saca IVA y resta descuentos (empleado, forma pago, cupon, total desc empleado)
         (r.mto_total
           - IFNULL(r.mto_descuentoempleado,0)
@@ -42,18 +37,13 @@ view: anl_fct_remitos {
                 FORMAT_DATE('%Y%m%d', ${TABLE}.fec_dia)) ;;
   }
 
-  dimension: hk_remito {
+  # Clave nativa de cabecera de remito (INT64, sin nulos). Reemplaza al hk_remito
+  # que antes se armaba con FARM_FINGERPRINT(sucursal + dia + nro remito); es 1:1
+  # exacto con esa clave y viene directo de la fuente (bss_oracle.fct_remitos).
+  dimension: id_remito {
     hidden: yes
     type: number
-    sql: ${TABLE}.hk_remito ;;
-  }
-
-  dimension: remito_key {
-    hidden: yes
-    type: string
-    sql: CONCAT(${id_sucursal},'-',
-                FORMAT_DATE('%Y%m%d', ${TABLE}.fec_dia),'-',
-                CAST(${TABLE}.id_nroremito AS STRING)) ;;
+    sql: ${TABLE}.id_remito ;;
   }
 
   dimension: id_sucursal { hidden: no  label: "Sucursal (ID)" }
@@ -137,7 +127,7 @@ view: anl_fct_remitos {
   measure: remitos {
     hidden: no
     type: count_distinct
-    sql: ${hk_remito} ;;
+    sql: ${id_remito} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes"]
     value_format_name: decimal_0
     label: "Remitos"
@@ -252,7 +242,7 @@ view: anl_fct_remitos {
   measure: remitos_periodo {
     hidden: no
     type: count_distinct
-    sql: ${hk_remito} ;;
+    sql: ${id_remito} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo: "yes"]
     value_format: "#,##0.0,,\"M\""
     label: "Remitos (periodo)"
@@ -260,7 +250,7 @@ view: anl_fct_remitos {
   measure: remitos_periodo_aa {
     hidden: no
     type: count_distinct
-    sql: ${hk_remito} ;;
+    sql: ${id_remito} ;;
     filters: [dim_tipocomprobante.es_venta: "yes", dim_tipocomprobante.resta_stock: "yes", en_periodo_aa: "yes"]
     value_format_name: decimal_0
     label: "Remitos (periodo año ant.)"
