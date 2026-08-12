@@ -6,11 +6,12 @@ view: anl_fct_ventas {
 
   derived_table: {
     sql:
-      SELECT f.*,
-        -- Venta $ estilo PBI [Vta $ T SIva Ant Desc]: precio sin IVA + cupon (siniva) + desc empleado
-        (f.mto_preciostotalsiniva
-          + IFNULL(f.mto_cupondescuentosiniva,0)
-          + IFNULL(f.mto_totalempleadodescuento,0)) AS mto_venta_pbi
+      SELECT f.*
+      -- Venta $ = campo crudo mto_totalsinivaantesdescuento (ya viene en f.*).
+      -- Acuerdo con Daniela Scarcella (11/08/2026): la metrica apunta al campo tal cual
+      -- y el ajuste del calculo se hace del lado de BQ/Modelado. Hasta ese ajuste NO cuadra
+      -- con PBI (da ~205.929M vs 207.183M del calculo previo). El calculo previo estilo PBI
+      -- [Vta $ T SIva Ant Desc] se conserva en la medida de control venta_neta_calc_pbi.
       -- Scope reporte PBI: Ventas Propia (tipo_op=0, excluye terceros/otros ingresos/recargos)
       -- + Controlada o Propia (relacion IN 1,3, excluye franquicia)
       FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f
@@ -84,21 +85,25 @@ view: anl_fct_ventas {
   measure: venta_neta {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_venta_pbi ;;
+    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: usd_0
     label: "Ventas"
     drill_fields: [detalle*]
   }
 
-  # Control: venta con la columna cruda mto_totalsinivaantesdescuento (definicion previa, no cuadra con PBI)
-  measure: venta_neta_col_old {
+  # Control: calculo previo estilo PBI [Vta $ T SIva Ant Desc] = precio siniva + cupon siniva + desc empleado.
+  # Cuadraba 100% con PowerBI (~207.183M jun-2026). Se conserva como referencia hasta que Modelado
+  # ajuste mto_totalsinivaantesdescuento en BQ; una vez ajustado, la medida principal debe converger a este valor.
+  measure: venta_neta_calc_pbi {
     hidden: yes
     type: sum
-    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
+    sql: ${TABLE}.mto_preciostotalsiniva
+       + IFNULL(${TABLE}.mto_cupondescuentosiniva,0)
+       + IFNULL(${TABLE}.mto_totalempleadodescuento,0) ;;
     filters: [dim_tipocomprobante.es_venta: "yes"]
     value_format_name: usd_0
-    label: "Ventas (columna cruda control)"
+    label: "Ventas (calc PBI previo, control)"
   }
 
   measure: unidades {
@@ -198,7 +203,7 @@ view: anl_fct_ventas {
   measure: venta_periodo {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_venta_pbi ;;
+    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo: "yes"]
     value_format: "$#,##0.0,,,\"B\""
     label: "Venta $ (periodo)"
@@ -206,7 +211,7 @@ view: anl_fct_ventas {
   measure: venta_periodo_aa {
     hidden: no
     type: sum
-    sql: ${TABLE}.mto_venta_pbi ;;
+    sql: ${TABLE}.mto_totalsinivaantesdescuento ;;
     filters: [dim_tipocomprobante.es_venta: "yes", en_periodo_aa: "yes"]
     value_format_name: usd_0
     label: "Venta $ (periodo año ant.)"
