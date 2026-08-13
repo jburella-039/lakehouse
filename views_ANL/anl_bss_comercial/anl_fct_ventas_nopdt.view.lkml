@@ -1,5 +1,7 @@
 include: "/views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml"
 
+# [rev 2026-08-13] Version SIN tabla derivada. Si ves un bloque "derived_table: {"
+# mas abajo, estas en una version vieja: hace Pull from Production en Looker.
 # =============================================================================
 # anl_fct_ventas_nopdt - COPIA DE anl_fct_ventas SIN TABLA DERIVADA (vista de prueba)
 # NO tiene derived_table: lee DIRECTO la vista vw_fct_ventas (hereda el
