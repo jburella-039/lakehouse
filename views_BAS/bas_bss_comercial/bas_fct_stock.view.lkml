@@ -1,97 +1,106 @@
+# =============================================================================
+# bas_fct_stock - capa BASE de Stock (PDV)
+# Nomenclatura segun Analisis_Tablas_Stock_PDV.xlsx (hoja Mapeo BT_STK_STOCK,
+# columna D "fct_stock"). Validado contra el esquema real de vw_fct_stock
+# (INFORMATION_SCHEMA, 2026-08-13): la vista YA expone los nombres nuevos, asi
+# que identificador y columna fisica coinciden 1:1.
+# NOTA: la columna real es flg_perteneceasurtid (sin la 'o' final, truncada en
+# la vista) y fec_aniomes (no fec_mes). Se respetan los nombres reales.
+# =============================================================================
 view: bas_fct_stock {
   sql_table_name: `lakehouse-dev-483619.bss_comercial.vw_fct_stock` ;;
   fields_hidden_by_default: yes
 
-  dimension: fc_stk_cantidadasignada {
-    type: number
-    sql: ${TABLE}.FC_STK_CANTIDADASIGNADA ;;
-  }
-  dimension: fc_stk_cantidaddevolucion {
-    type: number
-    sql: ${TABLE}.FC_STK_CANTIDADDEVOLUCION ;;
-  }
-  dimension: fc_stk_cantidaddisponible {
-    type: number
-    sql: ${TABLE}.FC_STK_CANTIDADDISPONIBLE ;;
-  }
-  dimension: fc_stk_costo {
-    type: number
-    sql: ${TABLE}.FC_STK_COSTO ;;
-  }
-  dimension: fc_stk_costodevolucion {
-    type: number
-    sql: ${TABLE}.FC_STK_COSTODEVOLUCION ;;
-  }
-  dimension: fc_stk_preciopublico {
-    type: number
-    sql: ${TABLE}.FC_STK_PRECIOPUBLICO ;;
-  }
-  dimension: fl_stk_perteneceasurtido {
-    type: number
-    sql: ${TABLE}.FL_STK_PERTENECEASURTIDO ;;
-  }
-  dimension: id_art_cuf {
-    type: number
-    sql: ${TABLE}.ID_ART_CUF ;;
-  }
-  dimension: id_art_hiscategoria {
-    type: number
-    sql: ${TABLE}.ID_ART_HISCATEGORIA ;;
-  }
-  dimension: id_art_hisdepartamento {
-    type: number
-    sql: ${TABLE}.ID_ART_HISDEPARTAMENTO ;;
-  }
-  dimension: id_art_hismarca {
-    type: number
-    sql: ${TABLE}.ID_ART_HISMARCA ;;
-  }
-  dimension: id_art_hissubcategoria {
-    type: number
-    sql: ${TABLE}.ID_ART_HISSUBCATEGORIA ;;
-  }
-  dimension: id_etl_cargadatos {
-    type: number
-    sql: ${TABLE}.ID_ETL_CARGADATOS ;;
-  }
-  dimension: id_pro_hisproveedor {
-    type: number
-    sql: ${TABLE}.ID_PRO_HISPROVEEDOR ;;
-  }
-  dimension_group: id_stk_fechaalta {
+  dimension_group: fec_dia {
     type: time
     timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.ID_STK_FECHAALTA ;;
+    sql: ${TABLE}.fec_dia ;;
   }
-  dimension_group: id_stk_fechaultimamodificacion {
+  dimension: id_sucursal {
+    type: number
+    sql: ${TABLE}.id_sucursal ;;
+  }
+  dimension: cd_sku {
+    type: number
+    sql: ${TABLE}.cd_sku ;;
+  }
+  dimension: id_departamento {
+    type: number
+    sql: ${TABLE}.id_departamento ;;
+  }
+  dimension: id_categoria {
+    type: number
+    sql: ${TABLE}.id_categoria ;;
+  }
+  dimension: id_subcategoria {
+    type: number
+    sql: ${TABLE}.id_subcategoria ;;
+  }
+  dimension: id_proveedor {
+    type: number
+    sql: ${TABLE}.id_proveedor ;;
+  }
+  dimension: id_marca {
+    type: number
+    sql: ${TABLE}.id_marca ;;
+  }
+  dimension_group: fec_alta {
     type: time
     timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.ID_STK_FECHAULTIMAMODIFICACION ;;
+    sql: ${TABLE}.fec_alta ;;
   }
-  dimension: id_stk_tiporotdemanda {
-    type: number
-    sql: ${TABLE}.ID_STK_TIPOROTDEMANDA ;;
-  }
-  dimension: id_stk_tiporotmargen {
-    type: number
-    sql: ${TABLE}.ID_STK_TIPOROTMARGEN ;;
-  }
-  dimension: id_stk_tiporotvolumen {
-    type: number
-    sql: ${TABLE}.ID_STK_TIPOROTVOLUMEN ;;
-  }
-  dimension: id_suc_sucursal {
-    type: number
-    sql: ${TABLE}.ID_SUC_SUCURSAL ;;
-  }
-  dimension_group: id_tie_dia {
+  dimension_group: fec_ultimamodificacion {
     type: time
     timeframes: [raw, time, date, week, month, quarter, year]
-    sql: ${TABLE}.ID_TIE_DIA ;;
+    sql: ${TABLE}.fec_ultimamodificacion ;;
   }
-  dimension: id_tie_mes {
+  dimension: id_cargadatos {
     type: number
-    sql: ${TABLE}.ID_TIE_MES ;;
+    sql: ${TABLE}.id_cargadatos ;;
+  }
+  dimension: cnt_disponible {
+    type: number
+    sql: ${TABLE}.cnt_disponible ;;
+  }
+  dimension: cnt_asignada {
+    type: number
+    sql: ${TABLE}.cnt_asignada ;;
+  }
+  dimension: cnt_devolucion {
+    type: number
+    sql: ${TABLE}.cnt_devolucion ;;
+  }
+  dimension: mto_costo {
+    type: number
+    sql: ${TABLE}.mto_costo ;;
+  }
+  dimension: mto_preciopublico {
+    type: number
+    sql: ${TABLE}.mto_preciopublico ;;
+  }
+  dimension: fec_aniomes {
+    type: number
+    sql: ${TABLE}.fec_aniomes ;;
+  }
+  dimension: mto_costodevolucion {
+    type: number
+    sql: ${TABLE}.mto_costodevolucion ;;
+  }
+  dimension: id_tiporotaciondemanda {
+    type: number
+    sql: ${TABLE}.id_tiporotaciondemanda ;;
+  }
+  dimension: id_tiporotacionvolumen {
+    type: number
+    sql: ${TABLE}.id_tiporotacionvolumen ;;
+  }
+  dimension: id_tiporotacionmargen {
+    type: number
+    sql: ${TABLE}.id_tiporotacionmargen ;;
+  }
+  dimension: flg_perteneceasurtid {
+    type: number
+    sql: ${TABLE}.flg_perteneceasurtid ;;
   }
   measure: count {
     type: count

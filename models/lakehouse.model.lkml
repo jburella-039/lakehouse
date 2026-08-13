@@ -377,7 +377,7 @@ explore: fct_stock {
     view_label: "Referencial - Fecha"
     type: left_outer
     relationship: many_to_one
-    sql_on: DATE(${fct_stock.dia_raw}) = ${dim_fecha.fecha_date} ;;
+    sql_on: DATE(${fct_stock.fec_dia_raw}) = ${dim_fecha.fecha_date} ;;
   }
 
   join: dim_articulo {
