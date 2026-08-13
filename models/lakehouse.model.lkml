@@ -136,6 +136,105 @@ explore: fct_ventas {
 
 
 # =============================================================================
+# explore: fct_ventas_nopdt - PRUEBA SIN PDT (NO productivo)
+# Identico a fct_ventas pero sobre anl_fct_ventas_nopdt (derived_table efimero,
+# subquery en vivo contra vw_fct_ventas, sin PDT). SIN persist_with venta_integral
+# para no cachear por el datagroup diario. Lo consume el dashboard venta_integral_nopdt.
+# Sirve para medir el impacto del PDT (staleness / performance) sin tocar lo productivo.
+# =============================================================================
+explore: fct_ventas_nopdt {
+  from: anl_fct_ventas_nopdt
+  label: "PRUEBA - Venta Integral sin PDT"
+  description: "Ventas en vivo (derived_table efimero, sin PDT). Solo para testear impacto del PDT."
+  hidden: yes
+
+  join: dim_fecha {
+    from: anl_dim_fecha
+    type: left_outer
+    relationship: many_to_one
+    sql_on: DATE(${fct_ventas_nopdt.fec_dia_raw}) = ${dim_fecha.fecha_date} ;;
+  }
+
+  join: dim_tipocomprobante {
+    from: anl_dim_tipocomprobante
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas_nopdt.id_tipocomprobante} = ${dim_tipocomprobante.id_tipocomprobante} ;;
+  }
+
+  join: dim_articulo {
+    from: anl_dim_articulo
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas_nopdt.cd_sku} = ${dim_articulo.cd_sku} ;;
+  }
+  join: dim_marca {
+    from: anl_dim_marca
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_articulo.id_marca} = ${dim_marca.id_marca} ;;
+  }
+  join: dim_categoria {
+    from: anl_dim_categoria
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_articulo.id_categoria} = ${dim_categoria.id_categoria} ;;
+  }
+  join: dim_subcategoria {
+    from: anl_dim_subcategoria
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_articulo.id_subcategoria} = ${dim_subcategoria.id_subcategoria} ;;
+  }
+  join: dim_departamento {
+    from: anl_dim_departamento
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_articulo.id_departamento} = ${dim_departamento.id_departamento} ;;
+  }
+
+  join: dim_sucursal {
+    from: anl_dim_sucursal
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas_nopdt.id_sucursal} = ${dim_sucursal.id_sucursal} ;;
+  }
+  join: dim_formato {
+    from: anl_dim_formato
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_sucursal.id_formato} = ${dim_formato.id_formato} ;;
+  }
+  join: dim_region {
+    from: anl_dim_region
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_sucursal.id_region} = ${dim_region.id_region} ;;
+  }
+  join: dim_provincia {
+    from: anl_dim_provincia
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${dim_sucursal.id_provincia} = ${dim_provincia.id_provincia} ;;
+  }
+
+  join: dim_obrasocial {
+    from: anl_dim_obrasocial
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas_nopdt.id_obrasocial} = ${dim_obrasocial.id_obrasocial} ;;
+  }
+
+  join: dim_origenventa {
+    from: anl_dim_origenventa
+    type: left_outer
+    relationship: many_to_one
+    sql_on: ${fct_ventas_nopdt.id_origenventa} = ${dim_origenventa.id_origenventa} ;;
+  }
+}
+
+
+# =============================================================================
 # explore: fct_ventas_pktest - PRUEBA PK (NO productivo)
 # Compara la PK nativa id_venta (BigQuery/Alex) contra el hash actual sobre la
 # misma metrica de Tickets. Solo se une dim_tipocomprobante (para es_venta /

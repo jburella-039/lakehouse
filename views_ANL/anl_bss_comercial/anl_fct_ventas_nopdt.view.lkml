@@ -1,28 +1,33 @@
 include: "/views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml"
 
-view: anl_fct_ventas {
+# =============================================================================
+# anl_fct_ventas_nopdt - COPIA DE anl_fct_ventas SIN PDT (vista de prueba)
+# Igual en TODO a anl_fct_ventas, pero el derived_table es EFIMERO: no lleva
+# datagroup_trigger / partition_keys / cluster_keys, asi Looker lo resuelve como
+# subquery en vivo contra vw_fct_ventas en cada consulta (no materializa PDT).
+# Sirve para testear el impacto del PDT (staleness / performance) sin tocar la
+# vista productiva anl_fct_ventas ni su explore/dashboard.
+# =============================================================================
+view: anl_fct_ventas_nopdt {
   extends: [bas_fct_ventas]
-  label: "Ventas"
+  label: "Ventas (sin PDT)"
 
   derived_table: {
     sql:
       SELECT f.*
       -- Venta $ = campo crudo mto_totalsinivaantesdescuento (ya viene en f.*).
       -- Acuerdo con Daniela Scarcella (11/08/2026): la metrica apunta al campo tal cual
-      -- y el ajuste del calculo se hace del lado de BQ/Modelado. Hasta ese ajuste NO cuadra
-      -- con PBI (da ~205.929M vs 207.183M del calculo previo). El calculo previo estilo PBI
-      -- [Vta $ T SIva Ant Desc] se conserva en la medida de control venta_neta_calc_pbi.
+      -- y el ajuste del calculo se hace del lado de BQ/Modelado. El calculo previo estilo
+      -- PBI [Vta $ T SIva Ant Desc] se conserva en la medida de control venta_neta_calc_pbi.
       -- Scope reporte PBI: Ventas Propia (tipo_op=0, excluye terceros/otros ingresos/recargos)
       -- + Controlada o Propia (relacion IN 1,3, excluye franquicia)
+      -- SIN PDT: derived_table efimero (subquery en vivo, sin datagroup_trigger/partition/cluster).
       FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f
       JOIN `lakehouse-dev-483619.bss_sucursales.dim_sucursal` AS s
         ON f.id_sucursal = s.id_sucursal
       WHERE f.id_tipooperacioncomercial = 0
         AND s.id_tiporelacion IN (1, 3)
       ;;
-    datagroup_trigger: venta_integral_datagroup
-    partition_keys: ["fec_dia"]
-    cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
   }
 
   dimension: pk {

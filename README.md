@@ -64,8 +64,8 @@ resolviendo en los `sql_on` aunque esten `hidden`).
 
 ### fct_remitos - mismo patron
 - BAS `bas_fct_remitos` = espejo crudo de `vw_fct_remitos` (`fields_hidden_by_default`).
-- ANL `anl_fct_remitos` `extends` la base; su **PDT** hace `SELECT r.*` y precomputa
-  `hk_remito` (`FARM_FINGERPRINT` de sucursal + dia + nro remito), particionado por
+- ANL `anl_fct_remitos` `extends` la base; su **PDT** hace `SELECT r.*` (usa la clave
+  nativa `id_remito` de la fuente, ver seccion Performance), particionado por
   `fec_dia` y clusterizado por `id_sucursal` + `id_tipocomprobante`. Agrega labels,
   las calculadas (tipo_dispensa, es_psicotropico, es_receta_digital) y las medidas.
 - El explore `fct_remitos` la consume via `from: anl_fct_remitos`. El grano de fecha
@@ -96,9 +96,12 @@ caro. Para acelerarlos:
   (`FARM_FINGERPRINT` de 6 campos de cabecera); se validó biyección 1:1 exacta
   entre `id_venta` y ese hash sobre la vista (0 NULLs en 693M filas, 2023-2026) y
   se reemplazó: menos bytes y menos CPU (escanea 1 columna vs 6, sin computar hash).
-- **Remitos - hash key (`hk_remito`)**: sigue usando `FARM_FINGERPRINT` de
-  sucursal + dia + nro remito (la vista de remitos no tiene una PK nativa de remito;
-  `id_venta` alli es la venta, otro grano).
+- **Remitos - clave nativa (`id_remito`)**: la vista `vw_fct_remitos` ya expone
+  `id_remito` (INT64), la clave de cabecera de remito del origen (`bss_oracle.fct_remitos`,
+  se propaga por el `SELECT *` de la vista). La medida Remitos hace
+  `COUNT(DISTINCT id_remito)`. Antes se calculaba en Looker un hash (`FARM_FINGERPRINT`
+  de sucursal + dia + nro remito); se validó 1:1 exacto entre `id_remito` y ese hash
+  sobre la vista (0 NULLs, 2.582.649 = 2.582.649 en junio 2026) y se reemplazó.
 - **PDT persistido**: `anl_fct_ventas` y `anl_fct_remitos` (ambos en views_ANL) son
   `derived_table` persistidos por `venta_integral_datagroup` (rebuild diario),
   **particionados por `fec_dia`** y **clusterizados** por las claves.
