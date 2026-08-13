@@ -145,8 +145,15 @@ explore: fct_ventas {
 explore: fct_ventas_nopdt {
   from: anl_fct_ventas_nopdt
   label: "PRUEBA - Venta Integral sin PDT"
-  description: "Ventas en vivo (derived_table efimero, sin PDT). Solo para testear impacto del PDT."
+  description: "Ventas en vivo (sin tabla derivada, sin PDT). Solo para testear impacto del PDT."
   hidden: yes
+
+  # Scope del reporte PBI (antes en el WHERE del derived_table de anl_fct_ventas):
+  # Ventas Propia (tipo_op=0) + relacion Controlada o Propia (IN 1,3). Se aplica aca
+  # porque la vista anl_fct_ventas_nopdt lee vw_fct_ventas cruda (sin filtro propio).
+  sql_always_where:
+    ${fct_ventas_nopdt.id_tipooperacioncomercial} = 0
+    AND ${dim_sucursal.id_tiporelacion} IN (1, 3) ;;
 
   join: dim_fecha {
     from: anl_dim_fecha
