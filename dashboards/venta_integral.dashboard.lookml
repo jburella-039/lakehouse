@@ -521,8 +521,8 @@
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
-    width: 6
-    height: 13
+    width: 13
+    height: 4
   - title: "Tickets por Canal"
     name: t_canal
     tab_name: tickets
@@ -538,9 +538,9 @@
     filters:
       fct_ventas.tickets: ">=57000"
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 6
-    width: 10
+    row: 4
+    col: 0
+    width: 13
     height: 5
   - title: "Top Marcas - Tickets"
     name: t_marcas
@@ -559,10 +559,10 @@
     limit: 15
     series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 16
-    width: 8
-    height: 13
+    row: 14
+    col: 0
+    width: 13
+    height: 8
   - title: "Marca Propia vs Resto (unidades)"
     name: t_marcapropia
     tab_name: tickets
@@ -576,10 +576,10 @@
     stacking: percent
     show_value_labels: true
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
-    col: 6
-    width: 10
-    height: 3
+    row: 9
+    col: 0
+    width: 13
+    height: 5
   - title: "Participacion por Departamento"
     name: t_depto
     tab_name: tickets
@@ -590,10 +590,10 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.pct_tickets_total desc]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 8
-    col: 6
-    width: 10
-    height: 5
+    row: 0
+    col: 13
+    width: 11
+    height: 9
   - title: "Top 10 Categorias - Tickets"
     name: t_categorias
     tab_name: tickets
@@ -605,9 +605,9 @@
     sorts: [fct_ventas.tickets desc]
     limit: 10
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
-    col: 0
-    width: 12
+    row: 9
+    col: 13
+    width: 11
     height: 9
   - title: "Top Productos - Tickets"
     name: t_productos
@@ -626,10 +626,10 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.tickets: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
-    col: 12
-    width: 12
-    height: 9
+    row: 18
+    col: 13
+    width: 11
+    height: 4
 
   # =====================================================================
   # TAB: UNIDADES  (metrica principal: Unidades -> amarillo #FBC02D)
@@ -652,8 +652,8 @@
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
-    width: 6
-    height: 13
+    width: 13
+    height: 4
   - title: "Unidades por Canal"
     name: u_canal
     tab_name: unidades
@@ -669,9 +669,9 @@
     filters:
       fct_ventas.unidades: ">=227000"
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 6
-    width: 10
+    row: 4
+    col: 0
+    width: 13
     height: 5
   - title: "Top Marcas - Unidades"
     name: u_marcas
@@ -690,10 +690,10 @@
     limit: 15
     series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 16
-    width: 8
-    height: 13
+    row: 14
+    col: 0
+    width: 13
+    height: 8
   - title: "Marca Propia vs Resto (unidades)"
     name: u_marcapropia
     tab_name: unidades
@@ -707,10 +707,10 @@
     stacking: percent
     show_value_labels: true
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
-    col: 6
-    width: 10
-    height: 3
+    row: 9
+    col: 0
+    width: 13
+    height: 5
   - title: "Participacion por Departamento"
     name: u_depto
     tab_name: unidades
@@ -721,10 +721,10 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.pct_unidades_total desc]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 8
-    col: 6
-    width: 10
-    height: 5
+    row: 0
+    col: 13
+    width: 11
+    height: 9
   - title: "Top 10 Categorias - Unidades"
     name: u_categorias
     tab_name: unidades
@@ -736,9 +736,9 @@
     sorts: [fct_ventas.unidades desc]
     limit: 10
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
-    col: 0
-    width: 8
+    row: 9
+    col: 13
+    width: 11
     height: 9
   - title: "Top Productos - Unidades"
     name: u_productos
@@ -757,10 +757,10 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.unidades: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
-    col: 8
-    width: 8
-    height: 9
+    row: 18
+    col: 13
+    width: 11
+    height: 4
 
   # =====================================================================
   # TAB: VENTAS EN $  (metrica principal: Ventas -> verde #2E7D32)
@@ -783,8 +783,8 @@
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
     col: 0
-    width: 6
-    height: 13
+    width: 13
+    height: 4
   - title: "Ventas por Canal"
     name: v_canal
     tab_name: ventas
@@ -800,9 +800,9 @@
     filters:
       fct_ventas.venta_neta: ">=1920000000"
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 6
-    width: 10
+    row: 4
+    col: 0
+    width: 13
     height: 5
   - title: "Top Marcas - Venta y Margen $"
     name: v_marcas
@@ -821,10 +821,10 @@
     limit: 15
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 0
-    col: 16
-    width: 8
-    height: 13
+    row: 14
+    col: 0
+    width: 13
+    height: 8
   - title: "Marca Propia vs Resto (venta)"
     name: v_marcapropia
     tab_name: ventas
@@ -838,10 +838,10 @@
     stacking: percent
     show_value_labels: true
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 5
-    col: 6
-    width: 10
-    height: 3
+    row: 9
+    col: 0
+    width: 13
+    height: 5
   - title: "Participacion por Departamento"
     name: v_depto
     tab_name: ventas
@@ -852,10 +852,10 @@
     fields: [dim_departamento.departamento, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.pct_venta_total desc]
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 8
-    col: 6
-    width: 10
-    height: 5
+    row: 0
+    col: 13
+    width: 11
+    height: 9
   - title: "Top 10 Categorias - Venta"
     name: v_categorias
     tab_name: ventas
@@ -867,9 +867,9 @@
     sorts: [fct_ventas.venta_neta desc]
     limit: 10
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
-    col: 0
-    width: 8
+    row: 9
+    col: 13
+    width: 11
     height: 9
   - title: "Top Productos - Venta"
     name: v_productos
@@ -888,10 +888,10 @@
     limit: 20
     series_cell_visualizations: { fct_ventas.venta_neta: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 13
-    col: 8
-    width: 8
-    height: 9
+    row: 18
+    col: 13
+    width: 11
+    height: 4
 
   # =====================================================================
   # TAB: REMITOS  (Venta -> verde, Remitos -> naranja, Unidades -> amarillo)
@@ -915,7 +915,7 @@
     row: 0
     col: 0
     width: 8
-    height: 5
+    height: 3
   - title: "Remitos"
     name: r_kpi_remitos
     tab_name: remitos
@@ -935,7 +935,7 @@
     row: 0
     col: 8
     width: 8
-    height: 5
+    height: 3
   - title: "Unidades Remitos"
     name: r_kpi_unidades
     tab_name: remitos
@@ -955,7 +955,49 @@
     row: 0
     col: 16
     width: 8
-    height: 5
+    height: 3
+  - title: "Venta Remitos por dia"
+    name: r_trend_venta
+    tab_name: remitos
+    model: lakehouse
+    explore: fct_remitos
+    type: looker_area
+    colors: ["#2E7D32"]
+    fields: [dim_fecha.fecha_date, fct_remitos.venta_remito]
+    sorts: [dim_fecha.fecha_date]
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    row: 3
+    col: 0
+    width: 8
+    height: 6
+  - title: "Remitos por dia"
+    name: r_trend_remitos
+    tab_name: remitos
+    model: lakehouse
+    explore: fct_remitos
+    type: looker_area
+    colors: ["#F57C00"]
+    fields: [dim_fecha.fecha_date, fct_remitos.remitos]
+    sorts: [dim_fecha.fecha_date]
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    row: 3
+    col: 8
+    width: 8
+    height: 6
+  - title: "Unidades Remitos por dia"
+    name: r_trend_unidades
+    tab_name: remitos
+    model: lakehouse
+    explore: fct_remitos
+    type: looker_area
+    colors: ["#FBC02D"]
+    fields: [dim_fecha.fecha_date, fct_remitos.unidades_remito]
+    sorts: [dim_fecha.fecha_date]
+    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    row: 3
+    col: 16
+    width: 8
+    height: 6
   - title: "Remito Promedio"
     name: r_kpi_promedio
     tab_name: remitos
@@ -972,7 +1014,7 @@
     custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 9
     col: 0
     width: 6
     height: 5
@@ -992,7 +1034,7 @@
     custom_color: "#FBC02D"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 9
     col: 6
     width: 6
     height: 5
@@ -1012,7 +1054,7 @@
     custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 9
     col: 12
     width: 6
     height: 5
@@ -1032,52 +1074,10 @@
     custom_color: "#2E7D32"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 5
+    row: 9
     col: 18
     width: 6
     height: 5
-  - title: "Venta Remitos por dia"
-    name: r_trend_venta
-    tab_name: remitos
-    model: lakehouse
-    explore: fct_remitos
-    type: looker_area
-    colors: ["#2E7D32"]
-    fields: [dim_fecha.fecha_date, fct_remitos.venta_remito]
-    sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 10
-    col: 0
-    width: 24
-    height: 8
-  - title: "Remitos por dia"
-    name: r_trend_remitos
-    tab_name: remitos
-    model: lakehouse
-    explore: fct_remitos
-    type: looker_area
-    colors: ["#F57C00"]
-    fields: [dim_fecha.fecha_date, fct_remitos.remitos]
-    sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 18
-    col: 0
-    width: 12
-    height: 7
-  - title: "Unidades Remitos por dia"
-    name: r_trend_unidades
-    tab_name: remitos
-    model: lakehouse
-    explore: fct_remitos
-    type: looker_area
-    colors: ["#FBC02D"]
-    fields: [dim_fecha.fecha_date, fct_remitos.unidades_remito]
-    sorts: [dim_fecha.fecha_date]
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 18
-    col: 12
-    width: 12
-    height: 7
   - title: "Detalle por Tipo Dispensa"
     name: r_dispensa
     tab_name: remitos
@@ -1094,10 +1094,70 @@
     sorts: [fct_remitos.venta_remito desc]
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 25
+    row: 14
     col: 0
     width: 24
     height: 9
+  - title: "Resumen por Tienda (Periodo Seleccionado vs Periodo Anterior)"
+    name: r_tienda
+    tab_name: remitos
+    model: lakehouse
+    explore: fct_remitos
+    type: looker_grid
+    table_theme: white
+    show_row_numbers: false
+    size_to_fit: true
+    header_background_color: "#2E7D32"
+    header_font_color: "#FFFFFF"
+    header_text_alignment: left
+    fields: [dim_sucursal.sucursal, dim_sucursal.cd_sucursal, fct_remitos.venta_periodo, fct_remitos.venta_yoy, fct_remitos.remitos_periodo, fct_remitos.remitos_yoy, fct_remitos.unidades_periodo, fct_remitos.unidades_yoy]
+    filters:
+      fct_remitos.en_periodo_o_aa: "yes"
+    sorts: [fct_remitos.venta_periodo desc]
+    limit: 50
+    hidden_fields: [fct_remitos.venta_periodo, fct_remitos.venta_yoy, fct_remitos.remitos_periodo, fct_remitos.remitos_yoy, fct_remitos.unidades_periodo, fct_remitos.unidades_yoy]
+    dynamic_fields:
+    - table_calculation: rtnd_ventas_cur
+      label: "Venta Remitos $"
+      expression: "${fct_remitos.venta_periodo}"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rtnd_ventas_anio_ant
+      label: "Venta Año Ant"
+      expression: "${fct_remitos.venta_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rtnd_remitos_cur
+      label: "Remitos"
+      expression: "${fct_remitos.remitos_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rtnd_remitos_anio_ant
+      label: "Remitos Año Ant"
+      expression: "${fct_remitos.remitos_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rtnd_unidades_cur
+      label: "Unidades"
+      expression: "${fct_remitos.unidades_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rtnd_unidades_anio_ant
+      label: "Unidades Año Ant"
+      expression: "${fct_remitos.unidades_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    row: 23
+    col: 0
+    width: 24
+    height: 10
   - title: "Top Productos - Remitos"
     name: r_productos
     tab_name: remitos
@@ -1115,7 +1175,7 @@
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 34
+    row: 33
     col: 0
     width: 24
     height: 9

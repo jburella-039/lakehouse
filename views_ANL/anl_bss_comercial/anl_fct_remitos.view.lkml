@@ -221,6 +221,12 @@ view: anl_fct_remitos {
     type: yesno
     sql: {% condition filtro_fecha %} TIMESTAMP(DATE_ADD(${TABLE}.fec_dia, INTERVAL 1 YEAR)) {% endcondition %} ;;
   }
+  dimension: en_periodo_o_aa {
+    hidden: yes
+    type: yesno
+    sql: ({% condition filtro_fecha %} TIMESTAMP(${TABLE}.fec_dia) {% endcondition %})
+      OR ({% condition filtro_fecha %} TIMESTAMP(DATE_ADD(${TABLE}.fec_dia, INTERVAL 1 YEAR)) {% endcondition %}) ;;
+  }
 
   measure: venta_periodo {
     hidden: no
