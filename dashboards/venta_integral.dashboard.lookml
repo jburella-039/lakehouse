@@ -351,7 +351,6 @@
       label: "Ventas Año Ant"
       expression: "${fct_ventas.venta_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tickets_cur
@@ -364,7 +363,6 @@
       label: "Tickets Año Ant"
       expression: "${fct_ventas.tickets_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: unidades_cur
@@ -377,7 +375,6 @@
       label: "Unidades Año Ant"
       expression: "${fct_ventas.unidades_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -413,7 +410,6 @@
       label: "Ventas Año Ant"
       expression: "${fct_ventas.venta_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: cnl_tickets_cur
@@ -426,7 +422,6 @@
       label: "Tickets Año Ant"
       expression: "${fct_ventas.tickets_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: cnl_unidades_cur
@@ -439,7 +434,6 @@
       label: "Unidades Año Ant"
       expression: "${fct_ventas.unidades_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -476,7 +470,6 @@
       label: "Ventas Año Ant"
       expression: "${fct_ventas.venta_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_tickets_cur
@@ -489,7 +482,6 @@
       label: "Tickets Año Ant"
       expression: "${fct_ventas.tickets_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: tnd_unidades_cur
@@ -502,7 +494,6 @@
       label: "Unidades Año Ant"
       expression: "${fct_ventas.unidades_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
@@ -1117,7 +1108,6 @@
       label: "Venta Año Ant"
       expression: "${fct_remitos.venta_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rdsp_remitos_cur
@@ -1130,7 +1120,6 @@
       label: "Remitos Año Ant"
       expression: "${fct_remitos.remitos_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rdsp_unidades_cur
@@ -1143,7 +1132,6 @@
       label: "Unidades Año Ant"
       expression: "${fct_remitos.unidades_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
@@ -1180,7 +1168,6 @@
       label: "Venta Año Ant"
       expression: "${fct_remitos.venta_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rtnd_remitos_cur
@@ -1193,7 +1180,6 @@
       label: "Remitos Año Ant"
       expression: "${fct_remitos.remitos_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     - table_calculation: rtnd_unidades_cur
@@ -1206,7 +1192,6 @@
       label: "Unidades Año Ant"
       expression: "${fct_remitos.unidades_yoy}"
       value_format_name: percent_1
-      html: '{% if value < 0 %}<span style="color:#C62828">{{ rendered_value }}</span>{% else %}<span style="color:#2E7D32">{{ rendered_value }}</span>{% endif %}'
       _kind_hint: measure
       _type_hint: number
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
