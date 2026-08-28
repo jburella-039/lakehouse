@@ -1,6 +1,8 @@
 # =============================================================================
 # Dashboard: Venta Integral (UNIFICADO con tabs)
-# rev: 2026-07-02d (encabezado verde + estilo white en las 13 grillas del reporte)
+# rev: 2026-08-28a (encabezados blancos texto #515457, KPIs en negro, variaciones YoY
+# con formato condicional verde/rojo en las tablas, tarjetas 3er fila igualadas a la 1ra,
+# Resumen por Dispensa con variaciones vs periodo anterior)
 #
 # Combina las 5 paginas (Home, Tickets, Unidades, Ventas en $, Remitos) en un solo
 # dashboard usando tabs nativos de LookML (parametro tabs + tab_name por elemento).
@@ -128,7 +130,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
@@ -150,7 +152,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#F57C00"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
@@ -172,7 +174,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#FBC02D"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 0
@@ -234,13 +236,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 0
     width: 5
-    height: 5
+    height: 3
   - title: "Unidades por Ticket"
     name: h_kpi_uxt
     tab_name: home
@@ -254,13 +256,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#FBC02D"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 5
     width: 5
-    height: 5
+    height: 3
   - title: "Margen %"
     name: h_kpi_margenpct
     tab_name: home
@@ -274,13 +276,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 10
     width: 5
-    height: 5
+    height: 3
   - title: "Margen $"
     name: h_kpi_margen
     tab_name: home
@@ -294,13 +296,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 15
     width: 5
-    height: 5
+    height: 3
   - title: "Remitos"
     name: h_kpi_remitos
     tab_name: home
@@ -314,13 +316,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#F57C00"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, marca: dim_marca.marca, marca_propia: dim_articulo.marca_propia }
     row: 9
     col: 20
     width: 4
-    height: 5
+    height: 3
   - title: "Resumen por Formato (Periodo Seleccionado vs Periodo Anterior)"
     name: h_formato
     tab_name: home
@@ -330,8 +332,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
     filters:
@@ -375,8 +377,25 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
+    conditional_formatting:
+    - type: greater than
+      value: 0
+      background_color: ""
+      font_color: "#2E7D32"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [ventas_anio_ant, tickets_anio_ant, unidades_anio_ant]
+    - type: less than
+      value: 0
+      background_color: ""
+      font_color: "#C62828"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [ventas_anio_ant, tickets_anio_ant, unidades_anio_ant]
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 14
+    row: 12
     col: 0
     width: 24
     height: 6
@@ -389,8 +408,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_origenventa.canal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
     filters:
@@ -434,8 +453,25 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
+    conditional_formatting:
+    - type: greater than
+      value: 0
+      background_color: ""
+      font_color: "#2E7D32"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [cnl_ventas_anio_ant, cnl_tickets_anio_ant, cnl_unidades_anio_ant]
+    - type: less than
+      value: 0
+      background_color: ""
+      font_color: "#C62828"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [cnl_ventas_anio_ant, cnl_tickets_anio_ant, cnl_unidades_anio_ant]
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 20
+    row: 18
     col: 0
     width: 24
     height: 6
@@ -448,8 +484,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_sucursal.sucursal, dim_sucursal.cd_sucursal, fct_ventas.venta_periodo, fct_ventas.venta_yoy, fct_ventas.tickets_periodo, fct_ventas.tickets_yoy, fct_ventas.unidades_periodo, fct_ventas.unidades_yoy]
     filters:
@@ -494,8 +530,25 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
+    conditional_formatting:
+    - type: greater than
+      value: 0
+      background_color: ""
+      font_color: "#2E7D32"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [tnd_ventas_anio_ant, tnd_tickets_anio_ant, tnd_unidades_anio_ant]
+    - type: less than
+      value: 0
+      background_color: ""
+      font_color: "#C62828"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [tnd_ventas_anio_ant, tnd_tickets_anio_ant, tnd_unidades_anio_ant]
     listen: { fecha: fct_ventas.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, departamento: dim_departamento.departamento, categoria: dim_categoria.categoria, marca: dim_marca.marca, canal: dim_origenventa.canal, marca_propia: dim_articulo.marca_propia }
-    row: 26
+    row: 24
     col: 0
     width: 24
     height: 10
@@ -512,8 +565,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.tickets, fct_ventas.pct_tickets_total]
     sorts: [fct_ventas.tickets desc]
@@ -551,8 +604,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_marca.marca, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
@@ -618,8 +671,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_articulo.producto, fct_ventas.tickets]
     sorts: [fct_ventas.tickets desc]
@@ -643,8 +696,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.unidades, fct_ventas.pct_unidades_total]
     sorts: [fct_ventas.unidades desc]
@@ -682,8 +735,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_marca.marca, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
@@ -749,8 +802,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_articulo.producto, fct_ventas.unidades]
     sorts: [fct_ventas.unidades desc]
@@ -774,8 +827,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_formato.formato, fct_ventas.venta_neta, fct_ventas.pct_venta_total]
     sorts: [fct_ventas.venta_neta desc]
@@ -813,8 +866,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_marca.marca, fct_ventas.venta_neta, fct_ventas.margen_pesos]
     sorts: [fct_ventas.venta_neta desc]
@@ -880,8 +933,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_articulo.producto, fct_ventas.venta_neta]
     sorts: [fct_ventas.venta_neta desc]
@@ -909,7 +962,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
@@ -929,7 +982,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#F57C00"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
@@ -949,7 +1002,7 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#FBC02D"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 0
@@ -1011,13 +1064,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 9
     col: 0
     width: 6
-    height: 5
+    height: 3
   - title: "Unidades por Remito"
     name: r_kpi_uxr
     tab_name: remitos
@@ -1031,13 +1084,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#FBC02D"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 9
     col: 6
     width: 6
-    height: 5
+    height: 3
   - title: "Margen %"
     name: r_kpi_margenpct
     tab_name: remitos
@@ -1051,13 +1104,13 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 9
     col: 12
     width: 6
-    height: 5
+    height: 3
   - title: "Margen $"
     name: r_kpi_margen
     tab_name: remitos
@@ -1071,14 +1124,14 @@
     comparison_type: change
     comparison_reverse_colors: false
     custom_color_enabled: true
-    custom_color: "#2E7D32"
+    custom_color: "#000000"
     show_comparison_label: false
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
     row: 9
     col: 18
     width: 6
-    height: 5
-  - title: "Detalle por Tipo Dispensa"
+    height: 3
+  - title: "Resumen por Dispensa"
     name: r_dispensa
     tab_name: remitos
     model: lakehouse
@@ -1087,14 +1140,70 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
-    fields: [fct_remitos.tipo_dispensa, fct_remitos.venta_remito, fct_remitos.pct_venta_total, fct_remitos.remitos, fct_remitos.pct_remitos_total, fct_remitos.unidades_remito, fct_remitos.pct_unidades_total]
-    sorts: [fct_remitos.venta_remito desc]
-    series_cell_visualizations: { fct_remitos.venta_remito: { is_active: true } }
-    listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 14
+    fields: [fct_remitos.tipo_dispensa, fct_remitos.venta_periodo, fct_remitos.venta_yoy, fct_remitos.remitos_periodo, fct_remitos.remitos_yoy, fct_remitos.unidades_periodo, fct_remitos.unidades_yoy]
+    filters:
+      fct_remitos.en_periodo_o_aa: "yes"
+    sorts: [fct_remitos.venta_periodo desc]
+    hidden_fields: [fct_remitos.venta_periodo, fct_remitos.venta_yoy, fct_remitos.remitos_periodo, fct_remitos.remitos_yoy, fct_remitos.unidades_periodo, fct_remitos.unidades_yoy]
+    dynamic_fields:
+    - table_calculation: rdsp_ventas_cur
+      label: "Venta Remitos $"
+      expression: "${fct_remitos.venta_periodo}"
+      value_format_name: usd_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rdsp_ventas_anio_ant
+      label: "Venta Año Ant"
+      expression: "${fct_remitos.venta_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rdsp_remitos_cur
+      label: "Remitos"
+      expression: "${fct_remitos.remitos_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rdsp_remitos_anio_ant
+      label: "Remitos Año Ant"
+      expression: "${fct_remitos.remitos_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rdsp_unidades_cur
+      label: "Unidades"
+      expression: "${fct_remitos.unidades_periodo}"
+      value_format_name: decimal_0
+      _kind_hint: measure
+      _type_hint: number
+    - table_calculation: rdsp_unidades_anio_ant
+      label: "Unidades Año Ant"
+      expression: "${fct_remitos.unidades_yoy}"
+      value_format_name: percent_1
+      _kind_hint: measure
+      _type_hint: number
+    conditional_formatting:
+    - type: greater than
+      value: 0
+      background_color: ""
+      font_color: "#2E7D32"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [rdsp_ventas_anio_ant, rdsp_remitos_anio_ant, rdsp_unidades_anio_ant]
+    - type: less than
+      value: 0
+      background_color: ""
+      font_color: "#C62828"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [rdsp_ventas_anio_ant, rdsp_remitos_anio_ant, rdsp_unidades_anio_ant]
+    listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
+    row: 12
     col: 0
     width: 24
     height: 9
@@ -1107,8 +1216,8 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_sucursal.sucursal, dim_sucursal.cd_sucursal, fct_remitos.venta_periodo, fct_remitos.venta_yoy, fct_remitos.remitos_periodo, fct_remitos.remitos_yoy, fct_remitos.unidades_periodo, fct_remitos.unidades_yoy]
     filters:
@@ -1153,8 +1262,25 @@
       value_format_name: percent_1
       _kind_hint: measure
       _type_hint: number
+    conditional_formatting:
+    - type: greater than
+      value: 0
+      background_color: ""
+      font_color: "#2E7D32"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [rtnd_ventas_anio_ant, rtnd_remitos_anio_ant, rtnd_unidades_anio_ant]
+    - type: less than
+      value: 0
+      background_color: ""
+      font_color: "#C62828"
+      bold: false
+      italic: false
+      strikethrough: false
+      fields: [rtnd_ventas_anio_ant, rtnd_remitos_anio_ant, rtnd_unidades_anio_ant]
     listen: { fecha: fct_remitos.filtro_fecha, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 23
+    row: 21
     col: 0
     width: 24
     height: 10
@@ -1167,15 +1293,15 @@
     table_theme: white
     show_row_numbers: false
     size_to_fit: true
-    header_background_color: "#2E7D32"
-    header_font_color: "#FFFFFF"
+    header_background_color: "#FFFFFF"
+    header_font_color: "#515457"
     header_text_alignment: left
     fields: [dim_articulo.producto, fct_remitos.venta_remito, fct_remitos.unidades_remito]
     sorts: [fct_remitos.venta_remito desc]
     limit: 20
     series_cell_visualizations: { fct_remitos.venta_remito: { is_active: false } }
     listen: { fecha: dim_fecha.fecha_date, formato: dim_formato.formato, provincia: dim_provincia.provincia, sucursal: dim_sucursal.dsc_codsucursal, dispensa: fct_remitos.tipo_dispensa, obrasocial: dim_obrasocial.obrasocial }
-    row: 33
+    row: 31
     col: 0
     width: 24
     height: 9
