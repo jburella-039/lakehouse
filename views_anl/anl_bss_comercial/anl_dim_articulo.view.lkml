@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_comercial/bas_dim_articulo.view.lkml"
+include: "/views_bas/bas_bss_comercial/bas_dim_articulo.view.lkml"
 
 view: anl_dim_articulo {
   extends: [bas_dim_articulo]

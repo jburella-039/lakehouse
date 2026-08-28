@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_comercial/bas_dim_subcategoria.view.lkml"
+include: "/views_bas/bas_bss_comercial/bas_dim_subcategoria.view.lkml"
 
 view: anl_dim_subcategoria {
   extends: [bas_dim_subcategoria]

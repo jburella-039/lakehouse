@@ -1,5 +1,5 @@
 # =============================================================================
-# view: fct_ventas_pktest  (VISTA DE PRUEBA - NO productiva)
+# view: cst_fct_ventas_pktest  (VISTA DE PRUEBA - NO productiva)
 # Objetivo (pedido de Luca): validar que la PK nativa de BigQuery id_venta
 # (agregada por Alex en la tabla base fct_ventas) da EXACTAMENTE el mismo conteo
 # de tickets que la PK que hoy calculamos en Looker (hash FARM_FINGERPRINT de 6
@@ -7,12 +7,12 @@
 #
 # Lee la TABLA BASE bss_comercial.fct_ventas (no la vista vw_fct_ventas) porque
 # id_venta todavia no esta expuesta en la vista logica. Cuando el equipo de datos
-# publique id_venta en vw_fct_ventas, el cambio productivo se hace en fnd_fct_ventas.
+# publique id_venta en vw_fct_ventas, el cambio productivo se hace en bas_fct_ventas.
 #
 # Validacion BigQuery (marzo 2026): COUNT(DISTINCT id_venta)=32.742,
 # COUNT(DISTINCT hash6)=32.742, 0 NULLs -> coincidencia exacta 1:1.
 # =============================================================================
-view: fct_ventas_pktest {
+view: cst_fct_ventas_pktest {
   sql_table_name: `lakehouse-dev-483619.bss_comercial.fct_ventas` ;;
 
   # PK de linea (grano de renglon) - solo para primary_key del explore.

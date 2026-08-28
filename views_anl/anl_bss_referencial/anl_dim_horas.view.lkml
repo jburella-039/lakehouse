@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_referencial/bas_dim_horas.view.lkml"
+include: "/views_bas/bas_bss_referencial/bas_dim_horas.view.lkml"
 
 view: anl_dim_horas {
   extends: [bas_dim_horas]

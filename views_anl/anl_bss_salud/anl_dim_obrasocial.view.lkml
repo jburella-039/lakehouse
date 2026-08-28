@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_salud/bas_dim_obrasocial.view.lkml"
+include: "/views_bas/bas_bss_salud/bas_dim_obrasocial.view.lkml"
 
 view: anl_dim_obrasocial {
   extends: [bas_dim_obrasocial]

@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_referencial/bas_dim_fecha.view.lkml"
+include: "/views_bas/bas_bss_referencial/bas_dim_fecha.view.lkml"
 
 view: anl_dim_fecha {
   extends: [bas_dim_fecha]

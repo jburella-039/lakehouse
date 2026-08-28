@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_comercial/bas_fct_stock.view.lkml"
+include: "/views_bas/bas_bss_comercial/bas_fct_stock.view.lkml"
 
 view: anl_fct_stock {
   extends: [bas_fct_stock]

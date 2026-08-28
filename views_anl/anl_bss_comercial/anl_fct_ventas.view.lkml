@@ -1,21 +1,29 @@
-include: "/views_BAS/bas_bss_comercial/bas_fct_ventas.view.lkml"
+include: "/views_bas/bas_bss_comercial/bas_fct_ventas.view.lkml"
 
-# [rev 2026-08-13] Version SIN tabla derivada. Si ves un bloque "derived_table: {"
-# mas abajo, estas en una version vieja: hace Pull from Production en Looker.
-# =============================================================================
-# anl_fct_ventas_nopdt - COPIA DE anl_fct_ventas SIN TABLA DERIVADA (vista de prueba)
-# NO tiene derived_table: lee DIRECTO la vista vw_fct_ventas (hereda el
-# sql_table_name de bas_fct_ventas), en vivo, sin materializar ni cachear PDT.
-# El scope del reporte PBI (Ventas Propia tipo_op=0 + relacion Controlada/Propia
-# IN 1,3, excluye terceros/otros ingresos/recargos/franquicia) NO va aca: se
-# aplica en el explore fct_ventas_nopdt via sql_always_where, usando el JOIN a
-# dim_sucursal (id_tiporelacion) que ya arma ese explore.
-# Sirve para testear el impacto del PDT (staleness / performance) sin tocar la
-# vista productiva anl_fct_ventas ni su explore/dashboard.
-# =============================================================================
-view: anl_fct_ventas_nopdt {
+view: anl_fct_ventas {
   extends: [bas_fct_ventas]
-  label: "Ventas (sin PDT)"
+  label: "Ventas"
+
+  derived_table: {
+    sql:
+      SELECT f.*
+      -- Venta $ = campo crudo mto_totalsinivaantesdescuento (ya viene en f.*).
+      -- Acuerdo con Daniela Scarcella (11/08/2026): la metrica apunta al campo tal cual
+      -- y el ajuste del calculo se hace del lado de BQ/Modelado. Hasta ese ajuste NO cuadra
+      -- con PBI (da ~205.929M vs 207.183M del calculo previo). El calculo previo estilo PBI
+      -- [Vta $ T SIva Ant Desc] se conserva en la medida de control venta_neta_calc_pbi.
+      -- Scope reporte PBI: Ventas Propia (tipo_op=0, excluye terceros/otros ingresos/recargos)
+      -- + Controlada o Propia (relacion IN 1,3, excluye franquicia)
+      FROM `lakehouse-dev-483619.bss_comercial.vw_fct_ventas` AS f
+      JOIN `lakehouse-dev-483619.bss_sucursales.dim_sucursal` AS s
+        ON f.id_sucursal = s.id_sucursal
+      WHERE f.id_tipooperacioncomercial = 0
+        AND s.id_tiporelacion IN (1, 3)
+      ;;
+    datagroup_trigger: venta_integral_datagroup
+    partition_keys: ["fec_dia"]
+    cluster_keys: ["id_sucursal", "id_tipocomprobante", "cd_nrocomprobante"]
+  }
 
   dimension: pk {
     primary_key: yes

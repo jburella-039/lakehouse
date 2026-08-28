@@ -2,11 +2,11 @@ connection: "lakehouse-dev-483619"
 
 # =============================================================================
 # Estructura de vistas (TODAS las entidades en dos capas BAS/ANL):
-#   views_BAS/   -> capa BASE cruda: bas_<entidad> = espejo 1:1 del origen BigQuery
+#   views_bas/   -> capa BASE cruda: bas_<entidad> = espejo 1:1 del origen BigQuery
 #                   con fields_hidden_by_default: yes (sin labels ni calculados).
-#   views_ANL/   -> capa ANALISIS: anl_<entidad> extiende bas_<entidad>, expone lo
+#   views_anl/   -> capa ANALISIS: anl_<entidad> extiende bas_<entidad>, expone lo
 #                   curado con hidden: no + labels, calculados, PDT y medidas.
-#   views/       -> solo queda fct_ventas_pktest (vista de prueba, no productiva).
+#   views_cst/   -> solo queda cst_fct_ventas_pktest (vista de prueba, no productiva).
 #   Subcarpetas por dataset: bas_/anl_ + bss_comercial | bss_referencial |
 #   bss_sucursales | bss_salud.
 #
@@ -18,9 +18,9 @@ connection: "lakehouse-dev-483619"
 # topologia que valida en esta instancia: con los explores en archivos separados,
 # las vistas no se resolvian y todo daba "could not find view".
 # =============================================================================
-include: "/views/**/*.view.lkml"
-include: "/views_BAS/**/*.view.lkml"
-include: "/views_ANL/**/*.view.lkml"
+include: "/views_cst/**/*.view.lkml"
+include: "/views_bas/**/*.view.lkml"
+include: "/views_anl/**/*.view.lkml"
 # include LookML dashboards (Venta Integral)
 include: "/dashboards/**/*.dashboard.lookml"
 
@@ -248,6 +248,7 @@ explore: fct_ventas_nopdt {
 # resta_stock). Ver dashboards/pk_test.dashboard.lookml.
 # =============================================================================
 explore: fct_ventas_pktest {
+  from: cst_fct_ventas_pktest
   label: "PRUEBA - PK Ventas (id_venta vs hash)"
   description: "Validacion: id_venta nativo de BigQuery vs hash calculado en Looker."
   hidden: yes

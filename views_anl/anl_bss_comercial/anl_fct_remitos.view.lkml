@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_comercial/bas_fct_remitos.view.lkml"
+include: "/views_bas/bas_bss_comercial/bas_fct_remitos.view.lkml"
 
 view: anl_fct_remitos {
   extends: [bas_fct_remitos]

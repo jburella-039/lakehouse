@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_comercial/bas_dim_tipocomprobante.view.lkml"
+include: "/views_bas/bas_bss_comercial/bas_dim_tipocomprobante.view.lkml"
 
 view: anl_dim_tipocomprobante {
   extends: [bas_dim_tipocomprobante]

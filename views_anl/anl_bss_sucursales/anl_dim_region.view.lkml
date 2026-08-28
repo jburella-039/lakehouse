@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_sucursales/bas_dim_region.view.lkml"
+include: "/views_bas/bas_bss_sucursales/bas_dim_region.view.lkml"
 
 view: anl_dim_region {
   extends: [bas_dim_region]

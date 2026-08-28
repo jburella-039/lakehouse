@@ -1,4 +1,4 @@
-include: "/views_BAS/bas_bss_sucursales/bas_dim_sucursal.view.lkml"
+include: "/views_bas/bas_bss_sucursales/bas_dim_sucursal.view.lkml"
 
 view: anl_dim_sucursal {
   extends: [bas_dim_sucursal]
